@@ -1,7 +1,7 @@
 
-= terminal-table
+= Terminal Table
 
-Simple,
+Simple, feature rich ASCII table generator.
 
 == License:
 
