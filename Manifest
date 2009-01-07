@@ -1,0 +1,10 @@
+History.rdoc
+Rakefile
+README.rdoc
+spec/spec_helper.rb
+spec/terminal-table_spec.rb
+tasks/docs.rake
+tasks/gemspec.rake
+tasks/spec.rake
+Todo.rdoc
+Manifest
