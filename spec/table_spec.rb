@@ -44,7 +44,15 @@ describe Terminal::Table do
     @table << ['big foo', 'big bar']
     @table.length_of_largest_row_with_padding.should == 18 
   end
-    
+  
+  it "should render seperators" do
+    @table.headings = ['Char', 'Num']
+    @table << ['a', 1]
+    @table << ['b', 2]
+    @table << ['c', 3]
+    @table.seperator.should == '+------+-----+'
+  end
+      
   it "should render properly" do
     @table.headings = ['Char', 'Num']
     @table << ['a', 1]

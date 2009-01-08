@@ -18,6 +18,15 @@ module Terminal
         end
       end
       
+      def render
+        value.to_s.align alignment, length
+      end
+      alias :to_s :render
+      
+      def length
+        (PADDING * 2) + value.to_s.length
+      end
+      
     end
   end
 end

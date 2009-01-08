@@ -20,25 +20,37 @@ module Terminal
     end
   
     def render
-      
+      s = "\n" << seperator << "\n"
+      s << headings.collect { |heading| Heading.new(heading).render }.join(Y) if has_headings?
+      s << rows.collect { |row| row.collect { |cell| Cell.new(cell).render }.join(Y) }.join("\n")
+      s << seperator << "\n"
+      puts s
     end
     alias :to_s :render
     
+    def seperator
+      @seperator ||= I + largest.collect { |cell| X * Cell.new(cell).length }.join(I) + I
+    end
+    
     def add_row row
-      @rows << row
+      rows << row
     end
     alias :<< :add_row
     
     def headings_length
-      @headings.sum_of :length
+      headings.sum_of :length
     end
     
     def headings_length_with_padding
       headings_length + padding
     end
     
+    def largest
+      [largest_row, headings].sort.first
+    end
+    
     def largest_row
-      @rows.sort_by { |row| row.join.length }.last 
+      rows.sort_by { |row| row.join.length }.last 
     end
     
     def length_of_largest_row
@@ -54,11 +66,11 @@ module Terminal
     end
     
     def number_of_columns
-      (@rows.first || []).length
+      (rows.first || []).length
     end
     
     def has_headings?
-      !@headings.empty?
+      !headings.empty?
     end
     
     def align_column n, alignment
