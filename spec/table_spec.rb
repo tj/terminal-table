@@ -9,18 +9,39 @@ describe Terminal::Table do
     @table << [1, 2, 3, 4]
     @table.padding.should == 8
   end
+  
+  it "should calculate number of columns" do
+    @table << [1, 2, 3, 4]
+    @table.number_of_columns.should == 4
+  end
     
-  it "should calculate heading chars with and without padding" do
+  it "should calculate heading chars without padding" do
+    @table << ['a', 1]
     @table.headings = ['Characters', 'Numbers']
     @table.headings_length.should == 17
-    @table.headings_length_with_padding.should == 21
   end
   
-  it "should calculate heading chars with and without padding" do
-    @table << ['foo', 'bar']
+  it "should calculate heading chars with padding" do
+    @table << ['a', 1]
+    @table.headings = ['Characters', 'Numbers']
+    @table.headings_length_with_padding.should == 21
+  end
+
+  it "should calculate largest row" do
+    @table << ['foo', 'bar', 'a']
     @table << ['big foo', 'big bar']
     @table.largest_row.should == ['big foo', 'big bar']
+  end
+  
+  it "should calculate heading chars without padding" do
+    @table << ['foo', 'bar']
+    @table << ['big foo', 'big bar']
     @table.length_of_largest_row.should == 14 
+  end
+
+  it "should calculate heading chars with padding" do
+    @table << ['foo', 'bar']
+    @table << ['big foo', 'big bar']
     @table.length_of_largest_row_with_padding.should == 18 
   end
     

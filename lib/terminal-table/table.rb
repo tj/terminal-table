@@ -2,7 +2,13 @@
 module Terminal
   class Table
     
+    ##
+    # Table characters, x axis, y axis, and intersection.
+    
     X, Y, I = '-', '|', '+'
+    
+    ##
+    # Space applied twice to each cell (left and right)
     
     PADDING = 1
     
@@ -44,7 +50,11 @@ module Terminal
     end
     
     def padding
-      @rows.first.length * (PADDING * 2)
+      (PADDING * 2) * number_of_columns 
+    end
+    
+    def number_of_columns
+      (@rows.first || []).length
     end
     
     def has_headings?
