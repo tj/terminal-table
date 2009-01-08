@@ -1,8 +1,8 @@
 
-describe TerminalTable do
+describe Terminal::Table do
   
   before :each do
-    @table = TerminalTable.new
+    @table = Terminal::Table.new
   end
   
   it "should render properly" do
@@ -52,7 +52,7 @@ describe TerminalTable do
   it "should allows a hash of options for creation" do
     headings = ['Char', 'Num']
     rows = [['a', 1], ['b', 2], ['c', 3]]
-    TerminalTable.new(:rows => rows, :headings => headings).render.should == <<-EOF.deindent
+    Terminal::Table.new(:rows => rows, :headings => headings).render.should == <<-EOF.deindent
       +------+-----+
       | Char | Num |
       +------+-----+

@@ -1,8 +1,14 @@
 History.rdoc
 Rakefile
 README.rdoc
+lib/terminal-table.rb
+lib/terminal-table/cell.rb
+lib/terminal-table/heading.rb
+lib/terminal-table/table.rb
+lib/terminal-table/version.rb
 spec/spec_helper.rb
-spec/terminal-table_spec.rb
+spec/table_spec.rb
+spec/cell_spec.rb
 tasks/docs.rake
 tasks/gemspec.rake
 tasks/spec.rake
