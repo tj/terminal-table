@@ -37,36 +37,12 @@ module Terminal
     end
     alias :<< :add_row
     
-    def headings_length
-      headings.sum_of :length
-    end
-    
-    def headings_length_with_padding
-      headings_length + padding
-    end
-    
     def largest
       [largest_row, headings].sort.first
     end
     
     def largest_row
       rows.sort_by { |row| row.join.length }.last 
-    end
-    
-    def length_of_largest_row
-      largest_row.sum_of :length
-    end
-    
-    def length_of_largest_row_with_padding
-      length_of_largest_row + padding
-    end
-    
-    def padding
-      (PADDING * 2) * number_of_columns 
-    end
-    
-    def number_of_columns
-      (rows.first || []).length
     end
     
     def has_headings?
