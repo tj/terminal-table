@@ -24,6 +24,7 @@
 $:.unshift File.dirname(__FILE__)
 
 require 'terminal-table/version'
+require 'terminal-table/core_ext'
 require 'terminal-table/table'
 require 'terminal-table/cell'
 require 'terminal-table/heading'

@@ -4,7 +4,26 @@ describe Terminal::Table do
   before :each do
     @table = Terminal::Table.new
   end
+
+  it "should calculate padding" do
+    @table << [1, 2, 3, 4]
+    @table.padding.should == 8
+  end
+    
+  it "should calculate heading chars with and without padding" do
+    @table.headings = ['Characters', 'Numbers']
+    @table.headings_length.should == 17
+    @table.headings_length_with_padding.should == 21
+  end
   
+  it "should calculate heading chars with and without padding" do
+    @table << ['foo', 'bar']
+    @table << ['big foo', 'big bar']
+    @table.largest_row.should == ['big foo', 'big bar']
+    @table.length_of_largest_row.should == 14 
+    @table.length_of_largest_row_with_padding.should == 18 
+  end
+    
   it "should render properly" do
     @table.headings = ['Char', 'Num']
     @table << ['a', 1]
