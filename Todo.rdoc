@@ -1,6 +1,8 @@
 
 == Major:
 
+* document
+* pre-create Cell and Heading objects
 * termina-table/import 
 
 == Minor:

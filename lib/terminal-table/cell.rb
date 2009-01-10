@@ -7,7 +7,8 @@ module Terminal
       
       attr_accessor :value, :alignment
       
-      def initialize initial = nil
+      def initialize render_length, initial = nil
+        @render_length = render_length
         case initial
         when Hash
           @value = initial[:value]
@@ -19,12 +20,12 @@ module Terminal
       end
       
       def render
-        value.to_s.align alignment, length
+        " #{value.to_s} ".align alignment, @render_length + 2
       end
       alias :to_s :render
       
       def length
-        (PADDING * 2) + value.to_s.length
+        value.to_s.length + 2
       end
       
     end

@@ -4,18 +4,53 @@ describe Terminal::Table do
   before :each do
     @table = Terminal::Table.new
   end
-
-  it "should calculate largest row" do
+   
+  it "should select columns" do
+    @table << ['foo', 'bar']
+    @table << ['big foo', 'big foo bar']
+    @table.column(1).should == ['bar', 'big foo bar']
+  end
+  
+  it "should count columns" do
+    @table << [1, 2, 3]
+    @table.number_of_columns.should == 3
+  end
+  
+  it "should iterate columns" do
+    @table << [1, 2, 3]
+    @table << [4, 5, 6]
+    @table.columns.should == [[1, 4], [2, 5], [3, 6]]
+  end
+  
+  it "should select columns with headings" do
+    @table.headings = ['one', 'two']
+    @table << ['foo', 'bar']
+    @table << ['big foo', 'big foo bar']
+    @table.column(1).should == ['two', 'bar', 'big foo bar']
+  end
+  
+  it "should select largest cell in a column" do
+    @table << ['foo', 'bar']
+    @table << ['big foo', 'big foo bar']
+    @table.largest_cell_in_column(1).should == 'big foo bar'
+  end
+  
+  it "should find column length" do
     @table << ['foo', 'bar', 'a']
-    @table << ['big foo', 'big bar']
-    @table.largest_row.should == ['big foo', 'big bar']
+    @table << ['big foo', 'big foo bar']
+    @table.length_of_column(1).should == 11
+  end
+  
+  it "should find column length with headings" do
+    @table.headings = ['one', 'super long heading']
+    @table << ['foo', 'bar', 'a']
+    @table << ['big foo', 'big foo bar']
+    @table.length_of_column(1).should == 18
   end
   
   it "should render seperators" do
     @table.headings = ['Char', 'Num']
     @table << ['a', 1]
-    @table << ['b', 2]
-    @table << ['c', 3]
     @table.seperator.should == '+------+-----+'
   end
       
@@ -40,26 +75,11 @@ describe Terminal::Table do
     @table << ['b', 2]
     @table << ['c', 3]
     @table.render.should == <<-EOF.deindent
-      +------+-----+
-      | a    | 1   |
-      | b    | 2   |
-      | c    | 3   |
-      +------+-----+
-    EOF
-  end
-  
-  it "should render properly without headings and row seperators" do
-    @table << ['a', 1]
-    @table << ['b', 2]
-    @table << ['c', 3]
-    @table.render.should == <<-EOF.deindent
-      +------+-----+
-      | a    | 1   |
-      +------+-----+
-      | b    | 2   |
-      +------+-----+
-      | c    | 3   |
-      +------+-----+
+      +---+---+
+      | a | 1 |
+      | b | 2 |
+      | c | 3 |
+      +---+---+
     EOF
   end
   
@@ -92,31 +112,32 @@ describe Terminal::Table do
   end
   
   it "should allow alignment of headings and cells" do
-    @table.headings = ['Characters', { :value => 'N', :align => :right }]
+    @table.headings = ['Characters', { :value => 'Nums', :align => :right }]
     @table << [{ :value => 'a', :align => :center }, 1]
-    @table << ['b', 2]
+    @table << ['b', 222222222222222]
     @table << ['c', 3]
     @table.render.should == <<-EOF.deindent
-      +------------+-----+
-      | Characters |   N |
-      +------------+-----+
-      |     a      | 1   |
-      | b          | 2   |
-      | c          | 3   |
-      +------------+-----+
+      +------------+-----------------+
+      | Characters |            Nums |
+      +------------+-----------------+
+      |     a      | 1               |
+      | b          | 222222222222222 |
+      | c          | 3               |
+      +------------+-----------------+
     EOF
+    
   end
   
-  it "should align columns" do
+  it "should align columns, but allow specifics to remain" do
     @table.headings = ['Just some characters', 'Num']
-    @table.rows = [[{ :value => 'a', :align => :center }, 1], ['b', 2], ['c', 3]]
+    @table.rows = [[{ :value => 'a', :align => :left }, 1], ['b', 2], ['c', 3]]
     @table.align_column 1, :center
     @table.align_column 2, :right
     @table.render.should == <<-EOF.deindent
       +----------------------+-----+
       | Just some characters | Num |
       +----------------------+-----+
-      |          a           |  1  |
+      | a                    |   1 |
       |          b           |   2 |
       |          c           |   3 |
       +----------------------+-----+
