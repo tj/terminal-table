@@ -5,7 +5,7 @@ namespace :docs do
   task :remove => [:clobber_docs]
   
   desc 'Build docs, and open in browser for viewing (specify BROWSER)'
-  task :open do
+  task :open => [:docs] do
     browser = ENV["BROWSER"] || "safari"
     sh "open -a #{browser} doc/index.html"
   end
