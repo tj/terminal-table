@@ -1,13 +1,11 @@
 
 == Major:
 
-* document
-* pre-create Cell and Heading objects
-* termina-table/import 
+* Nothing
 
 == Minor:
 
-* Nothing
+* pre-create Cell and Heading objects to clean up Table a bit
 
 == Brainstorming:
 
