@@ -7,6 +7,7 @@ lib/terminal-table/cell.rb
 lib/terminal-table/heading.rb
 lib/terminal-table/table.rb
 lib/terminal-table/version.rb
+lib/terminal-table/import.rb
 spec/spec_helper.rb
 spec/core_ext_spec.rb
 spec/table_spec.rb
