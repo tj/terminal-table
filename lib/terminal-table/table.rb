@@ -38,7 +38,11 @@ module Terminal
     end
     
     def column n
-      ([headings] + rows).collect { |row| row[n] }.compact 
+      rows.collect { |row| row[n] }.compact 
+    end
+    
+    def column_with_headings n
+      headings_with_rows.collect { |row| row[n] }.compact  
     end
     
     def columns 
@@ -46,7 +50,7 @@ module Terminal
     end
     
     def largest_cell_in_column n
-      column(n).sort_by { |c| Cell.new(0, c).length }.last
+      column_with_headings(n).sort_by { |c| Cell.new(0, c).length }.last
     end
     
     # FIXME: should not need rescue ... cannot compare array to array use length
@@ -59,12 +63,20 @@ module Terminal
     end
     
     def align_column n, alignment
-      columns.each_with_index do |col, i|
-        col.each_with_index do |cell, j|
-          value = cell.is_a?(Hash) ? cell[:value] : cell
-          @rows[j][i] = { :value => value, :align => alignment }
+      column(n).each_with_index do |c, i|
+        p c
+        unless c.is_a? Hash
+          #p @rows[i]
+          #p @rows[i][n] = { :value => c, :align => alignment }
         end
       end
+      puts
+    end
+    
+    private
+    
+    def headings_with_rows
+      [headings] + rows
     end
     
   end

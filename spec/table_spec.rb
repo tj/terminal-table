@@ -22,11 +22,17 @@ describe Terminal::Table do
     @table.columns.should == [[1, 4], [2, 5], [3, 6]]
   end
   
-  it "should select columns with headings" do
+  it "should select columns" do
     @table.headings = ['one', 'two']
     @table << ['foo', 'bar']
     @table << ['big foo', 'big foo bar']
-    @table.column(1).should == ['two', 'bar', 'big foo bar']
+    @table.column(1).should == ['bar', 'big foo bar']
+  end
+  
+  it "should select columns when using hashes" do
+    @table.headings = ['one', 'two']
+    @table.rows = [[{ :value => 'a', :align => :left }, 1], ['b', 2], ['c', 3]]
+    @table.column(0).should == [{ :value => 'a', :align => :left }, 'b', 'c']
   end
   
   it "should select largest cell in a column" do
@@ -131,8 +137,8 @@ describe Terminal::Table do
   it "should align columns, but allow specifics to remain" do
     @table.headings = ['Just some characters', 'Num']
     @table.rows = [[{ :value => 'a', :align => :left }, 1], ['b', 2], ['c', 3]]
-    @table.align_column 1, :center
-    @table.align_column 2, :right
+    @table.align_column 0, :center
+    @table.align_column 1, :right
     @table.render.should == <<-EOF.deindent
       +----------------------+-----+
       | Just some characters | Num |
