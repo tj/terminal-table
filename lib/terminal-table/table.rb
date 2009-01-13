@@ -64,10 +64,8 @@ module Terminal
     
     def align_column n, alignment
       column(n).each_with_index do |c, i|
-        p c
         unless c.is_a? Hash
-          #p @rows[i]
-          #p @rows[i][n] = { :value => c, :align => alignment }
+          @rows[i][n] = { :value => c, :align => alignment }
         end
       end
       puts
