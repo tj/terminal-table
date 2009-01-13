@@ -53,6 +53,7 @@ module Terminal
       column_with_headings(n).sort_by { |c| Cell.new(0, c).length }.last
     end
     
+    # FIXME: should not need rescue ... cannot compare array to array use length
     def length_of_column n
       largest_cell_in_column(n).to_s.length
     end

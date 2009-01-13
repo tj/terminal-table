@@ -76,17 +76,6 @@ describe Terminal::Table do
     EOF
   end
   
-  it "should render properly with tiny syntax" do
-    Terminal::Table.new(:headings => ['Hey', 'There'], :rows => [[1,2], [3,nil]]).render.should == <<-EOF.deindent
-      +-----+-------+
-      | Hey | There |
-      +-----+-------+
-      | 1   | 2     |
-      | 3   |       |
-      +-----+-------+
-    EOF
-  end
-    
   it "should render properly without headings" do
     @table << ['a', 1]
     @table << ['b', 2]
