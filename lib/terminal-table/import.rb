@@ -37,6 +37,15 @@ module Kernel
   #    end
   #    puts user_table
   #
+  #   # OR
+  #
+  #   rows = []
+  #   rows << ['Lines',      100]
+  #   rows << ['Comments',   20]
+  #   rows << ['Ruby',       70]
+  #   rows << ['JavaScript', 30]
+  #   puts table(nil, rows)
+  #
   
   def table headings = [], rows = [], &block
     table = Terminal::Table.new :headings => headings, :rows => rows
