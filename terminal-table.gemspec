@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{terminal-table}
-  s.version = "1.0.0"
+  s.version = "1.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 1.2") if s.respond_to? :required_rubygems_version=
   s.authors = ["TJ Holowaychuk"]
-  s.date = %q{2009-01-13}
+  s.date = %q{2009-01-15}
   s.description = %q{Simple,}
   s.email = %q{tj@vision-media.ca}
   s.extra_rdoc_files = ["README.rdoc", "lib/terminal-table.rb", "lib/terminal-table/core_ext.rb", "lib/terminal-table/cell.rb", "lib/terminal-table/heading.rb", "lib/terminal-table/table.rb", "lib/terminal-table/version.rb", "lib/terminal-table/import.rb", "tasks/docs.rake", "tasks/gemspec.rake", "tasks/spec.rake"]
