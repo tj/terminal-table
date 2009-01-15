@@ -14,9 +14,9 @@ puts t
 puts
 user_table = table do |t|
   t.headings = 'First Name', 'Last Name', 'Email'
-  t << ['TJ',  'Holowaychuk', 'tj@vision-media.ca']
-  t << ['Bob', 'Someone',     'bob@vision-media.ca']
-  t << ['Joe', 'Whatever',    'joe@vision-media.ca']
+  t << %w( TJ Holowaychuk tj@vision-media.ca )
+  t << %w( Bob Someone bob@vision-media.ca )
+  t << %w( Joe Whatever bob@vision-media.ca )
 end
 puts user_table
 
