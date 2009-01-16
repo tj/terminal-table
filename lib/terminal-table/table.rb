@@ -29,6 +29,12 @@ module Terminal
   
   class Table
     
+    #--
+    # Exceptions
+    #++
+    
+    class Error < StandardError; end
+    
     ##
     # Table characters, x axis, y axis, and intersection.
     
@@ -39,9 +45,10 @@ module Terminal
     ##
     # Generates a ASCII table.
   
-    def initialize options = {}
+    def initialize options = {}, &block
       @headings = options.delete(:headings) || []
-      @rows = options.delete(:rows) || []
+      @rows = options.delete(:rows) || [] 
+      yield_or_eval &block if block_given?
     end
     
     ##
@@ -118,8 +125,12 @@ module Terminal
     ##
     # Return total number of columns available.
      
-    def number_of_columns 
-      rows[0].length
+    def number_of_columns
+      if rows[0]
+        rows[0].length 
+      else
+        raise Error, 'Your table needs some rows'
+      end 
     end
     
     ##

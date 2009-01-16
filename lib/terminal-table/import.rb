@@ -48,8 +48,6 @@ module Kernel
   #
   
   def table headings = [], rows = [], &block
-    table = Terminal::Table.new :headings => headings, :rows => rows
-    table.yield_or_eval &block
-    table
+    table = Terminal::Table.new :headings => headings, :rows => rows, &block
   end
 end

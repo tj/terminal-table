@@ -54,3 +54,4 @@ rows << [nil,  nil, nil]
 rows << [nil, ':)', nil]
 rows << [nil,  nil, nil]
 puts table(nil, rows)
+

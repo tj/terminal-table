@@ -89,6 +89,36 @@ describe Terminal::Table do
     EOF
   end
   
+  it "should render properly using block syntax" do
+    table = Terminal::Table.new do |t|
+      t << ['a', 1]
+      t << ['b', 2]
+      t << ['c', 3]
+    end
+    table.render.should == <<-EOF.deindent
+      +---+---+
+      | a | 1 |
+      | b | 2 |
+      | c | 3 |
+      +---+---+
+    EOF
+  end
+  
+  it "should render properly using instance_eval block syntax" do
+    table = Terminal::Table.new do
+      add_row ['a', 1]
+      add_row ['b', 2]
+      add_row ['c', 3]
+    end
+    table.render.should == <<-EOF.deindent
+      +---+---+
+      | a | 1 |
+      | b | 2 |
+      | c | 3 |
+      +---+---+
+    EOF
+  end
+  
   it "should allows a hash of options for creation" do
     headings = ['Char', 'Num']
     rows = [['a', 1], ['b', 2], ['c', 3]]
