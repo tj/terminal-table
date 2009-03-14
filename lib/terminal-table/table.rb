@@ -56,12 +56,11 @@ module Terminal
     # instance in order to output it to the terminal.
   
     def render
-      sep = seperator
-      s = sep + "\n" 
+      s = seperator + "\n" 
       s << Y + headings.collect_with_index { |h, i| Heading.new(length_of_column(i), h).render }.join(Y) + Y if has_headings?
-      s << "\n" + sep + "\n" if has_headings?
+      s << "\n" + seperator + "\n" if has_headings?
       s << rows.collect { |row| Y + row.collect_with_index { |c, i| Cell.new(length_of_column(i), c).render }.join(Y) + Y }.join("\n")
-      s << "\n" + sep + "\n"
+      s << "\n" + seperator + "\n"
     end
     alias :to_s :render
     
