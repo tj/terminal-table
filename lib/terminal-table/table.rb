@@ -140,8 +140,6 @@ module Terminal
       end
     end
     
-    private
-    
     ##
     # Return headings combined with rows.
     
