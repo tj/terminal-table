@@ -1,7 +1,7 @@
 
 describe String do
+  
   describe "#align" do
-    
     it "should center" do
       'foo'.align(:center, 10).should == '   foo    '
     end
@@ -13,6 +13,6 @@ describe String do
     it "should align right" do
       'foo'.align(:right, 10).should == '       foo'
     end
-    
   end
+  
 end

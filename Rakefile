@@ -4,7 +4,7 @@ require 'rake'
 require 'echoe'
 require './lib/terminal-table.rb'
 
-Echoe.new("terminal-table", Terminal::Table::VERSION::STRING) do |p|
+Echoe.new("terminal-table", Terminal::Table::VERSION) do |p|
   p.author = "TJ Holowaychuk"
   p.email = "tj@vision-media.ca"
   p.summary = "Simple,"
