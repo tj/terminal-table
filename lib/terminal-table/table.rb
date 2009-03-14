@@ -46,8 +46,8 @@ module Terminal
     # Generates a ASCII table.
   
     def initialize options = {}, &block
-      @headings = options.delete(:headings) || []
-      @rows = options.delete(:rows) || [] 
+      @headings = options.fetch :headings, []
+      @rows = options.fetch :rows, []
       yield_or_eval &block if block_given?
     end
     
