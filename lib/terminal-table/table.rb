@@ -125,11 +125,8 @@ module Terminal
     # Return total number of columns available.
      
     def number_of_columns
-      if rows[0]
-        rows[0].length 
-      else
-        raise Error, 'Your table needs some rows'
-      end 
+      return rows.first.length unless rows.empty?
+      raise Error, 'your table needs some rows.'
     end
     
     ##
