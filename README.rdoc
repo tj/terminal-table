@@ -7,16 +7,16 @@ Simple, feature rich ASCII table generator.
 
 * Fast
 * Simple
-* With or without headings
-* Alignment of headings, cells, or columns
-* Easy modification of table chars (+, -, |)
+* Optional headings
+* Alignment of columns, headings, or cells
+* Easy modification of table strings (+, -, |)
 
 == Examples:
 
    require 'rubygems'
    require 'terminal-table/import'
    
-   puts table(['a', 'b'], [[1, 2], [3, 4]])
+   puts table(['a', 'b'], [1, 2], [3, 4])
    
    t = table ['a', 'b']
    t << [1, 2]
@@ -45,14 +45,14 @@ Simple, feature rich ASCII table generator.
    rows << ['Comments',   20]
    rows << ['Ruby',       70]
    rows << ['JavaScript', 30]
-   puts table([nil, 'Lines'], rows)
+   puts table([nil, 'Lines'], *rows)
    
    rows = []
    rows << ['Lines',      100]
    rows << ['Comments',   20]
    rows << ['Ruby',       70]
    rows << ['JavaScript', 30]
-   puts table(nil, rows)
+   puts table(nil, *rows)
 
 == Results:
 
