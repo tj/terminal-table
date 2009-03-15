@@ -3,7 +3,7 @@ $:.unshift File.dirname(__FILE__) + '/../lib'
 require 'terminal-table/import'
 
 puts
-puts table(['a', 'b'], [[1, 2], [3, 4]])
+puts table(['a', 'b'], [1, 2], [3, 4])
 
 puts
 t = table ['a', 'b']
@@ -23,7 +23,7 @@ puts user_table
 puts
 user_table = table do
   self.headings = 'First Name', 'Last Name', 'Email'
-  add_row ['TJ',  'Holowaychuk', { :value => 'tj@vision-media.ca', :align => :right }]
+  add_row ['TJ',  'Holowaychuk', ['tj@vision-media.ca', :right]]
   add_row ['Bob', 'Someone',     'bob@vision-media.ca']
   add_row ['Joe', 'Whatever',    'joe@vision-media.ca']
   align_column 1, :center
@@ -35,14 +35,14 @@ rows << ['Lines',      100]
 rows << ['Comments',   20]
 rows << ['Ruby',       70]
 rows << ['JavaScript', 30]
-puts table([nil, 'Lines'], rows)
+puts table([nil, 'Lines'], *rows)
 
 rows = []
 rows << ['Lines',      100]
 rows << ['Comments',   20]
 rows << ['Ruby',       70]
 rows << ['JavaScript', 30]
-puts table(nil, rows)
+puts table(nil, *rows)
 
 
 Terminal::Table::X = '='
@@ -53,5 +53,5 @@ rows = []
 rows << [nil,  nil, nil]
 rows << [nil, ':)', nil]
 rows << [nil,  nil, nil]
-puts table(nil, rows)
+puts table(nil, *rows)
 

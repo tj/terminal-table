@@ -152,8 +152,8 @@ describe Terminal::Table do
   end
   
   it "should allow alignment of headings and cells" do
-    @table.headings = ['Characters', { :value => 'Nums', :align => :right }]
-    @table << [{ :value => 'a', :align => :center }, 1]
+    @table.headings = ['Characters', ['Nums', :right ]]
+    @table << [['a', :center ], 1]
     @table << ['b', 222222222222222]
     @table << ['c', 3]
     @table.render.should == <<-EOF.deindent
@@ -170,7 +170,7 @@ describe Terminal::Table do
   
   it "should align columns, but allow specifics to remain" do
     @table.headings = ['Just some characters', 'Num']
-    @table.rows = [[{ :value => 'a', :align => :left }, 1], ['b', 2], ['c', 3]]
+    @table.rows = [[['a', :left], 1], ['b', 2], ['c', 3]]
     @table.align_column 0, :center
     @table.align_column 1, :right
     @table.render.should == <<-EOF.deindent

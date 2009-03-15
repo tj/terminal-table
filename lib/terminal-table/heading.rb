@@ -2,7 +2,9 @@
 module Terminal
   class Table
     class Heading < Cell
-      DEFAULT_ALIGNMENT = :center
+      def initialize width, value = nil, alignment = :center
+        super
+      end
     end
   end
 end

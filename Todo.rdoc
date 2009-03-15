@@ -1,7 +1,7 @@
 
 == Major:
 
-* Nothing
+* Remove hash for value / alignment / adjust doc and release . no more shorthands |c| use value
 
 == Minor:
 

@@ -15,9 +15,7 @@ end
 module Enumerable
   def map_with_index &block
     result = []
-    each_with_index do |v, i|
-      result << yield(v, i)
-    end
+    each_with_index { |v, i| result << yield(v, i) } 
     result
   end
   alias :collect_with_index :map_with_index
@@ -38,4 +36,5 @@ class Object
       end
     end
   end
+  
 end

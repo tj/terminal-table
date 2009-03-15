@@ -8,7 +8,7 @@ module Kernel
   #
   # === Examples:
   #    
-  #    puts table(['a', 'b'], [[1, 2], [3, 4]])
+  #    puts table(['a', 'b'], [1, 2], [3, 4])
   #    
   #    # OR
   #
@@ -44,10 +44,10 @@ module Kernel
   #   rows << ['Comments',   20]
   #   rows << ['Ruby',       70]
   #   rows << ['JavaScript', 30]
-  #   puts table(nil, rows)
+  #   puts table(nil, *rows)
   #
   
-  def table headings = [], rows = [], &block
-    table = Terminal::Table.new :headings => headings, :rows => rows, &block
+  def table headings = [], *rows, &block
+    Terminal::Table.new :headings => headings, :rows => rows, &block
   end
 end

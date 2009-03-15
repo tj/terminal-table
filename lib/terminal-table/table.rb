@@ -57,9 +57,9 @@ module Terminal
   
     def render
       s = seperator + "\n" 
-      s << Y + headings.collect_with_index { |h, i| Heading.new(length_of_column(i), h).render }.join(Y) + Y if has_headings?
+      s << Y + headings.collect_with_index { |h, i| Heading.new(length_of_column(i), *h).render }.join(Y) + Y if has_headings?
       s << "\n" + seperator + "\n" if has_headings?
-      s << rows.collect { |row| Y + row.collect_with_index { |c, i| Cell.new(length_of_column(i), c).render }.join(Y) + Y }.join("\n")
+      s << rows.collect { |row| Y + row.collect_with_index { |c, i| Cell.new(length_of_column(i), *c).render }.join(Y) + Y }.join("\n")
       s << "\n" + seperator + "\n"
     end
     alias :to_s :render
@@ -134,9 +134,7 @@ module Terminal
     
     def align_column n, alignment
       column(n).each_with_index do |c, i|
-        unless c.is_a? Hash
-          @rows[i][n] = { :value => c, :align => alignment }
-        end
+        @rows[i][n] = [c, alignment] unless c.is_a? Hash
       end
     end
     
