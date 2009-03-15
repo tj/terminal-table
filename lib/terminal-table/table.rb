@@ -59,6 +59,7 @@ module Terminal
       buffer = seperator << "\n" 
       if has_headings?
         buffer << Y + headings.map_with_index do |heading, i| 
+          p heading
           Heading.new(length_of_column(i), *heading).render 
         end.join(Y) + Y
         buffer << "\n#{seperator}\n"
