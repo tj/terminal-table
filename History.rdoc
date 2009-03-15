@@ -1,4 +1,10 @@
 
+=== 1.0.5 / 2009-03-14
+
+* Allowing nil to be passed to table for headings
+* Revised doc to show that rows can be splatted now
+* Misc refactoring
+
 === 1.0.3 / 2009-01-15
 
 * Moved yield or eval to Terminal::Table initialize where it belongs
