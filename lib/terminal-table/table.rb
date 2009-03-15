@@ -56,11 +56,19 @@ module Terminal
     # instance in order to output it to the terminal.
   
     def render
-      s = seperator + "\n" 
-      s << Y + headings.collect_with_index { |h, i| Heading.new(length_of_column(i), *h).render }.join(Y) + Y if has_headings?
-      s << "\n" + seperator + "\n" if has_headings?
-      s << rows.collect { |row| Y + row.collect_with_index { |c, i| Cell.new(length_of_column(i), *c).render }.join(Y) + Y }.join("\n")
-      s << "\n" + seperator + "\n"
+      buffer = seperator + "\n" 
+      if has_headings?
+        buffer << Y + headings.map_with_index do |heading, value| 
+          Heading.new(length_of_column(value), *heading).render 
+        end.join(Y) + Y
+        buffer << "\n" + seperator + "\n"
+      end
+      buffer << rows.map do |row| 
+        Y + row.map_with_index do |cell, value|
+          Cell.new(length_of_column(value), *cell).render 
+        end.join(Y) + Y 
+      end.join("\n")
+      buffer << "\n" + seperator + "\n"
     end
     alias :to_s :render
     
