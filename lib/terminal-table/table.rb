@@ -56,19 +56,19 @@ module Terminal
     # instance in order to output it to the terminal.
   
     def render
-      buffer = seperator + "\n" 
+      buffer = seperator << "\n" 
       if has_headings?
         buffer << Y + headings.map_with_index do |heading, i| 
           Heading.new(length_of_column(i), *heading).render 
         end.join(Y) + Y
-        buffer << "\n" + seperator + "\n"
+        buffer << "\n#{seperator}\n"
       end
       buffer << rows.map do |row| 
         Y + row.map_with_index do |cell, i|
           Cell.new(length_of_column(i), *cell).render 
         end.join(Y) + Y 
       end.join("\n")
-      buffer << "\n" + seperator + "\n"
+      buffer << "\n#{seperator}\n"
     end
     alias :to_s :render
     
