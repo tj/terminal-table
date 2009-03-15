@@ -59,7 +59,6 @@ module Terminal
       buffer = seperator << "\n" 
       if has_headings?
         buffer << Y + headings.map_with_index do |heading, i| 
-          p heading
           Heading.new(length_of_column(i), *heading).render 
         end.join(Y) + Y
         buffer << "\n#{seperator}\n"
@@ -122,7 +121,7 @@ module Terminal
     # Return the largest cell found within column +n+.
     
     def largest_cell_in_column n
-      column_with_headings(n).sort_by { |c| Cell.new(0, c).length }.last
+      column_with_headings(n).sort_by { |cell| Cell.new(0, *cell).length }.last
     end
     
     ##
@@ -144,8 +143,8 @@ module Terminal
     # Align column +n+ to +alignment+ of :center, :left, or :right.
     
     def align_column n, alignment
-      column(n).each_with_index do |c, i|
-        @rows[i][n] = [c, alignment] unless c.is_a? Hash
+      column(n).each_with_index do |col, i|
+        @rows[i][n] = [col, alignment] unless col.is_a? Array
       end
     end
     
