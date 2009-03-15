@@ -58,14 +58,14 @@ module Terminal
     def render
       buffer = seperator + "\n" 
       if has_headings?
-        buffer << Y + headings.map_with_index do |heading, value| 
-          Heading.new(length_of_column(value), *heading).render 
+        buffer << Y + headings.map_with_index do |heading, i| 
+          Heading.new(length_of_column(i), *heading).render 
         end.join(Y) + Y
         buffer << "\n" + seperator + "\n"
       end
       buffer << rows.map do |row| 
-        Y + row.map_with_index do |cell, value|
-          Cell.new(length_of_column(value), *cell).render 
+        Y + row.map_with_index do |cell, i|
+          Cell.new(length_of_column(i), *cell).render 
         end.join(Y) + Y 
       end.join("\n")
       buffer << "\n" + seperator + "\n"
@@ -76,7 +76,9 @@ module Terminal
     # Create a seperator based on colum lengths.
     
     def seperator
-      I + columns.collect_with_index { |col, i| X * (length_of_column(i) + 2) }.join(I) + I 
+      I + columns.collect_with_index do |_, i| 
+        X * (length_of_column(i) + 2) 
+      end.join(I) + I 
     end
     
     ##
