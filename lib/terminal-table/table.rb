@@ -76,7 +76,7 @@ module Terminal
     # Create a seperator based on colum lengths.
     
     def seperator
-      I + columns.collect_with_index do |_, i| 
+      I + columns.collect_with_index do |col, i| 
         X * (length_of_column(i) + 2) 
       end.join(I) + I 
     end
@@ -100,21 +100,21 @@ module Terminal
     # Return +n+ column.
     
     def column n
-      rows.collect { |row| row[n] }.compact 
+      rows.map { |row| row[n] }.compact 
     end
     
     ##
     # Return +n+ column including headings.
     
     def column_with_headings n
-      headings_with_rows.collect { |row| row[n] }.compact  
+      headings_with_rows.map { |row| row[n] }.compact  
     end
     
     ##
     # Return columns.
     
     def columns 
-      (0..number_of_columns-1).collect { |n| column n } 
+      (0..number_of_columns-1).map { |n| column n } 
     end
     
     ##
