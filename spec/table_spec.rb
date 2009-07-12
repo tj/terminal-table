@@ -184,5 +184,62 @@ module Terminal
         +----------------------+-----+
       EOF
     end
+   
+    describe "==" do
+      it "should be equal to itself" do
+        t = Table.new
+        t.should == t
+      end
+
+      it "should be equal with two empty tables" do
+        table_one = Table.new
+        table_two = Table.new
+   
+        table_one.should == table_two
+        table_two.should == table_one
+      end
+
+      it "should not be equal with different headings" do
+        table_one = Table.new
+        table_two = Table.new
+
+        table_one.headings << "a"
+   
+        table_one.should_not == table_two
+        table_two.should_not == table_one
+      end
+
+      it "should not be equal with different rows" do
+        table_one = Table.new
+        table_two = Table.new
+
+        table_one.rows << "a"
+   
+        table_one.should_not == table_two
+        table_two.should_not == table_one
+      end
+
+      it "should not be equal if the other object does not respond_to? :headings" do
+        table_one = Table.new
+        table_two = Object.new
+        
+        def table_two.rows
+          []
+        end
+
+        table_one.should_not == table_two
+      end
+
+      it "should not be equal if the other object does not respond_to? :rows" do
+        table_one = Table.new
+        table_two = Object.new
+
+        def table_two.headings
+          []
+        end
+
+        table_one.should_not == table_two
+      end
+    end
   end
 end

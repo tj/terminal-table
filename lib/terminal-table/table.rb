@@ -154,6 +154,13 @@ module Terminal
     def headings_with_rows
       [headings] + rows
     end
-    
+
+    def ==(other_table)
+      if other_table.respond_to?(:headings) && other_table.respond_to?(:rows)
+        headings == other_table.headings && rows == other_table.rows
+      else
+        false
+      end
+    end
   end
 end
