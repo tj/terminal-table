@@ -6,22 +6,21 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 1.2") if s.respond_to? :required_rubygems_version=
   s.authors = ["TJ Holowaychuk"]
-  s.date = %q{2009-03-14}
+  s.date = %q{2009-07-12}
   s.description = %q{Simple,}
   s.email = %q{tj@vision-media.ca}
-  s.extra_rdoc_files = ["lib/terminal-table/cell.rb", "lib/terminal-table/core_ext.rb", "lib/terminal-table/heading.rb", "lib/terminal-table/import.rb", "lib/terminal-table/table.rb", "lib/terminal-table/version.rb", "lib/terminal-table.rb", "README.rdoc", "tasks/docs.rake", "tasks/gemspec.rake", "tasks/spec.rake"]
-  s.files = ["examples/examples.rb", "History.rdoc", "lib/terminal-table/cell.rb", "lib/terminal-table/core_ext.rb", "lib/terminal-table/heading.rb", "lib/terminal-table/import.rb", "lib/terminal-table/table.rb", "lib/terminal-table/version.rb", "lib/terminal-table.rb", "Manifest", "Rakefile", "README.rdoc", "spec/cell_spec.rb", "spec/core_ext_spec.rb", "spec/import_spec.rb", "spec/spec_helper.rb", "spec/table_spec.rb", "tasks/docs.rake", "tasks/gemspec.rake", "tasks/spec.rake", "terminal-table.gemspec", "Todo.rdoc"]
-  s.has_rdoc = true
+  s.extra_rdoc_files = ["lib/terminal-table/cell.rb", "lib/terminal-table/core_ext.rb", "lib/terminal-table/heading.rb", "lib/terminal-table/import.rb", "lib/terminal-table/table.rb", "lib/terminal-table/table_helper.rb", "lib/terminal-table/version.rb", "lib/terminal-table.rb", "README.rdoc", "tasks/docs.rake", "tasks/gemspec.rake", "tasks/spec.rake"]
+  s.files = ["examples/examples.rb", "History.rdoc", "lib/terminal-table/cell.rb", "lib/terminal-table/core_ext.rb", "lib/terminal-table/heading.rb", "lib/terminal-table/import.rb", "lib/terminal-table/table.rb", "lib/terminal-table/table_helper.rb", "lib/terminal-table/version.rb", "lib/terminal-table.rb", "Manifest", "Rakefile", "README.rdoc", "spec/cell_spec.rb", "spec/core_ext_spec.rb", "spec/import_spec.rb", "spec/spec.opts", "spec/spec_helper.rb", "spec/table_helper_spec.rb", "spec/table_spec.rb", "tasks/docs.rake", "tasks/gemspec.rake", "tasks/spec.rake", "terminal-table.gemspec", "Todo.rdoc"]
   s.homepage = %q{http://github.com/visionmedia/terminal-table}
   s.rdoc_options = ["--line-numbers", "--inline-source", "--title", "Terminal-table", "--main", "README.rdoc"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{terminal-table}
-  s.rubygems_version = %q{1.3.1}
+  s.rubygems_version = %q{1.3.4}
   s.summary = %q{Simple,}
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
-    s.specification_version = 2
+    s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
     else
