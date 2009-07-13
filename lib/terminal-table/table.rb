@@ -154,6 +154,10 @@ module Terminal
     def headings_with_rows
       [headings] + rows
     end
+    
+    ##
+    # Check if +other+ is equal to self. +other+ is considered equal
+    # if it contains the same headings and rows.
 
     def == other
       if other.respond_to?(:headings) && other.respond_to?(:rows)
