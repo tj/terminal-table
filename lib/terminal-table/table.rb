@@ -6,7 +6,7 @@ module Terminal
   #
   # This class can be used in many ways, however ultimately you should
   # require 'terminal-table/import' (which requires terminal-table itself) to use
-  # the Kernel helper method which is easier, and cleaner to use. View Kernel#table
+  # the Kernel helper method which is easier, and cleaner to use. View Object#table
   # for examples.
   #
   # === Examples:
@@ -155,11 +155,9 @@ module Terminal
       [headings] + rows
     end
 
-    def ==(other_table)
-      if other_table.respond_to?(:headings) && other_table.respond_to?(:rows)
-        headings == other_table.headings && rows == other_table.rows
-      else
-        false
+    def == other
+      if other.respond_to?(:headings) && other.respond_to?(:rows)
+        headings == other.headings && rows == other.rows
       end
     end
   end

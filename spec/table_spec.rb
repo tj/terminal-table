@@ -185,7 +185,7 @@ module Terminal
       EOF
     end
    
-    describe "==" do
+    describe "#==" do
       it "should be equal to itself" do
         t = Table.new
         t.should == t
