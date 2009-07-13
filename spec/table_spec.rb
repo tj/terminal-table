@@ -222,22 +222,14 @@ module Terminal
       it "should not be equal if the other object does not respond_to? :headings" do
         table_one = Table.new
         table_two = Object.new
-        
-        def table_two.rows
-          []
-        end
-
+        table_two.stub!(:rows).and_return([])
         table_one.should_not == table_two
       end
 
       it "should not be equal if the other object does not respond_to? :rows" do
         table_one = Table.new
         table_two = Object.new
-
-        def table_two.headings
-          []
-        end
-
+        table_two.stub!(:rows).and_return([])
         table_one.should_not == table_two
       end
     end
