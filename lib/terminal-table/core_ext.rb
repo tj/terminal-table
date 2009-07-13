@@ -28,12 +28,11 @@ class Object
   # in order to support both types of block syntax for DSL's.
   
   def yield_or_eval &block
-    if block_given?
-      if block.arity > 0
-        yield self
-      else
-        self.instance_eval &block
-      end
+    return unless block
+    if block.arity > 0
+      yield self
+    else
+      self.instance_eval &block
     end
   end
   
