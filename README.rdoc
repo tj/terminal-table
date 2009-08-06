@@ -9,6 +9,7 @@ Simple, feature rich ASCII table generator.
 * Simple
 * Optional headings
 * Alignment of columns, headings, or cells
+* Supports column span
 * Easy modification of table strings (+, -, |)
 
 == Examples:
