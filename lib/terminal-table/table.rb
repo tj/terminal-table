@@ -58,14 +58,32 @@ module Terminal
     def render
       buffer = seperator << "\n" 
       if has_headings?
-        buffer << Y + headings.map_with_index do |heading, i| 
-          Heading.new(length_of_column(i), *heading).render 
+        buffer << Y + headings.map_with_index do |heading, i|
+          width = 0
+          if heading.is_a?(Hash) and !heading[:colspan].nil?
+            i.upto(i + heading[:colspan] - 1) do |col|
+              width += length_of_column(col)
+            end
+            width += (heading[:colspan] - 1) * (Y.length + 2)
+          else
+            width = length_of_column(i)
+          end
+          Heading.new( width, heading).render
         end.join(Y) + Y
         buffer << "\n#{seperator}\n"
       end
       buffer << rows.map do |row| 
         Y + row.map_with_index do |cell, i|
-          Cell.new(length_of_column(i), *cell).render 
+          width = 0
+          if cell.is_a?(Hash) and !cell[:colspan].nil?
+            i.upto(i + cell[:colspan] - 1) do |col|
+              width += length_of_column(col)
+            end
+            width += (cell[:colspan] - 1) * (Y.length + 2)
+          else
+            width = length_of_column(i)
+          end
+          Cell.new(width, cell).render
         end.join(Y) + Y 
       end.join("\n")
       buffer << "\n#{seperator}\n"
@@ -121,14 +139,19 @@ module Terminal
     # Return the largest cell found within column +n+.
     
     def largest_cell_in_column n
-      column_with_headings(n).sort_by { |cell| Cell.new(0, *cell).length }.last
+      column_with_headings(n).sort_by { |cell| Cell.new(0, cell).length }.last
     end
     
     ##
     # Return length of column +n+.
     
     def length_of_column n
-      largest_cell_in_column(n).to_s.length
+      largest_cell = largest_cell_in_column(n)
+      if largest_cell.is_a? Hash
+        largest_cell[:value].length# - 2
+      else
+        largest_cell.to_s.length
+      end
     end
     
     ##
@@ -144,7 +167,7 @@ module Terminal
     
     def align_column n, alignment
       column(n).each_with_index do |col, i|
-        @rows[i][n] = [col, alignment] unless col.is_a? Array
+        @rows[i][n] = {:value => col, :alignment => alignment} unless col.is_a? Hash
       end
     end
     

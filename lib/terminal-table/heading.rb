@@ -2,7 +2,7 @@
 module Terminal
   class Table
     class Heading < Cell
-      def initialize width, value = nil, alignment = :center
+      def initialize width, params
         super
       end
     end
