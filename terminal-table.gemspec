@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{terminal-table}
-  s.version = "1.1.0"
+  s.version = "1.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 1.2") if s.respond_to? :required_rubygems_version=
   s.authors = ["TJ Holowaychuk"]
-  s.date = %q{2009-07-13}
+  s.date = %q{2009-08-06}
   s.description = %q{Simple,}
   s.email = %q{tj@vision-media.ca}
   s.extra_rdoc_files = ["lib/terminal-table/cell.rb", "lib/terminal-table/core_ext.rb", "lib/terminal-table/heading.rb", "lib/terminal-table/import.rb", "lib/terminal-table/table.rb", "lib/terminal-table/table_helper.rb", "lib/terminal-table/version.rb", "lib/terminal-table.rb", "README.rdoc", "tasks/docs.rake", "tasks/gemspec.rake", "tasks/spec.rake"]
@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--line-numbers", "--inline-source", "--title", "Terminal-table", "--main", "README.rdoc"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{terminal-table}
-  s.rubygems_version = %q{1.3.4}
+  s.rubygems_version = %q{1.3.5}
   s.summary = %q{Simple,}
 
   if s.respond_to? :specification_version then
