@@ -1,3 +1,6 @@
+=== 1.1.0 / 2009-08-06
+
+* Added colspan support to table
 
 === 1.1.0 / 2009-07-13
 
