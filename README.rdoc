@@ -3,6 +3,11 @@
 
 Simple, feature rich ASCII table generator.
 
+== Installation:
+
+  Install [Gemcutter](http://gemcutter.org) then execute:
+  $ sudo gem install terminal-table
+
 == Features:
 
 * Fast
