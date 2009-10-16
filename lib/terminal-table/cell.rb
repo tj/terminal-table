@@ -4,6 +4,11 @@ module Terminal
     class Cell
       
       ##
+      # Cell width.
+      
+      attr_reader :width
+      
+      ##
       # Cell value.
       
       attr_reader :value
@@ -21,25 +26,19 @@ module Terminal
       ##
       # Initialize with _width_ and _options_.
       
-      def initialize width, options = {}
+      def initialize width, options = nil
         @width = width
-        @alignment = :left
-        @colspan = 1
-
-        if options.is_a? Hash
-          @value = options[:value]
-          @alignment = options[:alignment] unless options[:alignment].nil?
-          @colspan = options[:colspan] unless options[:colspan].nil?
-        else
-          @value = options
-        end
+        @value, options = options, {} unless Hash === options
+        @value = options.fetch :value, value
+        @alignment = options.fetch :alignment, :left
+        @colspan = options.fetch :colspan, 1
       end
       
       ##
       # Render the cell.
       
       def render
-        " #{value.to_s} ".align alignment, @width + 2
+        " #{value} ".align alignment, width + 2
       end
       alias :to_s :render
       
@@ -47,7 +46,7 @@ module Terminal
       # Cell length.
       
       def length
-        @value.to_s.length + 2
+        value.to_s.length + 2
       end
     end
   end
