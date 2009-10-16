@@ -3,26 +3,48 @@ module Terminal
   class Table
     class Cell
       
-      attr_accessor :value, :alignment, :colspan
+      ##
+      # Cell value.
       
-      def initialize width, params
+      attr_reader :value
+      
+      ##
+      # Cell alignment.
+      
+      attr_reader :alignment
+      
+      ##
+      # Column span.
+      
+      attr_reader :colspan
+      
+      ##
+      # Initialize with _width_ and _options_.
+      
+      def initialize width, options = {}
         @width = width
         @alignment = :left
         @colspan = 1
 
-        if params.is_a? Hash
-          @value = params[:value]
-          @alignment = params[:alignment] unless params[:alignment].nil?
-          @colspan = params[:colspan] unless params[:colspan].nil?
+        if options.is_a? Hash
+          @value = options[:value]
+          @alignment = options[:alignment] unless options[:alignment].nil?
+          @colspan = options[:colspan] unless options[:colspan].nil?
         else
-          @value = params
+          @value = options
         end
       end
+      
+      ##
+      # Render the cell.
       
       def render
         " #{value.to_s} ".align alignment, @width + 2
       end
       alias :to_s :render
+      
+      ##
+      # Cell length.
       
       def length
         @value.to_s.length + 2
