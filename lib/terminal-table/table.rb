@@ -40,28 +40,28 @@ module Terminal
       if has_headings?
         buffer << Y + headings.map_with_index do |heading, i|
           width = 0
-          if heading.is_a?(Hash) and !heading[:colspan].nil?
+          if Hash === heading and not heading[:colspan].nil?
             i.upto(i + heading[:colspan] - 1) do |col|
               width += length_of_column(col)
             end
             width += (heading[:colspan] - 1) * (Y.length + 2)
           else
-            width = length_of_column(i)
+            width = length_of_column i
           end
-          Heading.new( width, heading).render
+          Heading.new(width, heading).render
         end.join(Y) + Y
         buffer << "\n#{seperator}\n"
       end
       buffer << rows.map do |row| 
         Y + row.map_with_index do |cell, i|
           width = 0
-          if cell.is_a?(Hash) and !cell[:colspan].nil?
+          if Hash === cell and not cell[:colspan].nil?
             i.upto(i + cell[:colspan] - 1) do |col|
               width += length_of_column(col)
             end
             width += (cell[:colspan] - 1) * (Y.length + 2)
           else
-            width = length_of_column(i)
+            width = length_of_column i
           end
           Cell.new(width, cell).render
         end.join(Y) + Y 
@@ -88,21 +88,21 @@ module Terminal
     alias :<< :add_row
 
     ##
-    # Weither or not any headings are present, since they are optional.
+    # Check if headings are present.
     
     def has_headings?
-      !headings.empty?
+      not headings.empty?
     end
     
     ##
-    # Return +n+ column.
+    # Return column _n_.
     
     def column n
       rows.map { |row| row[n] }.compact 
     end
     
     ##
-    # Return +n+ column including headings.
+    # Return _n_ column including headings.
     
     def column_with_headings n
       headings_with_rows.map { |row| row[n] }.compact  
