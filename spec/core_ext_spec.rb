@@ -1,7 +1,7 @@
-require File.expand_path(File.dirname(__FILE__) + "/spec_helper")
+
+require File.dirname(__FILE__) + '/spec_helper'
 
 describe String do
-  
   describe "#align" do
     it "should center" do
       'foo'.align(:center, 10).should == '   foo    '
@@ -15,5 +15,4 @@ describe String do
       'foo'.align(:right, 10).should == '       foo'
     end
   end
-  
 end

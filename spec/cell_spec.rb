@@ -1,7 +1,7 @@
-require File.expand_path(File.dirname(__FILE__) + "/spec_helper")
+
+require File.dirname(__FILE__) + '/spec_helper'
 
 describe Terminal::Table do
-  
   Cell = Terminal::Table::Cell
   
   it "should default alignment to the left" do
@@ -15,5 +15,4 @@ describe Terminal::Table do
     cell.value.should == 'foo'
     cell.alignment.should == :center
   end
-  
 end
