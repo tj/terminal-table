@@ -1,3 +1,4 @@
+
 require 'terminal-table'
 
 class Object

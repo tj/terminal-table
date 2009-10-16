@@ -1,10 +1,11 @@
 module Terminal
   class Table
     module TableHelper
+      
       ##
       # Generates a Terminal::Table object.
       #
-      # === Examples:
+      # === Examples
       #    
       #    puts table(['a', 'b'], [1, 2], [3, 4])
       #    

@@ -9,7 +9,7 @@ module Terminal
   # the Kernel helper method which is easier, and cleaner to use. View Object#table
   # for examples.
   #
-  # === Examples:
+  # === Examples
   #
   #    table = Terminal::Table.new
   #    table.headings = ['Characters', { :value => 'Nums', :align => :right }]

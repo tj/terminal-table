@@ -10,8 +10,8 @@ describe Terminal::Table do
     cell.alignment.should == :left
   end
 
-  it "should override alignment" do
-    cell = Cell.new 0, {:value => 'foo', :alignment => :center}
+  it "should allow overriding of alignment" do
+    cell = Cell.new 0, :value => 'foo', :alignment => :center
     cell.value.should == 'foo'
     cell.alignment.should == :center
   end
