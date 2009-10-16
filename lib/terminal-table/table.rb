@@ -112,7 +112,7 @@ module Terminal
     # Return columns.
     
     def columns 
-      (0..number_of_columns-1).map { |n| column n } 
+      (0...number_of_columns).map { |n| column n } 
     end
     
     ##
