@@ -1,32 +1,5 @@
 
 module Terminal
-  
-  ##
-  # Generates an ASCII table for terminal usage.
-  #
-  # This class can be used in many ways, however ultimately you should
-  # require 'terminal-table/import' (which requires terminal-table itself) to use
-  # the Kernel helper method which is easier, and cleaner to use. View Object#table
-  # for examples.
-  #
-  # === Examples
-  #
-  #    table = Terminal::Table.new
-  #    table.headings = ['Characters', { :value => 'Nums', :align => :right }]
-  #    table << [{ :value => 'a', :align => :center }, 1]
-  #    table << ['b', 222222222222222]
-  #    table << ['c', 3]
-  #    puts table.render     # or simply puts table
-  #
-  #    +------------+-----------------+
-  #    | Characters |            Nums |
-  #    +------------+-----------------+
-  #    |     a      | 1               |
-  #    | b          | 222222222222222 |
-  #    | c          | 3               |
-  #    +------------+-----------------+
-  #    
-  
   class Table
     
     #--
