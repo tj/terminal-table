@@ -1,4 +1,8 @@
 
+=== 1.3.0 / 2009-10-16
+
+* Major refactoring (functionality remains the same)
+
 === 1.2.0 / 2009-08-06
 
 * Added colspan support to table

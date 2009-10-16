@@ -54,6 +54,7 @@ rows << ['JavaScript', 30]
 puts table(nil, *rows)
 
 
+$VERBOSE = nil
 Terminal::Table::X = '='
 Terminal::Table::Y = '!'
 Terminal::Table::I = '*'
