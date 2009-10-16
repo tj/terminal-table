@@ -116,22 +116,22 @@ module Terminal
     end
     
     ##
-    # Return the largest cell found within column +n+.
+    # Return the largest cell found within column _n_.
     
     def largest_cell_in_column n
-      column_with_headings(n).sort_by { |cell| Cell.new(0, cell).length }.last
+      column_with_headings(n).sort_by do |cell| 
+        Cell.new(0, cell).length 
+      end.last
     end
     
     ##
-    # Return length of column +n+.
+    # Return length of column _n_.
     
     def length_of_column n
-      largest_cell = largest_cell_in_column(n)
-      if largest_cell.is_a? Hash
-        largest_cell[:value].length# - 2
-      else
-        largest_cell.to_s.length
-      end
+      largest_cell = largest_cell_in_column n
+      Hash === largest_cell ?
+        largest_cell[:value].to_s.length :
+          largest_cell.to_s.length
     end
     
     ##
@@ -139,15 +139,15 @@ module Terminal
      
     def number_of_columns
       return rows.first.length unless rows.empty?
-      raise Error, 'your table needs some rows.'
+      raise Error, 'your table needs some rows'
     end
     
     ##
-    # Align column +n+ to +alignment+ of :center, :left, or :right.
+    # Align column _n_ to the given _alignment_ of :center, :left, or :right.
     
     def align_column n, alignment
       column(n).each_with_index do |col, i|
-        @rows[i][n] = {:value => col, :alignment => alignment} unless col.is_a? Hash
+        @rows[i][n] = { :value => col, :alignment => alignment } unless Hash === col
       end
     end
     
@@ -159,12 +159,12 @@ module Terminal
     end
     
     ##
-    # Check if +other+ is equal to self. +other+ is considered equal
+    # Check if _other_ is equal to self. _other_ is considered equal
     # if it contains the same headings and rows.
 
     def == other
-      if other.respond_to?(:headings) && other.respond_to?(:rows)
-        headings == other.headings && rows == other.rows
+      if other.respond_to? :headings and other.respond_to? :rows
+        headings == other.headings and rows == other.rows
       end
     end
   end
