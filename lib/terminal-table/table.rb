@@ -13,20 +13,27 @@ module Terminal
     
     X, Y, I = '-', '|', '+'
     
-    attr_accessor :headings, :rows
+    ##
+    # Headings array.
+    
+    attr_accessor :headings
     
     ##
-    # Generates a ASCII table.
+    # Rows array.
+    
+    attr_accessor :rows
+    
+    ##
+    # Generates a ASCII table with the given _options_.
   
     def initialize options = {}, &block
       @headings = options.fetch :headings, []
       @rows = options.fetch :rows, []
-      yield_or_eval &block if block_given?
+      yield_or_eval &block if block
     end
     
     ##
-    # Render the table. Often you will simply call _puts_ with an
-    # instance in order to output it to the terminal.
+    # Render the table.
   
     def render
       buffer = seperator << "\n" 
