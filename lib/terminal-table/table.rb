@@ -84,7 +84,7 @@ module Terminal
     end
 
     def render_row(row)
-      if row.is_a?(Separator)
+      if row == :separator
         separator
       else
         Y + row.map_with_index do |cell, i|
@@ -127,7 +127,7 @@ module Terminal
     # Add a separator.
 
     def add_separator
-      @rows << Separator.new
+      @rows << :separator
     end
 
     ##
@@ -205,7 +205,7 @@ module Terminal
     # Return rows without separator rows.
 
     def rows
-      @rows.reject { |row| row.is_a?(Separator) }
+      @rows.reject { |row| row == :separator }
     end
 
     ##
