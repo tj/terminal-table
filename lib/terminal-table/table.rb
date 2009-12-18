@@ -56,7 +56,7 @@ module Terminal
     # instance in order to output it to the terminal.
   
     def render
-      buffer = seperator << "\n" 
+      buffer = separator << "\n"
       if has_headings?
         buffer << Y + headings.map_with_index do |heading, i|
           width = 0
@@ -70,7 +70,7 @@ module Terminal
           end
           Heading.new( width, heading).render
         end.join(Y) + Y
-        buffer << "\n#{seperator}\n"
+        buffer << "\n#{separator}\n"
       end
       buffer << rows.map do |row| 
         Y + row.map_with_index do |cell, i|
@@ -86,14 +86,14 @@ module Terminal
           Cell.new(width, cell).render
         end.join(Y) + Y 
       end.join("\n")
-      buffer << "\n#{seperator}\n"
+      buffer << "\n#{separator}\n"
     end
     alias :to_s :render
     
     ##
-    # Create a seperator based on colum lengths.
+    # Create a separator based on colum lengths.
     
-    def seperator
+    def separator
       I + columns.collect_with_index do |col, i| 
         X * (length_of_column(i) + 2) 
       end.join(I) + I 
