@@ -79,8 +79,11 @@ module Terminal
         end.join(Y) + Y
       end
     end
+    
+    ##
+    # Render the given _cell_ at index _i_.
 
-    def render_cell(cell, i)
+    def render_cell cell, i
       width = 0
       if cell.is_a?(Hash) and !cell[:colspan].nil?
         i.upto(i + cell[:colspan] - 1) do |col|
