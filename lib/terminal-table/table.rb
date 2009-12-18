@@ -6,7 +6,7 @@ module Terminal
     # Exceptions
     #++
     
-    class Error < StandardError; end
+    Error = Class.new StandardError
     
     ##
     # Table characters, x axis, y axis, and intersection.
@@ -47,6 +47,9 @@ module Terminal
       buffer << "\n#{separator}\n"
     end
     alias :to_s :render
+    
+    ##
+    # Render headings.
 
     def render_headings
       Y + headings.map_with_index do |heading, i|
@@ -62,8 +65,11 @@ module Terminal
         Heading.new( width, heading).render
       end.join(Y) + Y
     end
+    
+    ##
+    # Render the given _row_.
 
-    def render_row(row)
+    def render_row row
       if row == :separator
         separator
       else
