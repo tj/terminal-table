@@ -36,44 +36,60 @@ module Terminal
     # Render the table.
   
     def render
-      buffer = seperator << "\n" 
+      buffer = separator << "\n"
       if has_headings?
-        buffer << Y + headings.map_with_index do |heading, i|
-          width = 0
-          if Hash === heading and not heading[:colspan].nil?
-            i.upto(i + heading[:colspan] - 1) do |col|
-              width += length_of_column(col)
-            end
-            width += (heading[:colspan] - 1) * (Y.length + 2)
-          else
-            width = length_of_column i
-          end
-          Heading.new(width, heading).render
-        end.join(Y) + Y
-        buffer << "\n#{seperator}\n"
+        buffer << render_headings
+        buffer << "\n#{separator}\n"
       end
-      buffer << rows.map do |row| 
-        Y + row.map_with_index do |cell, i|
-          width = 0
-          if Hash === cell and not cell[:colspan].nil?
-            i.upto(i + cell[:colspan] - 1) do |col|
-              width += length_of_column(col)
-            end
-            width += (cell[:colspan] - 1) * (Y.length + 2)
-          else
-            width = length_of_column i
-          end
-          Cell.new(width, cell).render
-        end.join(Y) + Y 
+      buffer << @rows.map do |row| 
+        render_row(row)
       end.join("\n")
-      buffer << "\n#{seperator}\n"
+      buffer << "\n#{separator}\n"
     end
     alias :to_s :render
+
+    def render_headings
+      Y + headings.map_with_index do |heading, i|
+        width = 0
+        if heading.is_a?(Hash) and !heading[:colspan].nil?
+          i.upto(i + heading[:colspan] - 1) do |col|
+            width += length_of_column(col)
+          end
+          width += (heading[:colspan] - 1) * (Y.length + 2)
+        else
+          width = length_of_column(i)
+        end
+        Heading.new( width, heading).render
+      end.join(Y) + Y
+    end
+
+    def render_row(row)
+      if row == :separator
+        separator
+      else
+        Y + row.map_with_index do |cell, i|
+          render_cell(cell, i)
+        end.join(Y) + Y
+      end
+    end
+
+    def render_cell(cell, i)
+      width = 0
+      if cell.is_a?(Hash) and !cell[:colspan].nil?
+        i.upto(i + cell[:colspan] - 1) do |col|
+          width += length_of_column(col)
+        end
+        width += (cell[:colspan] - 1) * (Y.length + 2)
+      else
+        width = length_of_column(i)
+      end
+      Cell.new(width, cell).render
+    end
     
     ##
-    # Create a seperator based on colum lengths.
+    # Create a separator based on colum lengths.
     
-    def seperator
+    def separator
       I + columns.collect_with_index do |col, i| 
         X * (length_of_column(i) + 2) 
       end.join(I) + I 
@@ -83,12 +99,19 @@ module Terminal
     # Add a row. 
     
     def add_row row
-      rows << row
+      @rows << row
     end
     alias :<< :add_row
 
     ##
-    # Check if headings are present.
+    # Add a separator.
+
+    def add_separator
+      @rows << :separator
+    end
+
+    ##
+    # Weither or not any headings are present, since they are optional.
     
     def has_headings?
       not headings.empty?
@@ -157,7 +180,21 @@ module Terminal
     def headings_with_rows
       [headings] + rows
     end
-    
+
+    ##
+    # Return rows without separator rows.
+
+    def rows
+      @rows.reject { |row| row == :separator }
+    end
+
+    ##
+    # Return rows including separator rows.
+
+    def all_rows
+      @rows
+    end
+
     ##
     # Check if _other_ is equal to self. _other_ is considered equal
     # if it contains the same headings and rows.

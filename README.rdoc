@@ -22,11 +22,13 @@ Simple, feature rich ASCII table generator.
   require 'rubygems'
   require 'terminal-table/import'
    
-  puts table(['a', 'b'], [1, 2], [3, 4])
+  puts table(['a', 'b'], [1, 2], [3, 4], :separator, [4, 6])
    
   t = table ['a', 'b']
   t << [1, 2]
   t << [3, 4]
+  t.add_separator
+  t << [4, 6]
   puts t
    
   user_table = table do |t|
@@ -77,12 +79,17 @@ Simple, feature rich ASCII table generator.
   | 1 | 2 |
   | 3 | 4 |
   +---+---+
+  | 4 | 6 |
+  +---+---+
+
    
   +---+---+
   | a | b |
   +---+---+
   | 1 | 2 |
   | 3 | 4 |
+  +---+---+
+  | 4 | 6 |
   +---+---+
    
   +------------+-------------+---------------------+

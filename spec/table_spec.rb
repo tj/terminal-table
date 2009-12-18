@@ -56,10 +56,18 @@ module Terminal
       @table.length_of_column(1).should == 18
     end
 
-    it "should render seperators" do
+    it "should render separators" do
       @table.headings = ['Char', 'Num']
       @table << ['a', 1]
-      @table.seperator.should == '+------+-----+'
+      @table.separator.should == '+------+-----+'
+    end
+
+    it "should add separator" do
+      @table << ['a', 1]
+      @table.add_separator
+      @table << ['b', 2]
+      @table.rows.size.should == 2
+      @table.all_rows.size.should == 3
     end
 
     it "should bitch and complain when you have no rows" do
@@ -92,6 +100,24 @@ module Terminal
         | b | 2 |
         | c | 3 |
         +---+---+
+      EOF
+    end
+
+    it "should render separators" do
+      @table.headings = ['Char', 'Num']
+      @table << ['a', 1]
+      @table << ['b', 2]
+      @table.add_separator
+      @table << ['c', 3]
+      @table.render.should == <<-EOF.deindent
+        +------+-----+
+        | Char | Num |
+        +------+-----+
+        | a    | 1   |
+        | b    | 2   |
+        +------+-----+
+        | c    | 3   |
+        +------+-----+
       EOF
     end
 
@@ -214,7 +240,7 @@ module Terminal
         table_one = Table.new
         table_two = Table.new
 
-        table_one.rows << "a"
+        table_one.add_row "a"
 
         table_one.should_not == table_two
         table_two.should_not == table_one
