@@ -25,7 +25,7 @@ puts user_table
 puts
 user_table = table do
   self.headings = 'First Name', 'Last Name', 'Email'
-  add_row ['TJ',  'Holowaychuk', ['tj@vision-media.ca', :right]]
+  add_row ['TJ',  'Holowaychuk', 'tj@vision-media.ca']
   add_row ['Bob', 'Someone',     'bob@vision-media.ca']
   add_row ['Joe', 'Whatever',    'joe@vision-media.ca']
   add_separator

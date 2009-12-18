@@ -41,7 +41,7 @@ Simple, feature rich ASCII table generator.
    
   user_table = table do
     self.headings = 'First Name', 'Last Name', 'Email'
-    add_row ['TJ',  'Holowaychuk', { :value => 'tj@vision-media.ca', :align => :right }]
+    add_row ['TJ',  'Holowaychuk', { :value => 'tj@vision-media.ca', :alignment => :right }]
     add_row ['Bob', 'Someone',     'bob@vision-media.ca']
     add_row ['Joe', 'Whatever',    'joe@vision-media.ca']
     align_column 1, :center
