@@ -9,6 +9,8 @@ puts
 t = table ['a', 'b']
 t << [1, 2]
 t << [3, 4]
+t << :separator
+t << [4, 6]
 puts t
 
 puts
@@ -26,6 +28,8 @@ user_table = table do
   add_row ['TJ',  'Holowaychuk', ['tj@vision-media.ca', :right]]
   add_row ['Bob', 'Someone',     'bob@vision-media.ca']
   add_row ['Joe', 'Whatever',    'joe@vision-media.ca']
+  add_separator
+  add_row ['Total', { :value => '3', :colspan => 2, :alignment => :right }]
   align_column 1, :center
 end
 puts user_table

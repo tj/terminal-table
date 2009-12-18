@@ -1,4 +1,9 @@
 
+=== 1.4.0 / 2009-12-18
+
+* Can now add :seperator arbitrarily in a table [thanks splattael]
+* Fix common typo: seperator -> separator [thanks splattael]
+
 === 1.3.0 / 2009-10-16
 
 * Major refactoring (functionality remains the same)
