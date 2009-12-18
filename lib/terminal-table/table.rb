@@ -179,8 +179,9 @@ module Terminal
     # Align column _n_ to the given _alignment_ of :center, :left, or :right.
     
     def align_column n, alignment
+      r = rows
       column(n).each_with_index do |col, i|
-        @rows[i][n] = { :value => col, :alignment => alignment } unless Hash === col
+        r[i][n] = { :value => col, :alignment => alignment } unless Hash === col
       end
     end
     

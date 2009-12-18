@@ -121,6 +121,26 @@ module Terminal
       EOF
     end
 
+    it "should align columns with separators" do
+      @table.headings = ['Char', 'Num']
+      @table << ['a', 1]
+      @table << ['b', 2]
+      @table.add_separator
+      @table << ['c', 3]
+      @table.align_column 1, :right
+      @table.render.should == <<-EOF.deindent
+        +------+-----+
+        | Char | Num |
+        +------+-----+
+        | a    |   1 |
+        | b    |   2 |
+        +------+-----+
+        | c    |   3 |
+        +------+-----+
+      EOF
+    end
+
+
     it "should render properly using block syntax" do
       table = Terminal::Table.new do |t|
         t << ['a', 1]
