@@ -70,17 +70,6 @@ module Terminal
       @table.all_rows.size.should == 3
     end
 
-    it "should align columns even with separators defined" do
-      @table << ['a', 1]
-      @table.add_separator
-      @table << ['b', 2]
-
-      @table.align_column 0, :right
-      @table.align_column 1, :right
-      @table.rows.first[:alignment].should == :right
-      @table.rows.last[:alignment].should == :right
-    end
-
     it "should bitch and complain when you have no rows" do
       lambda { @table.render }.should raise_error(Terminal::Table::Error)
     end
