@@ -143,21 +143,20 @@ module Terminal
 
     def row_with_hash row
       # this method duplicates the multi-column columns in each column they are in
-      arr = []
       index = 0
-      row.each do |column|
+      row.inject [] do |columns, column|
         if column.is_a?(Hash) && column[:colspan] && column[:colspan] > 1
           column[:start_index] = index
           column[:colspan].times do
-            arr << column
+            columns << column
             index += 1
           end
         else
-          arr << column
+          columns << column
           index += 1
         end
+        columns
       end
-      arr
     end
 
     def row_to_index row, index
