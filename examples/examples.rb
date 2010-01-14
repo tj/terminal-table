@@ -57,15 +57,11 @@ rows << ['Ruby',       70]
 rows << ['JavaScript', 30]
 puts table(nil, *rows)
 
-
-$VERBOSE = nil
-Terminal::Table::X = '='
-Terminal::Table::Y = '!'
-Terminal::Table::I = '*'
-
 rows = []
-rows << [nil,  nil, nil]
-rows << [nil, ':)', nil]
-rows << [nil,  nil, nil]
-puts table(nil, *rows)
-
+rows << ['Lines',      100]
+rows << ['Comments',   20]
+rows << ['Ruby',       70]
+rows << ['JavaScript', 30]
+table = table([{ :value => 'Stats', :colspan => 2, :alignment => :center }], *rows)
+table.align_column 1, :right
+puts table
