@@ -75,7 +75,7 @@ module Terminal
         separator
       else
         Y + row.map_with_index do |cell, i|
-          render_cell(cell, i)
+          render_cell(cell, row_to_index(row, i))
         end.join(Y) + Y
       end
     end
@@ -138,7 +138,39 @@ module Terminal
     # Return _n_ column including headings.
     
     def column_with_headings n
-      headings_with_rows.map { |row| row[n] }.compact  
+      headings_with_rows.map { |row| row_with_hash(row)[n] }.compact
+    end
+
+    def row_with_hash row
+      # this method duplicates the multi-column columns in each column they are in
+      arr = []
+      index = 0
+      row.each{|column|
+        if column.is_a?(Hash) && column[:colspan] && column[:colspan] > 1
+          column[:start_index] = index
+          column[:colspan].times{
+            arr << column
+            index = index + 1
+          }
+        else
+          arr << column
+          index = index + 1
+        end
+      }
+      return arr
+    end
+
+    def row_to_index(row, index)
+      new_index = -1
+      0.upto(index) do |i|
+        column = row[i]
+        if column.is_a?(Hash) && column[:colspan] && column[:colspan] > 1 && index != i
+          new_index = new_index + column[:colspan]
+        else
+          new_index = new_index + 1
+        end
+      end
+      return new_index
     end
     
     ##
@@ -149,22 +181,63 @@ module Terminal
     end
     
     ##
-    # Return the largest cell found within column _n_.
-    
-    def largest_cell_in_column n
-      column_with_headings(n).sort_by do |cell| 
-        Cell.new(0, cell).length 
-      end.last
+    # Return the length of the largest cell found within column _n_.
+
+    def length_of_largest_cell_in_column n
+      column_with_headings(n).map do |cell|
+        if cell.is_a? Hash
+          if cell[:colspan] && cell[:colspan] > 1
+            if (cell[:value].to_s.length <= length_of_single_columns_where_multicolumn_is(cell[:start_index],cell[:colspan]))
+              0
+            else
+              spacing_length = (3 * (cell[:colspan] - 1))
+              length_in_columns = (cell[:value].to_s.length - spacing_length)
+              (length_in_columns.to_f / cell[:colspan]).ceil
+            end
+          else
+            cell[:value].to_s.length
+          end
+        else
+          cell.to_s.length
+        end
+      end.sort.last
+    end
+
+    ##
+    # Returns the length of the largest single column cell found within column _n_.
+
+    def length_of_largest_single_column_cell_in_column n
+      column_with_headings(n).map do |cell|
+        if cell.is_a? Hash
+          if cell[:colspan] && cell[:colspan] > 1
+            0
+          else
+            cell[:value].to_s.length
+          end
+        else
+          cell.to_s.length
+        end
+      end.sort.last
+    end
+
+    ##
+    # Returns the length of the single columns starting from _n_ and going through _length_ columns.
+
+    def length_of_single_columns_where_multicolumn_is(n,length)
+      total_length = 0
+      spacing_length = (3 * (length - 1))
+      total_length = total_length + spacing_length
+      n.upto(n + length - 1) do |i|
+        total_length = total_length + length_of_largest_single_column_cell_in_column(i)
+      end
+      return total_length
     end
     
     ##
     # Return length of column _n_.
     
     def length_of_column n
-      largest_cell = largest_cell_in_column n
-      Hash === largest_cell ?
-        largest_cell[:value].to_s.length :
-          largest_cell.to_s.length
+      length_of_largest_cell_in_column n      
     end
     
     ##
