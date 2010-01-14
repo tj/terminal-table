@@ -145,29 +145,29 @@ module Terminal
       # this method duplicates the multi-column columns in each column they are in
       arr = []
       index = 0
-      row.each{|column|
+      row.each do |column|
         if column.is_a?(Hash) && column[:colspan] && column[:colspan] > 1
           column[:start_index] = index
-          column[:colspan].times{
+          column[:colspan].times do
             arr << column
-            index = index + 1
-          }
+            index += 1
+          end
         else
           arr << column
-          index = index + 1
+          index += 1
         end
-      }
-      return arr
+      end
+      arr
     end
 
-    def row_to_index(row, index)
+    def row_to_index row, index
       new_index = -1
       0.upto(index) do |i|
         column = row[i]
         if column.is_a?(Hash) && column[:colspan] && column[:colspan] > 1 && index != i
           new_index = new_index + column[:colspan]
         else
-          new_index = new_index + 1
+          new_index += 1
         end
       end
       return new_index
