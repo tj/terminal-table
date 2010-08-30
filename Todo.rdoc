@@ -5,7 +5,7 @@
 
 == Minor:
 
-* Programmatically add seperator rows
+* Programmatically add separator rows
 * Arbitrary dimensions
 * Add multi-column sorting
 * Change; pre-create Cell and Heading objects to clean up Table a bit

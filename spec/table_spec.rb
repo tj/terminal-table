@@ -55,10 +55,10 @@ module Terminal
       @table.length_of_column(1).should == 18
     end
 
-    it "should render seperators" do
+    it "should render separators" do
       @table.headings = ['Char', 'Num']
       @table << ['a', 1]
-      @table.seperator.should == '+------+-----+'
+      @table.separator.should == '+------+-----+'
     end
 
     it "should bitch and complain when you have no rows" do
