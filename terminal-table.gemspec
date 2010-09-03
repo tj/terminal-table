@@ -2,21 +2,21 @@
 
 Gem::Specification.new do |s|
   s.name = %q{terminal-table}
-  s.version = "1.1.0"
+  s.version = "1.4.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 1.2") if s.respond_to? :required_rubygems_version=
   s.authors = ["TJ Holowaychuk"]
-  s.date = %q{2009-07-13}
-  s.description = %q{Simple,}
+  s.date = %q{2010-01-14}
+  s.description = %q{Simple, feature rich ascii table generation library}
   s.email = %q{tj@vision-media.ca}
-  s.extra_rdoc_files = ["lib/terminal-table/cell.rb", "lib/terminal-table/core_ext.rb", "lib/terminal-table/heading.rb", "lib/terminal-table/import.rb", "lib/terminal-table/table.rb", "lib/terminal-table/table_helper.rb", "lib/terminal-table/version.rb", "lib/terminal-table.rb", "README.rdoc", "tasks/docs.rake", "tasks/gemspec.rake", "tasks/spec.rake"]
-  s.files = ["examples/examples.rb", "History.rdoc", "lib/terminal-table/cell.rb", "lib/terminal-table/core_ext.rb", "lib/terminal-table/heading.rb", "lib/terminal-table/import.rb", "lib/terminal-table/table.rb", "lib/terminal-table/table_helper.rb", "lib/terminal-table/version.rb", "lib/terminal-table.rb", "Manifest", "Rakefile", "README.rdoc", "spec/cell_spec.rb", "spec/core_ext_spec.rb", "spec/import_spec.rb", "spec/spec.opts", "spec/spec_helper.rb", "spec/table_helper_spec.rb", "spec/table_spec.rb", "tasks/docs.rake", "tasks/gemspec.rake", "tasks/spec.rake", "terminal-table.gemspec", "Todo.rdoc"]
+  s.extra_rdoc_files = ["README.rdoc", "lib/terminal-table.rb", "lib/terminal-table/cell.rb", "lib/terminal-table/core_ext.rb", "lib/terminal-table/heading.rb", "lib/terminal-table/import.rb", "lib/terminal-table/table.rb", "lib/terminal-table/table_helper.rb", "lib/terminal-table/version.rb", "tasks/docs.rake", "tasks/gemspec.rake", "tasks/spec.rake"]
+  s.files = ["History.rdoc", "Manifest", "README.rdoc", "Rakefile", "Todo.rdoc", "examples/examples.rb", "lib/terminal-table.rb", "lib/terminal-table/cell.rb", "lib/terminal-table/core_ext.rb", "lib/terminal-table/heading.rb", "lib/terminal-table/import.rb", "lib/terminal-table/table.rb", "lib/terminal-table/table_helper.rb", "lib/terminal-table/version.rb", "spec/cell_spec.rb", "spec/core_ext_spec.rb", "spec/import_spec.rb", "spec/spec.opts", "spec/spec_helper.rb", "spec/table_spec.rb", "tasks/docs.rake", "tasks/gemspec.rake", "tasks/spec.rake", "terminal-table.gemspec"]
   s.homepage = %q{http://github.com/visionmedia/terminal-table}
   s.rdoc_options = ["--line-numbers", "--inline-source", "--title", "Terminal-table", "--main", "README.rdoc"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{terminal-table}
-  s.rubygems_version = %q{1.3.4}
-  s.summary = %q{Simple,}
+  s.rubygems_version = %q{1.3.5}
+  s.summary = %q{Simple, feature rich ascii table generation library}
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION

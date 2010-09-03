@@ -1,4 +1,5 @@
-require File.expand_path(File.dirname(__FILE__) + "/spec_helper")
+
+require File.dirname(__FILE__) + '/spec_helper'
 
 module Terminal
   describe Table do
@@ -10,6 +11,43 @@ module Terminal
       @table << ['foo', 'bar']
       @table << ['big foo', 'big foo bar']
       @table.column(1).should == ['bar', 'big foo bar']
+    end
+
+    it "should select the column with headings at an index" do
+      @table << [1,2,3]
+      @table << [4,5,6]
+      @table.column_with_headings(2).should == [3,6]
+    end
+
+    it "should select the columns with colspans > 1 in the index" do
+      @table << [1,{:value => 2, :colspan => 2}]
+      @table << [{:value => 3, :colspan => 2}, 4]
+    end
+
+    it "should account for the colspan when selecting columns" do
+      @table << [1,2,3]
+      @table << [{:value => "4,5", :colspan => 2}, 6]
+      @table.column_with_headings(0).should == [1,{:start_index => 0, :value => "4,5", :colspan => 2}]
+      @table.column_with_headings(1).should == [2,{:start_index => 0, :value => "4,5", :colspan => 2}]
+      @table.column_with_headings(2).should == [3,6]
+    end
+
+    it "should render tables with colspan properly" do
+      @table << [1,2,3]
+      @table << [4,5,6]
+      @table << [{:value => "7", :colspan => 2}, 88]
+      @table.render.should == <<-EOF.deindent
+        +---+---+----+
+        | 1 | 2 | 3  |
+        | 4 | 5 | 6  |
+        | 7     | 88 |
+        +---+---+----+
+      EOF
+    end
+
+    it "should convert rows to indexes" do
+      @table << [{:value => '7', :colspan => 2}, 88]
+      @table.row_to_index(@table.rows[0], 1).should == 2
     end
 
     it "should count columns" do
@@ -36,10 +74,42 @@ module Terminal
       @table.column(0).should == [{ :value => 'a', :align => :left }, 'b', 'c']
     end
 
-    it "should select largest cell in a column" do
+    it "should determine length of largest cell in a column" do
       @table << ['foo', 'bar']
       @table << ['big foo', 'big foo bar']
-      @table.largest_cell_in_column(1).should == 'big foo bar'
+      @table.length_of_largest_cell_in_column(1).should == 11
+    end
+
+    it "should determine length of largest cell in a column with multi-column rows" do
+      @table << [1,2]
+      @table << [{:value => '123456789', :colspan => 2}]
+      # +-----+-----+
+      # | 1   | 2   |
+      # | 123456789 |
+      #
+      @table.length_of_largest_cell_in_column(0).should == 3
+      @table.length_of_largest_cell_in_column(1).should == 3
+
+      @table.render.should == <<-EOF.deindent
+        +-----+-----+
+        | 1   | 2   |
+        | 123456789 |
+        +-----+-----+
+      EOF
+    end
+
+    it "should determine length of largest cell in a column with multi-column rows, rounding up" do
+      @table << [1,2]
+      @table << [{:value => '1234567890', :colspan => 2}]
+      @table.length_of_largest_cell_in_column(0).should == 4
+      @table.length_of_largest_cell_in_column(1).should == 4
+
+      @table.render.should == <<-EOF.deindent
+        +------+------+
+        | 1    | 2    |
+        | 1234567890  |
+        +------+------+
+      EOF
     end
 
     it "should find column length" do
@@ -59,6 +129,14 @@ module Terminal
       @table.headings = ['Char', 'Num']
       @table << ['a', 1]
       @table.separator.should == '+------+-----+'
+    end
+
+    it "should add separator" do
+      @table << ['a', 1]
+      @table.add_separator
+      @table << ['b', 2]
+      @table.rows.size.should == 2
+      @table.all_rows.size.should == 3
     end
 
     it "should bitch and complain when you have no rows" do
@@ -93,6 +171,44 @@ module Terminal
         +---+---+
       EOF
     end
+
+    it "should render separators" do
+      @table.headings = ['Char', 'Num']
+      @table << ['a', 1]
+      @table << ['b', 2]
+      @table.add_separator
+      @table << ['c', 3]
+      @table.render.should == <<-EOF.deindent
+        +------+-----+
+        | Char | Num |
+        +------+-----+
+        | a    | 1   |
+        | b    | 2   |
+        +------+-----+
+        | c    | 3   |
+        +------+-----+
+      EOF
+    end
+
+    it "should align columns with separators" do
+      @table.headings = ['Char', 'Num']
+      @table << ['a', 1]
+      @table << ['b', 2]
+      @table.add_separator
+      @table << ['c', 3]
+      @table.align_column 1, :right
+      @table.render.should == <<-EOF.deindent
+        +------+-----+
+        | Char | Num |
+        +------+-----+
+        | a    |   1 |
+        | b    |   2 |
+        +------+-----+
+        | c    |   3 |
+        +------+-----+
+      EOF
+    end
+
 
     it "should render properly using block syntax" do
       table = Terminal::Table.new do |t|
@@ -213,7 +329,7 @@ module Terminal
         table_one = Table.new
         table_two = Table.new
 
-        table_one.rows << "a"
+        table_one.add_row "a"
 
         table_one.should_not == table_two
         table_two.should_not == table_one
@@ -238,27 +354,66 @@ module Terminal
       @table.headings = ['one', { :value => 'two', :alignment => :center, :colspan => 2}]
       @table.rows = [['a', 1, 2], ['b', 3, 4], ['c', 3, 4]]
       @table.render.should == <<-EOF.deindent
-        +-----+-----+---+
-        | one |   two   |
-        +-----+-----+---+
-        | a   | 1   | 2 |
-        | b   | 3   | 4 |
-        | c   | 3   | 4 |
-        +-----+-----+---+
+        +-----+---+---+
+        | one |  two  |
+        +-----+---+---+
+        | a   | 1 | 2 |
+        | b   | 3 | 4 |
+        | c   | 3 | 4 |
+        +-----+---+---+
       EOF
     end
 
     it "should handle colspan inside cells" do
       @table.headings = ['one', 'two', 'three']
+      @table.rows = [['a', 1, 2], ['b', 3, 4], [{:value => "joined", :colspan => 2,:alignment => :center}, 'c']]
+      @table.render.should == <<-EOF.deindent
+        +-----+-----+-------+
+        | one | two | three |
+        +-----+-----+-------+
+        | a   | 1   | 2     |
+        | b   | 3   | 4     |
+        |  joined   | c     |
+        +-----+-----+-------+
+      EOF
+    end
+
+    it "should handle colspan inside cells regardless of colspan position" do
+      @table.headings = ['one', 'two', 'three']
       @table.rows = [['a', 1, 2], ['b', 3, 4], ['c', {:value => "joined", :colspan => 2,:alignment => :center}]]
       @table.render.should == <<-EOF.deindent
-        +-----+--------+-------+
-        | one | two    | three |
-        +-----+--------+-------+
-        | a   | 1      | 2     |
-        | b   | 3      | 4     |
-        | c   |     joined     |
-        +-----+--------+-------+
+        +-----+-----+-------+
+        | one | two | three |
+        +-----+-----+-------+
+        | a   | 1   | 2     |
+        | b   | 3   | 4     |
+        | c   |   joined    |
+        +-----+-----+-------+
+      EOF
+    end
+
+    it "should handle overflowing colspans" do
+      @table.headings = ['one', 'two', 'three']
+      @table.rows = [['a', 1, 2], ['b', 3, 4], ['c', {:value => "joined that is very very long", :colspan => 2,:alignment => :center}]]
+      @table.render.should == <<-EOF.deindent
+        +-----+---------------+---------------+
+        | one | two           | three         |
+        +-----+---------------+---------------+
+        | a   | 1             | 2             |
+        | b   | 3             | 4             |
+        | c   | joined that is very very long |
+        +-----+---------------+---------------+
+      EOF
+    end
+
+    it "should only increase column size for multi-column if it is unavoidable" do
+      @table << [12345,2,3]
+      @table << [{:value => 123456789, :colspan => 2}, 4]
+      @table.render.should == <<-EOF.deindent
+        +-------+---+---+
+        | 12345 | 2 | 3 |
+        | 123456789 | 4 |
+        +-------+---+---+
       EOF
     end
 
@@ -283,13 +438,13 @@ module Terminal
       @table.rows = [['a', 1, 2, 3], ['b', 4, 5, 6], ['c', 7, 8, 9]]
       
       @table.render.should == <<-EOF.deindent
-        +------+--------+---+---+
-        | name | values         |
-        +------+--------+---+---+
-        | a    | 1      | 2 | 3 |
-        | b    | 4      | 5 | 6 |
-        | c    | 7      | 8 | 9 |
-        +------+--------+---+---+
+        +------+---+---+---+
+        | name | values    |
+        +------+---+---+---+
+        | a    | 1 | 2 | 3 |
+        | b    | 4 | 5 | 6 |
+        | c    | 7 | 8 | 9 |
+        +------+---+---+---+
       EOF
     end
   end

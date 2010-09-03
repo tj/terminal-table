@@ -9,6 +9,8 @@ puts
 t = table ['a', 'b']
 t << [1, 2]
 t << [3, 4]
+t << :separator
+t << [4, 6]
 puts t
 
 puts
@@ -23,9 +25,11 @@ puts user_table
 puts
 user_table = table do
   self.headings = 'First Name', 'Last Name', 'Email'
-  add_row ['TJ',  'Holowaychuk', ['tj@vision-media.ca', :right]]
+  add_row ['TJ',  'Holowaychuk', 'tj@vision-media.ca']
   add_row ['Bob', 'Someone',     'bob@vision-media.ca']
   add_row ['Joe', 'Whatever',    'joe@vision-media.ca']
+  add_separator
+  add_row ['Total', { :value => '3', :colspan => 2, :alignment => :right }]
   align_column 1, :center
 end
 puts user_table
@@ -53,14 +57,11 @@ rows << ['Ruby',       70]
 rows << ['JavaScript', 30]
 puts table(nil, *rows)
 
-
-Terminal::Table::X = '='
-Terminal::Table::Y = '!'
-Terminal::Table::I = '*'
-
 rows = []
-rows << [nil,  nil, nil]
-rows << [nil, ':)', nil]
-rows << [nil,  nil, nil]
-puts table(nil, *rows)
-
+rows << ['Lines',      100]
+rows << ['Comments',   20]
+rows << ['Ruby',       70]
+rows << ['JavaScript', 30]
+table = table([{ :value => 'Stats', :colspan => 2, :alignment => :center }], *rows)
+table.align_column 1, :right
+puts table
