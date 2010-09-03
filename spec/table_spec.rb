@@ -448,6 +448,28 @@ module Terminal
       EOF
     end
 
+    it "should render a table without cell borders" do
+      Terminal::Table::X = ""
+      Terminal::Table::Y = ""
+      Terminal::Table::I = ""
+
+      @table.headings = ['name', { :value => 'values', :alignment => :right, :colspan => 3}]
+      @table.headings = ['name', { :value => 'values', :colspan => 3}]
+      @table.rows = [['a', 1, 2, 3], ['b', 4, 5, 6], :separator, ['c', 7, 8, 9]]
+
+      expected_rows = []
+      expected_rows << " name  values  "
+      expected_rows << " a     1  2  3 "
+      expected_rows << " b     4  5  6 "
+      expected_rows << " c     7  8  9 \n"
+
+      @table.render.should == expected_rows.join("\n")
+      
+      Terminal::Table::X = "-"
+      Terminal::Table::Y = "|"
+      Terminal::Table::I = "+"
+    end
+
     it "should handle multiple colspan" do
       @table.headings = []
       @table.headings << 'name'

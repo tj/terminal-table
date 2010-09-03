@@ -36,15 +36,18 @@ module Terminal
     # Render the table.
   
     def render
-      buffer = [separator, "\n"]
+      buffer = []
+      buffer << separator << "\n" unless separator.empty?
       if has_headings?
         buffer << render_headings
-        buffer << "\n" << separator << "\n"
+        buffer << "\n"
+        buffer << separator << "\n" unless separator.empty?
       end
-      buffer << @rows.map do |row| 
+      buffer << @rows.map do |row|
         render_row(row)
-      end.join("\n")
-      buffer << "\n" << separator << "\n"
+      end.reject{|row| row.empty?}.join("\n")
+      buffer << "\n"
+      buffer << separator << "\n" unless separator.empty?
       buffer.join
     end
     alias :to_s :render
