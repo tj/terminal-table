@@ -97,7 +97,7 @@ module Terminal
     end
     
     ##
-    # Create a separator based on colum lengths.
+    # Create a separator based on column lengths.
     
     def separator
       I + columns.collect_with_index do |col, i| 
@@ -189,7 +189,7 @@ module Terminal
             if (cell[:value].to_s.length <= length_of_single_columns_where_multicolumn_is(cell[:start_index],cell[:colspan]))
               0
             else
-              spacing_length = (3 * (cell[:colspan] - 1))
+              spacing_length = ((2 + Y.length) * (cell[:colspan] - 1))
               length_in_columns = (cell[:value].to_s.length - spacing_length)
               (length_in_columns.to_f / cell[:colspan]).ceil
             end
@@ -224,7 +224,7 @@ module Terminal
 
     def length_of_single_columns_where_multicolumn_is(n,length)
       total_length = 0
-      spacing_length = (3 * (length - 1))
+      spacing_length = ((2 + Y.length) * (length - Y.length))
       total_length = total_length + spacing_length
       n.upto(n + length - 1) do |i|
         total_length = total_length + length_of_largest_single_column_cell_in_column(i)
