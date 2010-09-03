@@ -447,5 +447,34 @@ module Terminal
         +------+---+---+---+
       EOF
     end
+
+    it "should handle multiple colspan" do
+      @table.headings = []
+      @table.headings << 'name'
+      @table.headings <<  { :value => 'Values',
+                            :alignment => :right, :colspan => 2}
+      @table.headings <<  { :value => 'Other values',
+                            :alignment => :right, :colspan => 2}
+      @table.headings <<  { :value => 'Column 3',
+                            :alignment => :right, :colspan => 2}
+
+      3.times do |row_index|
+        row = ["row ##{row_index+1}"]
+        6.times do |i|
+          row << row_index*6 + i
+        end
+        @table.add_row(row)
+      end
+
+      @table.render.should == <<-EOF.deindent
+        +--------+----+----+-------+-------+-----+-----+
+        | name   |  Values | Other values  |  Column 3 |
+        +--------+----+----+-------+-------+-----+-----+
+        | row #0 | 0  | 1  | 2     | 3     | 4   | 5   |
+        | row #1 | 6  | 7  | 8     | 9     | 10  | 11  |
+        | row #2 | 12 | 13 | 14    | 15    | 16  | 17  |
+        +--------+----+----+-------+-------+-----+-----+
+      EOF
+    end
   end
 end
