@@ -14,6 +14,11 @@ module Terminal
     X, Y, I = '-', '|', '+'
     
     ##
+    # Title
+    
+    attr_accessor :title
+
+    ##
     # Headings array.
     
     attr_accessor :headings
@@ -27,6 +32,7 @@ module Terminal
     # Generates a ASCII table with the given _options_.
   
     def initialize options = {}, &block
+      @title = options.fetch :title, nil
       @headings = options.fetch :headings, []
       @rows = options.fetch :rows, []
       yield_or_eval &block if block
@@ -37,6 +43,10 @@ module Terminal
   
     def render
       buffer = [separator, "\n"]
+      if has_title?
+        buffer << render_title
+        buffer << "\n" << separator << "\n"
+      end
       if has_headings?
         buffer << render_headings
         buffer << "\n" << separator << "\n"
@@ -48,6 +58,13 @@ module Terminal
       buffer.join
     end
     alias :to_s :render
+
+    ##
+    # Render title
+
+    def render_title
+      render_row [{:value => title, :colspan => number_of_columns, :alignment => :center}]
+    end
     
     ##
     # Render headings.
@@ -118,6 +135,13 @@ module Terminal
 
     def add_separator
       @rows << :separator
+    end
+
+    ##
+    # Whether title is present
+
+    def has_title?
+        @title != nil
     end
 
     ##
