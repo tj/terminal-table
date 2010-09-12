@@ -447,5 +447,24 @@ module Terminal
         +------+---+---+---+
       EOF
     end
+
+    it "should render titles" do
+      @table.title = "Title"
+      @table.headings = ['Char', 'Num']
+      @table << ['a', 1]
+      @table << ['b', 2]
+      @table << ['c', 3]
+      @table.render.should == <<-EOF.deindent
+        +------+-----+
+        |   Title    |
+        +------+-----+
+        | Char | Num |
+        +------+-----+
+        | a    | 1   |
+        | b    | 2   |
+        | c    | 3   |
+        +------+-----+
+      EOF
+    end
   end
 end
