@@ -247,6 +247,14 @@ module Terminal
       raise Error, 'your table needs some rows'
     end
     
+    def number_of_columns
+      raise Error, 'your table needs some rows' if rows.empty?
+      
+      rows.first.inject(0) do |mem,cell|
+        mem += (cell.is_a?(Hash) && !cell[:colspan].nil?) ? cell[:colspan] : 1
+      end
+    end
+    
     ##
     # Align column _n_ to the given _alignment_ of :center, :left, or :right.
     
