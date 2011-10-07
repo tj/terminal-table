@@ -14,11 +14,6 @@ module Terminal
     X, Y, I = '-', '|', '+'
     
     ##
-    # Headings array.
-    
-    attr_accessor :headings
-    
-    ##
     # Rows array.
     
     attr_accessor :rows
@@ -27,11 +22,18 @@ module Terminal
     # Generates a ASCII table with the given _options_.
   
     def initialize options = {}, &block
-      @headings = options.fetch :headings, []
-      @rows = options.fetch :rows, []
+      @column_lengths = []
+      self.headings = options.fetch :headings, []
+      @rows = []
+      options.fetch(:rows, []).each { |row| add_row row }
       yield_or_eval &block if block
     end
-    
+
+    def headings= h
+      @headings = h
+      recalc_column_lengths @headings
+    end
+
     ##
     # Render the table.
   
@@ -53,7 +55,7 @@ module Terminal
     # Render headings.
 
     def render_headings
-      Y + headings.map_with_index do |heading, i|
+      Y + @headings.map_with_index do |heading, i|
         width = 0
         if heading.is_a?(Hash) and !heading[:colspan].nil?
           i.upto(i + heading[:colspan] - 1) do |col|
@@ -110,6 +112,23 @@ module Terminal
     
     def add_row row
       @rows << row
+      recalc_column_lengths row
+    end
+
+    def recalc_column_lengths row
+      if row.is_a?(Symbol) then return end
+      i = 0
+      row.each do |row|
+        length = if row.is_a?(Hash)
+                   row[:value].to_s.length
+                 else
+                   row.to_s.length
+                 end
+        if (@column_lengths[i] || 0) < length
+          @column_lengths[i] = length
+        end
+        i = i + 1
+      end
     end
     alias :<< :add_row
 
@@ -124,7 +143,7 @@ module Terminal
     # Weither or not any headings are present, since they are optional.
     
     def has_headings?
-      not headings.empty?
+      not @headings.empty?
     end
     
     ##
@@ -180,63 +199,10 @@ module Terminal
     end
     
     ##
-    # Return the length of the largest cell found within column _n_.
-
-    def length_of_largest_cell_in_column n
-      column_with_headings(n).map do |cell|
-        if cell.is_a? Hash
-          if cell[:colspan] && cell[:colspan] > 1
-            if (cell[:value].to_s.length <= length_of_single_columns_where_multicolumn_is(cell[:start_index],cell[:colspan]))
-              0
-            else
-              spacing_length = (3 * (cell[:colspan] - 1))
-              length_in_columns = (cell[:value].to_s.length - spacing_length)
-              (length_in_columns.to_f / cell[:colspan]).ceil
-            end
-          else
-            cell[:value].to_s.length
-          end
-        else
-          cell.to_s.length
-        end
-      end.sort.last
-    end
-
-    ##
-    # Returns the length of the largest single column cell found within column _n_.
-
-    def length_of_largest_single_column_cell_in_column n
-      column_with_headings(n).map do |cell|
-        if cell.is_a? Hash
-          if cell[:colspan] && cell[:colspan] > 1
-            0
-          else
-            cell[:value].to_s.length
-          end
-        else
-          cell.to_s.length
-        end
-      end.sort.last
-    end
-
-    ##
-    # Returns the length of the single columns starting from _n_ and going through _length_ columns.
-
-    def length_of_single_columns_where_multicolumn_is(n,length)
-      total_length = 0
-      spacing_length = (3 * (length - 1))
-      total_length = total_length + spacing_length
-      n.upto(n + length - 1) do |i|
-        total_length = total_length + length_of_largest_single_column_cell_in_column(i)
-      end
-      return total_length
-    end
-    
-    ##
     # Return length of column _n_.
     
     def length_of_column n
-      length_of_largest_cell_in_column n      
+      @column_lengths[n] || 0
     end
     
     ##
@@ -261,7 +227,7 @@ module Terminal
     # Return headings combined with rows.
     
     def headings_with_rows
-      [headings] + rows
+      [@headings] + rows
     end
 
     ##
@@ -284,7 +250,7 @@ module Terminal
 
     def == other
       if other.respond_to? :headings and other.respond_to? :rows
-        headings == other.headings and rows == other.rows
+        @headings == other.headings and rows == other.rows
       end
     end
   end
