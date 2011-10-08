@@ -118,16 +118,26 @@ module Terminal
     def recalc_column_lengths row
       if row.is_a?(Symbol) then return end
       i = 0
-      row.each do |row|
-        length = if row.is_a?(Hash)
-                   row[:value].to_s.length
-                 else
-                   row.to_s.length
-                 end
-        if (@column_lengths[i] || 0) < length
-          @column_lengths[i] = length
+      row.each do |cell|
+        if cell.is_a?(Hash)
+          colspan = cell[:colspan] || 1
+          cell_value = cell[:value]
+        else
+          colspan = 1
+          cell_value = cell
         end
-        i = i + 1
+        colspan.downto(1) do |j|
+          cell_length = cell_value.to_s.length
+          if colspan > 1
+            spacing_length = (3 * (colspan - 1))
+            length_in_columns = (cell_length - spacing_length)
+            cell_length = (length_in_columns.to_f / colspan).ceil
+          end
+          if (@column_lengths[i] || 0) < cell_length
+            @column_lengths[i] = cell_length
+          end
+          i = i + 1
+        end
       end
     end
     alias :<< :add_row
