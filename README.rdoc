@@ -24,11 +24,11 @@ Simple, feature rich ASCII table generator.
    
   puts table(['a', 'b'], [1, 2], [3, 4], :separator, [4, 6])
    
-  t = table ['a', 'b']
-  t << [1, 2]
-  t << [3, 4]
-  t.add_separator
-  t << [4, 6]
+  v = table ['a', 'b']
+  v << [1, 2]
+  v << [3, 4]
+  v.add_separator
+  v << [4, 6]
   puts t
    
   user_table = table do |t|
