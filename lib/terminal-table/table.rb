@@ -21,7 +21,7 @@ module Terminal
     ##
     # Rows array.
     
-    attr_accessor :rows
+    attr_writer :rows
     
     ##
     # Generates a ASCII table with the given _options_.
@@ -29,7 +29,7 @@ module Terminal
     def initialize options = {}, &block
       @headings = options.fetch :headings, []
       @rows = options.fetch :rows, []
-      yield_or_eval &block if block
+      yield_or_eval(&block) if block
     end
     
     ##
