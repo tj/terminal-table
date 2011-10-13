@@ -1,12 +1,12 @@
-
 = Terminal Table
 
 Simple, feature rich ASCII table generator.
 
 == Installation:
 
-  Install [Gemcutter](http://gemcutter.org) then execute:
-  $ sudo gem install terminal-table
+1. Install [Gemcutter](http://gemcutter.org)
+1. Execute  `$ sudo gem install terminal-table`
+1. Profit?
 
 == Features:
 
@@ -19,118 +19,122 @@ Simple, feature rich ASCII table generator.
 
 == Examples:
 
-  require 'rubygems'
-  require 'terminal-table/import'
-   
-  puts table(['a', 'b'], [1, 2], [3, 4], :separator, [4, 6])
-   
-  t = table ['a', 'b']
-  t << [1, 2]
-  t << [3, 4]
-  t.add_separator
-  t << [4, 6]
-  puts t
-   
-  user_table = table do |t|
-    t.headings = 'First Name', 'Last Name', 'Email'
-    t << ['TJ',  'Holowaychuk', 'tj@vision-media.ca']
-    t << ['Bob', 'Someone',     'bob@vision-media.ca']
-    t << ['Joe', 'Whatever',    'joe@vision-media.ca']
-  end
-  puts user_table
-   
-  user_table = table do
-    self.headings = 'First Name', 'Last Name', 'Email'
-    add_row ['TJ',  'Holowaychuk', { :value => 'tj@vision-media.ca', :alignment => :right }]
-    add_row ['Bob', 'Someone',     'bob@vision-media.ca']
-    add_row ['Joe', 'Whatever',    'joe@vision-media.ca']
-    align_column 1, :center
-  end
-  puts user_table
+```ruby
+require 'rubygems'
+require 'terminal-table/import'
 
-  puts
-  user_table = table do
-    self.headings = ['First Name', 'Last Name', {:value => 'Phones', :colspan => 2, :alignment => :center}]
-    add_row ['Bob', 'Someone',     '123', '456']
-    add_row ['TJ',  'Holowaychuk', {:value => "No phones", :colspan => 2, :alignment => :center}]
-    add_row ['Joe', 'Whatever',    '4324', '343242']
-  end
-  puts user_table
-   
-  rows = []
-  rows << ['Lines',      100]
-  rows << ['Comments',   20]
-  rows << ['Ruby',       70]
-  rows << ['JavaScript', 30]
-  puts table([nil, 'Lines'], *rows)
-   
-  rows = []
-  rows << ['Lines',      100]
-  rows << ['Comments',   20]
-  rows << ['Ruby',       70]
-  rows << ['JavaScript', 30]
-  puts table(nil, *rows)
+puts table(['a', 'b'], [1, 2], [3, 4], :separator, [4, 6])
+
+t = table ['a', 'b']
+t << [1, 2]
+t << [3, 4]
+t.add_separator
+t << [4, 6]
+puts t
+
+user_table = table do |t|
+t.headings = 'First Name', 'Last Name', 'Email'
+t << ['TJ',  'Holowaychuk', 'tj@vision-media.ca']
+t << ['Bob', 'Someone',     'bob@vision-media.ca']
+t << ['Joe', 'Whatever',    'joe@vision-media.ca']
+end
+puts user_table
+
+user_table = table do
+self.headings = 'First Name', 'Last Name', 'Email'
+add_row ['TJ',  'Holowaychuk', { :value => 'tj@vision-media.ca', :alignment => :right }]
+add_row ['Bob', 'Someone',     'bob@vision-media.ca']
+add_row ['Joe', 'Whatever',    'joe@vision-media.ca']
+align_column 1, :center
+end
+puts user_table
+
+puts
+user_table = table do
+self.headings = ['First Name', 'Last Name', {:value => 'Phones', :colspan => 2, :alignment => :center}]
+add_row ['Bob', 'Someone',     '123', '456']
+add_row ['TJ',  'Holowaychuk', {:value => "No phones", :colspan => 2, :alignment => :center}]
+add_row ['Joe', 'Whatever',    '4324', '343242']
+end
+puts user_table
+
+rows = []
+rows << ['Lines',      100]
+rows << ['Comments',   20]
+rows << ['Ruby',       70]
+rows << ['JavaScript', 30]
+puts table([nil, 'Lines'], *rows)
+
+rows = []
+rows << ['Lines',      100]
+rows << ['Comments',   20]
+rows << ['Ruby',       70]
+rows << ['JavaScript', 30]
+puts table(nil, *rows)
+```
 
 == Results:
 
-  +---+---+
-  | a | b |
-  +---+---+
-  | 1 | 2 |
-  | 3 | 4 |
-  +---+---+
-  | 4 | 6 |
-  +---+---+
+```
++---+---+
+| a | b |
++---+---+
+| 1 | 2 |
+| 3 | 4 |
++---+---+
+| 4 | 6 |
++---+---+
 
-   
-  +---+---+
-  | a | b |
-  +---+---+
-  | 1 | 2 |
-  | 3 | 4 |
-  +---+---+
-  | 4 | 6 |
-  +---+---+
-   
-  +------------+-------------+---------------------+
-  | First Name | Last Name   | Email               |
-  +------------+-------------+---------------------+
-  | TJ         | Holowaychuk | tj@vision-media.ca  |
-  | Bob        | Someone     | bob@vision-media.ca |
-  | Joe        | Whatever    | joe@vision-media.ca |
-  +------------+-------------+---------------------+
-   
-  +------------+-----------------------------+---------------------+
-  | First Name | Last Name                   | Email               |
-  +------------+-----------------------------+---------------------+
-  | TJ         |         Holowaychuk         |  tj@vision-media.ca |
-  | Bob        |           Someone           | bob@vision-media.ca |
-  | Joe        |          Whatever           | joe@vision-media.ca |
-  +------------+-----------------------------+---------------------+
 
-  +------------+-------------+-----------+--------+
-  | First Name | Last Name   |       Phones       |
-  +------------+-------------+-----------+--------+
-  | Bob        | Someone     | 123       | 456    |
-  | TJ         | Holowaychuk |     No phones      |
-  | Joe        | Whatever    | 4324      | 343242 |
-  +------------+-------------+-----------+--------+
++---+---+
+| a | b |
++---+---+
+| 1 | 2 |
+| 3 | 4 |
++---+---+
+| 4 | 6 |
++---+---+
 
-  +------------+-------+
-  |            | Lines |
-  +------------+-------+
-  | Lines      | 100   |
-  | Comments   | 20    |
-  | Ruby       | 70    |
-  | JavaScript | 30    |
-  +------------+-------+
++------------+-------------+---------------------+
+| First Name | Last Name   | Email               |
++------------+-------------+---------------------+
+| TJ         | Holowaychuk | tj@vision-media.ca  |
+| Bob        | Someone     | bob@vision-media.ca |
+| Joe        | Whatever    | joe@vision-media.ca |
++------------+-------------+---------------------+
 
-  +------------+-----+
-  | Lines      | 100 |
-  | Comments   | 20  |
-  | Ruby       | 70  |
-  | JavaScript | 30  |
-  +------------+-----+
++------------+-----------------------------+---------------------+
+| First Name | Last Name                   | Email               |
++------------+-----------------------------+---------------------+
+| TJ         |         Holowaychuk         |  tj@vision-media.ca |
+| Bob        |           Someone           | bob@vision-media.ca |
+| Joe        |          Whatever           | joe@vision-media.ca |
++------------+-----------------------------+---------------------+
+
++------------+-------------+-----------+--------+
+| First Name | Last Name   |       Phones       |
++------------+-------------+-----------+--------+
+| Bob        | Someone     | 123       | 456    |
+| TJ         | Holowaychuk |     No phones      |
+| Joe        | Whatever    | 4324      | 343242 |
++------------+-------------+-----------+--------+
+
++------------+-------+
+|            | Lines |
++------------+-------+
+| Lines      | 100   |
+| Comments   | 20    |
+| Ruby       | 70    |
+| JavaScript | 30    |
++------------+-------+
+
++------------+-----+
+| Lines      | 100 |
+| Comments   | 20  |
+| Ruby       | 70  |
+| JavaScript | 30  |
++------------+-----+
+```
 
 == License:
 
