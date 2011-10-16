@@ -16,7 +16,7 @@ module Terminal
     ##
     # Rows array.
     
-    attr_accessor :rows
+    attr_writer :rows
     
     ##
     # Generates a ASCII table with the given _options_.
@@ -26,7 +26,7 @@ module Terminal
       self.headings = options.fetch :headings, []
       @rows = []
       options.fetch(:rows, []).each { |row| add_row row }
-      yield_or_eval &block if block
+      yield_or_eval(&block) if block
     end
 
     def headings= h
