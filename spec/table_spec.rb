@@ -115,14 +115,14 @@ module Terminal
     it "should find column length" do
       @table << ['foo', 'bar', 'a']
       @table << ['big foo', 'big foo bar']
-      @table.length_of_column(1).should == 11
+      @table.column_width(1).should == 11
     end
 
     it "should find column length with headings" do
       @table.headings = ['one', 'super long heading']
       @table << ['foo', 'bar', 'a']
       @table << ['big foo', 'big foo bar']
-      @table.length_of_column(1).should == 18
+      @table.column_width(1).should == 18
     end
 
     it "should render separators" do
