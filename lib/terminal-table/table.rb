@@ -18,6 +18,8 @@ module Terminal
     
     attr_accessor :rows
     
+    attr_reader :headings
+    
     ##
     # Generates a ASCII table with the given _options_.
   
