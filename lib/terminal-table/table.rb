@@ -13,25 +13,22 @@ module Terminal
     
     X, Y, I = '-', '|', '+'
     
-    ##
-    # Rows array.
-    
-    attr_writer :rows
+    attr_reader :headings
     
     ##
     # Generates a ASCII table with the given _options_.
   
     def initialize options = {}, &block
-      @column_lengths = []
+      @column_widths = []
       self.headings = options.fetch :headings, []
       @rows = []
       options.fetch(:rows, []).each { |row| add_row row }
       yield_or_eval(&block) if block
     end
 
-    def headings= h
-      @headings = h
-      recalc_column_lengths @headings
+    def headings= array
+      @headings = Row.new(self, array)
+      recalc_column_widths @headings
     end
 
     ##
@@ -40,11 +37,11 @@ module Terminal
     def render
       buffer = [separator, "\n"]
       if has_headings?
-        buffer << render_headings
+        buffer << @headings.render
         buffer << "\n" << separator << "\n"
       end
       buffer << @rows.map do |row| 
-        render_row(row)
+        row.render
       end.join("\n")
       buffer << "\n" << separator << "\n"
       buffer.join
@@ -52,80 +49,28 @@ module Terminal
     alias :to_s :render
     
     ##
-    # Render headings.
-
-    def render_headings
-      Y + @headings.map_with_index do |heading, i|
-        width = 0
-        if heading.is_a?(Hash) and !heading[:colspan].nil?
-          i.upto(i + heading[:colspan] - 1) do |col|
-            width += length_of_column(col)
-          end
-          width += (heading[:colspan] - 1) * (Y.length + 2)
-        else
-          width = length_of_column(i)
-        end
-        Heading.new( width, heading).render
-      end.join(Y) + Y
-    end
-    
-    ##
-    # Render the given _row_.
-
-    def render_row row
-      if row == :separator
-        separator
-      else
-        Y + row.map_with_index do |cell, i|
-          render_cell(cell, row_to_index(row, i))
-        end.join(Y) + Y
-      end
-    end
-    
-    ##
-    # Render the given _cell_ at index _i_.
-
-    def render_cell cell, i
-      width = 0
-      if cell.is_a?(Hash) and !cell[:colspan].nil?
-        i.upto(i + cell[:colspan] - 1) do |col|
-          width += length_of_column(col)
-        end
-        width += (cell[:colspan] - 1) * (Y.length + 2)
-      else
-        width = length_of_column(i)
-      end
-      Cell.new(width, cell).render
-    end
-    
-    ##
     # Create a separator based on colum lengths.
     
     def separator
       I + columns.collect_with_index do |col, i| 
-        X * (length_of_column(i) + 2) 
+        X * (column_width(i) + 2) 
       end.join(I) + I 
     end
     
     ##
     # Add a row. 
     
-    def add_row row
-      @rows << row
-      recalc_column_lengths row
+    def add_row array
+      @rows << Row.new(self, array)
+      recalc_column_widths @rows.last
     end
 
-    def recalc_column_lengths row
+    def recalc_column_widths row
       if row.is_a?(Symbol) then return end
       i = 0
       row.each do |cell|
-        if cell.is_a?(Hash)
-          colspan = cell[:colspan] || 1
-          cell_value = cell[:value]
-        else
-          colspan = 1
-          cell_value = cell
-        end
+        colspan = cell.colspan
+        cell_value = cell.value_for_column_width_recalc
         colspan.downto(1) do |j|
           cell_length = cell_value.to_s.length
           if colspan > 1
@@ -133,8 +78,8 @@ module Terminal
             length_in_columns = (cell_length - spacing_length)
             cell_length = (length_in_columns.to_f / colspan).ceil
           end
-          if (@column_lengths[i] || 0) < cell_length
-            @column_lengths[i] = cell_length
+          if @column_widths[i].to_i < cell_length
+            @column_widths[i] = cell_length
           end
           i = i + 1
         end
@@ -146,7 +91,7 @@ module Terminal
     # Add a separator.
 
     def add_separator
-      @rows << :separator
+      @rows << Row.new(self, :separator)
     end
 
     ##
@@ -159,15 +104,18 @@ module Terminal
     ##
     # Return column _n_.
     
-    def column n
-      rows.map { |row| row[n] }.compact 
+    def column n, method = :value, array = rows
+      array.map { |row| 
+        cell = row[n]
+        cell && method ? cell.__send__(method) : cell
+      }.compact 
     end
     
     ##
     # Return _n_ column including headings.
     
-    def column_with_headings n
-      headings_with_rows.map { |row| row_with_hash(row)[n] }.compact
+    def column_with_headings n, method = :value
+      column n, method, headings_with_rows
     end
 
     def row_with_hash row
@@ -204,23 +152,27 @@ module Terminal
     ##
     # Return columns.
     
-    def columns 
+    def columns
       (0...number_of_columns).map { |n| column n } 
     end
     
     ##
     # Return length of column _n_.
     
-    def length_of_column n
-      @column_lengths[n] || 0
+    def column_width n
+      @column_widths[n] || 0
     end
+    alias length_of_column column_width # for legacy support
     
     ##
     # Return total number of columns available.
      
     def number_of_columns
-      return rows.first.length unless rows.empty?
-      raise Error, 'your table needs some rows'
+      if rows.empty?
+        raise Error, 'your table needs some rows'
+      else
+        rows.first.size
+      end
     end
     
     ##
@@ -229,7 +181,7 @@ module Terminal
     def align_column n, alignment
       r = rows
       column(n).each_with_index do |col, i|
-        r[i][n] = { :value => col, :alignment => alignment } unless Hash === col
+        r[i][n].alignment = alignment
       end
     end
     
@@ -244,9 +196,13 @@ module Terminal
     # Return rows without separator rows.
 
     def rows
-      @rows.reject { |row| row == :separator }
+      @rows.reject { |row| row.separator? }
     end
-
+    
+    def rows= array
+      array.each { |arr| self << arr }
+    end
+    
     ##
     # Return rows including separator rows.
 
@@ -259,8 +215,8 @@ module Terminal
     # if it contains the same headings and rows.
 
     def == other
-      if other.respond_to? :headings and other.respond_to? :rows
-        @headings == other.headings and rows == other.rows
+      if other.respond_to? :render and other.respond_to? :rows
+        self.headings == other.headings and self.rows == other.rows
       end
     end
   end
