@@ -22,7 +22,7 @@ module Terminal
     # Generates a ASCII table with the given _options_.
   
     def initialize options = {}, &block
-      @column_lengths = []
+      @column_widths = []
       self.headings = options.fetch :headings, []
       @rows = []
       options.fetch(:rows, []).each { |row| add_row row }
@@ -31,7 +31,7 @@ module Terminal
 
     def headings= array
       @headings = array
-      recalc_column_lengths array
+      recalc_column_widths array
     end
 
     ##
@@ -59,11 +59,11 @@ module Terminal
         width = 0
         if heading.is_a?(Hash) and !heading[:colspan].nil?
           i.upto(i + heading[:colspan] - 1) do |col|
-            width += length_of_column(col)
+            width += column_width(col)
           end
           width += (heading[:colspan] - 1) * (Y.length + 2)
         else
-          width = length_of_column(i)
+          width = column_width(i)
         end
         Heading.new(width, heading).render
       end.join(Y) + Y
@@ -89,11 +89,11 @@ module Terminal
       width = 0
       if cell.is_a?(Hash) and !cell[:colspan].nil?
         i.upto(i + cell[:colspan] - 1) do |col|
-          width += length_of_column(col)
+          width += column_width(col)
         end
         width += (cell[:colspan] - 1) * (Y.length + 2)
       else
-        width = length_of_column(i)
+        width = column_width(i)
       end
       Cell.new(width, cell).render
     end
@@ -103,7 +103,7 @@ module Terminal
     
     def separator
       I + columns.collect_with_index do |col, i| 
-        X * (length_of_column(i) + 2) 
+        X * (column_width(i) + 2) 
       end.join(I) + I 
     end
     
@@ -112,10 +112,10 @@ module Terminal
     
     def add_row array
       @rows << Row.new(self, array)
-      recalc_column_lengths array
+      recalc_column_widths array
     end
 
-    def recalc_column_lengths row
+    def recalc_column_widths row
       if row.is_a?(Symbol) then return end
       i = 0
       row.each do |cell|
@@ -133,8 +133,8 @@ module Terminal
             length_in_columns = (cell_length - spacing_length)
             cell_length = (length_in_columns.to_f / colspan).ceil
           end
-          if @column_lengths[i].to_i < cell_length
-            @column_lengths[i] = cell_length
+          if @column_widths[i].to_i < cell_length
+            @column_widths[i] = cell_length
           end
           i = i + 1
         end
@@ -213,9 +213,10 @@ module Terminal
     ##
     # Return length of column _n_.
     
-    def length_of_column n
-      @column_lengths[n] || 0
+    def column_width n
+      @column_widths[n] || 0
     end
+    alias length_of_column column_width # for legacy support
     
     ##
     # Return total number of columns available.
