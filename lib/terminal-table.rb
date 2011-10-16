@@ -22,10 +22,6 @@
 #++
 
 $:.unshift File.dirname(__FILE__)
-
-require 'terminal-table/version'
-require 'terminal-table/core_ext'
-require 'terminal-table/table'
-require 'terminal-table/cell'
-require 'terminal-table/heading'
-require 'terminal-table/table_helper'
+%w(version core_ext table cell heading row table_helper).each do |file|
+  require "terminal-table/#{file}"
+end
