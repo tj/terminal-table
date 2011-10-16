@@ -15,4 +15,13 @@ describe Terminal::Table do
     cell.value.should == 'foo'
     cell.alignment.should == :center
   end
+  
+  it "should allow multiline content" do
+    cell = Cell.new :value => "foo\nbarrissimo", :table => Terminal::Table.new, :index => 0
+    cell.value.should == "foo\nbarrissimo"
+    cell.lines.should == ['foo', 'barrissimo']
+    cell.value_for_column_width_recalc.should == 'barrissimo'
+    cell.render(1).should == " barrissimo "
+  end
+
 end
