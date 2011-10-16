@@ -16,7 +16,7 @@ module Terminal
     ##
     # Rows array.
     
-    attr_writer :rows
+    attr_accessor :rows
     
     ##
     # Generates a ASCII table with the given _options_.
@@ -26,12 +26,12 @@ module Terminal
       self.headings = options.fetch :headings, []
       @rows = []
       options.fetch(:rows, []).each { |row| add_row row }
-      yield_or_eval(&block) if block
+      yield_or_eval &block if block
     end
 
-    def headings= h
-      @headings = h
-      recalc_column_lengths @headings
+    def headings= array
+      @headings = array
+      recalc_column_lengths array
     end
 
     ##
@@ -65,7 +65,7 @@ module Terminal
         else
           width = length_of_column(i)
         end
-        Heading.new( width, heading).render
+        Heading.new(width, heading).render
       end.join(Y) + Y
     end
     
@@ -73,7 +73,7 @@ module Terminal
     # Render the given _row_.
 
     def render_row row
-      if row == :separator
+      if row.separator?
         separator
       else
         Y + row.map_with_index do |cell, i|
@@ -110,9 +110,9 @@ module Terminal
     ##
     # Add a row. 
     
-    def add_row row
-      @rows << row
-      recalc_column_lengths row
+    def add_row array
+      @rows << Row.new(self, array)
+      recalc_column_lengths array
     end
 
     def recalc_column_lengths row
@@ -133,7 +133,7 @@ module Terminal
             length_in_columns = (cell_length - spacing_length)
             cell_length = (length_in_columns.to_f / colspan).ceil
           end
-          if (@column_lengths[i] || 0) < cell_length
+          if @column_lengths[i].to_i < cell_length
             @column_lengths[i] = cell_length
           end
           i = i + 1
@@ -146,7 +146,7 @@ module Terminal
     # Add a separator.
 
     def add_separator
-      @rows << :separator
+      @rows << Row.new(self, :separator)
     end
 
     ##
@@ -160,7 +160,9 @@ module Terminal
     # Return column _n_.
     
     def column n
-      rows.map { |row| row[n] }.compact 
+      rows.map { |row| 
+        row[n] 
+      }.compact 
     end
     
     ##
@@ -247,7 +249,7 @@ module Terminal
     # Return rows without separator rows.
 
     def rows
-      @rows.reject { |row| row == :separator }
+      @rows.reject { |row| row.separator? }
     end
 
     ##
