@@ -74,44 +74,6 @@ module Terminal
       @table.column(0).should == [{ :value => 'a', :align => :left }, 'b', 'c']
     end
 
-    it "should determine length of largest cell in a column" do
-      @table << ['foo', 'bar']
-      @table << ['big foo', 'big foo bar']
-      @table.length_of_largest_cell_in_column(1).should == 11
-    end
-
-    it "should determine length of largest cell in a column with multi-column rows" do
-      @table << [1,2]
-      @table << [{:value => '123456789', :colspan => 2}]
-      # +-----+-----+
-      # | 1   | 2   |
-      # | 123456789 |
-      #
-      @table.length_of_largest_cell_in_column(0).should == 3
-      @table.length_of_largest_cell_in_column(1).should == 3
-
-      @table.render.should == <<-EOF.deindent
-        +-----+-----+
-        | 1   | 2   |
-        | 123456789 |
-        +-----+-----+
-      EOF
-    end
-
-    it "should determine length of largest cell in a column with multi-column rows, rounding up" do
-      @table << [1,2]
-      @table << [{:value => '1234567890', :colspan => 2}]
-      @table.length_of_largest_cell_in_column(0).should == 4
-      @table.length_of_largest_cell_in_column(1).should == 4
-
-      @table.render.should == <<-EOF.deindent
-        +------+------+
-        | 1    | 2    |
-        | 1234567890  |
-        +------+------+
-      EOF
-    end
-
     it "should find column length" do
       @table << ['foo', 'bar', 'a']
       @table << ['big foo', 'big foo bar']
