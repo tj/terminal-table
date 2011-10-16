@@ -44,6 +44,19 @@ module Terminal
         +---+---+----+
       EOF
     end
+    
+    it "should render tables with colspan in first row properly" do
+      @table << [{:value => "7", :colspan => 2}, 88]
+      @table << [1,2,3]
+      @table << [4,5,6]
+      @table.render.should == <<-EOF.deindent
+        +---+---+----+
+        | 7     | 88 |
+        | 1 | 2 | 3  |
+        | 4 | 5 | 6  |
+        +---+---+----+
+      EOF
+    end
 
     it "should count columns" do
       @table << [1, 2, 3]
