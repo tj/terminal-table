@@ -32,8 +32,8 @@ module Terminal
     end
 
     def headings= array
-      @headings = array
-      recalc_column_widths array
+      @headings = Row.new(self, array)
+      recalc_column_widths @headings
     end
 
     ##
@@ -42,63 +42,16 @@ module Terminal
     def render
       buffer = [separator, "\n"]
       if has_headings?
-        buffer << render_headings
+        buffer << @headings.render
         buffer << "\n" << separator << "\n"
       end
       buffer << @rows.map do |row| 
-        render_row(row)
+        row.render
       end.join("\n")
       buffer << "\n" << separator << "\n"
       buffer.join
     end
     alias :to_s :render
-    
-    ##
-    # Render headings.
-
-    def render_headings
-      Y + @headings.map_with_index do |heading, i|
-        width = 0
-        if heading.is_a?(Hash) and !heading[:colspan].nil?
-          i.upto(i + heading[:colspan] - 1) do |col|
-            width += column_width(col)
-          end
-          width += (heading[:colspan] - 1) * (Y.length + 2)
-        else
-          width = column_width(i)
-        end
-        Heading.new(width, heading).render
-      end.join(Y) + Y
-    end
-    
-    ##
-    # Render the given _row_.
-
-    def render_row row
-      if row.separator?
-        separator
-      else
-        Y + row.map_with_index do |cell, i|
-          render_cell(cell, row_to_index(row, i))
-        end.join(Y) + Y
-      end
-    end
-    
-    ##
-    # Render the given _cell_ at index _i_.
-
-    def render_cell cell, i
-      width = 0
-      if cell.is_a?(Hash) and !cell[:colspan].nil?
-        i.upto(i + cell[:colspan] - 1) do |col|
-          width += column_width(col)
-        end
-        width += (cell[:colspan] - 1) * (Y.length + 2)
-      else
-        width = column_width(i)
-      end
-      Cell.new(width, cell).render
-    end
     
     def rows= array
       array.each { |arr| self << arr }
@@ -118,16 +71,16 @@ module Terminal
     
     def add_row array
       @rows << Row.new(self, array)
-      recalc_column_widths array
+      recalc_column_widths @rows.last
     end
 
     def recalc_column_widths row
       if row.is_a?(Symbol) then return end
       i = 0
       row.each do |cell|
-        if cell.is_a?(Hash)
-          colspan = cell[:colspan] || 1
-          cell_value = cell[:value]
+        if cell.is_a?(Cell)
+          colspan = cell.colspan || 1
+          cell_value = cell.value
         else
           colspan = 1
           cell_value = cell
@@ -241,7 +194,7 @@ module Terminal
     def align_column n, alignment
       r = rows
       column(n).each_with_index do |col, i|
-        r[i][n] = { :value => col, :alignment => alignment } unless Hash === col
+        r[i][n].alignment = alignment
       end
     end
     
@@ -276,4 +229,8 @@ module Terminal
       end
     end
   end
+end
+
+if __FILE__ == $0
+  require File.join(File.dirname(__FILE__), '..', '..', 'examples', 'examples')
 end

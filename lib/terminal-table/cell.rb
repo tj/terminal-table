@@ -16,7 +16,7 @@ module Terminal
       ##
       # Cell alignment.
       
-      attr_reader :alignment
+      attr_accessor :alignment
       
       ##
       # Column span.
@@ -24,14 +24,16 @@ module Terminal
       attr_reader :colspan
       
       ##
-      # Initialize with _width_ and _options_.
+      # Initialize with _options_.
       
-      def initialize width, options = nil
-        @width = width
+      def initialize options = nil
         @value, options = options, {} unless Hash === options
         @value = options.fetch :value, value
         @alignment = options.fetch :alignment, :left
         @colspan = options.fetch :colspan, 1
+        @width = options.fetch :width, @value.to_s.size
+        @index = options.fetch :index
+        @table = options.fetch :table
       end
       
       ##
@@ -42,11 +44,19 @@ module Terminal
       end
       alias :to_s :render
       
+      def width
+        padding = (colspan - 1) * 3
+        inner_width = (1..@colspan).to_a.inject(0) do |w, counter|
+          w + @table.column_width(@index + counter - 1)
+        end
+        inner_width + padding
+      end
+      
       ##
       # Cell length.
       
       def length
-        value.to_s.length + 2
+        value.to_s.size + 2
       end
     end
   end

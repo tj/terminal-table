@@ -19,7 +19,17 @@ module Terminal
       
       def initialize table, array
         @table = table
-        @cells = array
+        @cells = if array == :separator
+          array
+        else
+          index = 0
+          array.map do |item| 
+            options = item.is_a?(Hash) ? item : {:value => item, :index => index}
+            cell = Cell.new(options.merge(:index => index, :table => @table))
+            index += cell.colspan
+            cell
+          end
+        end
       end
       
       def [] index
@@ -31,7 +41,7 @@ module Terminal
       end
       
       def each &block
-        cells.each &block
+        cells.each &block unless separator?
       end
       
       def method_missing m, &block
@@ -44,6 +54,13 @@ module Terminal
       
       def render
         
+          if separator?
+            @table.separator
+          else
+            Y + self.map_with_index do |cell, i|
+              cell.render
+            end.join(Y) + Y
+          end
       end
       
       def separator?
