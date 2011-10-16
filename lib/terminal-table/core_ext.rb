@@ -22,7 +22,7 @@ class Object
     if block.arity > 0
       yield self
     else
-      self.instance_eval &block
+      self.instance_eval(&block)
     end
   end
 end
