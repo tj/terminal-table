@@ -219,8 +219,11 @@ module Terminal
     # Return total number of columns available.
      
     def number_of_columns
-      return rows.first.length unless rows.empty?
-      raise Error, 'your table needs some rows'
+      if rows.empty?
+        raise Error, 'your table needs some rows'
+      else
+        rows.map { |r| r.size }.max
+      end
     end
     
     ##
