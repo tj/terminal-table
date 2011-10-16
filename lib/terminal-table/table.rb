@@ -78,13 +78,8 @@ module Terminal
       if row.is_a?(Symbol) then return end
       i = 0
       row.each do |cell|
-        if cell.is_a?(Cell)
-          colspan = cell.colspan || 1
-          cell_value = cell.value
-        else
-          colspan = 1
-          cell_value = cell
-        end
+        colspan = cell.colspan
+        cell_value = cell.value_for_column_width_recalc
         colspan.downto(1) do |j|
           cell_length = cell_value.to_s.length
           if colspan > 1

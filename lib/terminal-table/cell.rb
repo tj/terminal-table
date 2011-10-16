@@ -39,10 +39,18 @@ module Terminal
       ##
       # Render the cell.
       
-      def render
-        " #{value} ".align alignment, width + 2
+      def render(line = 0)
+        " #{lines[line]} ".align alignment, width + 2
       end
       alias :to_s :render
+      
+      def lines
+        @value.to_s.split(/\n/)
+      end
+      
+      def value_for_column_width_recalc
+        lines.sort.last
+      end
       
       def width
         padding = (colspan - 1) * 3
