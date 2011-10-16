@@ -1,3 +1,7 @@
+require 'rubygems'
+require 'term/ansicolor'
+
+class String; include Term::ANSIColor; end
 
 require File.dirname(__FILE__) + '/spec_helper'
 
@@ -22,6 +26,13 @@ describe Terminal::Table do
     cell.lines.should == ['foo', 'barrissimo']
     cell.value_for_column_width_recalc.should == 'barrissimo'
     cell.render(1).should == " barrissimo "
+  end
+  
+  it "should allow colorized content" do
+    cell = Cell.new :value => "foo".red, :table => Terminal::Table.new, :index => 0
+    cell.value.should == "\e[31mfoo\e[0m"
+    cell.value_for_column_width_recalc.should == 'foo'
+    cell.render.should == " \e[31mfoo\e[0m "
   end
 
 end

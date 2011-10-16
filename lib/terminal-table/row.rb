@@ -1,11 +1,7 @@
-
-require File.join(File.dirname(__FILE__), 'table')
-
 module Terminal
   class Table
     class Row
       include Enumerable
-      X, Y, I = Terminal::Table::X, Terminal::Table::Y, Terminal::Table::I
       
       ##
       # Row cells
@@ -57,13 +53,14 @@ module Terminal
       end
       
       def render
+        y = Terminal::Table::Y
         if separator?
           @table.separator
         else
           (0...height).to_a.map do |line|
-            Y + self.map_with_index do |cell, i|
+            y + self.map_with_index do |cell, i|
               cell.render(line)
-            end.join(Y) + Y
+            end.join(y) + y
           end.join("\n")
         end
       end

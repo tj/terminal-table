@@ -1,7 +1,5 @@
-
 $:.unshift File.dirname(__FILE__) + '/../lib'
 require 'terminal-table/import'
-
 
 puts
 puts table(['a', 'b'], [1, 2], [3, 4])
