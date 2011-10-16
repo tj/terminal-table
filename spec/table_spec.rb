@@ -27,8 +27,8 @@ module Terminal
     it "should account for the colspan when selecting columns" do
       @table << [1,2,3]
       @table << [{:value => "4,5", :colspan => 2}, 6]
-      @table.column_with_headings(0).should == [1,{:start_index => 0, :value => "4,5", :colspan => 2}]
-      @table.column_with_headings(1).should == [2,{:start_index => 0, :value => "4,5", :colspan => 2}]
+      @table.column_with_headings(0).should == [1,"4,5"]
+      @table.column_with_headings(1).should == [2,"4,5"]
       @table.column_with_headings(2).should == [3,6]
     end
 
@@ -43,11 +43,6 @@ module Terminal
         | 7     | 88 |
         +---+---+----+
       EOF
-    end
-
-    it "should convert rows to indexes" do
-      @table << [{:value => '7', :colspan => 2}, 88]
-      @table.row_to_index(@table.rows[0], 1).should == 2
     end
 
     it "should count columns" do
@@ -71,58 +66,20 @@ module Terminal
     it "should select columns when using hashes" do
       @table.headings = ['one', 'two']
       @table.rows = [[{ :value => 'a', :align => :left }, 1], ['b', 2], ['c', 3]]
-      @table.column(0).should == [{ :value => 'a', :align => :left }, 'b', 'c']
-    end
-
-    it "should determine length of largest cell in a column" do
-      @table << ['foo', 'bar']
-      @table << ['big foo', 'big foo bar']
-      @table.length_of_largest_cell_in_column(1).should == 11
-    end
-
-    it "should determine length of largest cell in a column with multi-column rows" do
-      @table << [1,2]
-      @table << [{:value => '123456789', :colspan => 2}]
-      # +-----+-----+
-      # | 1   | 2   |
-      # | 123456789 |
-      #
-      @table.length_of_largest_cell_in_column(0).should == 3
-      @table.length_of_largest_cell_in_column(1).should == 3
-
-      @table.render.should == <<-EOF.deindent
-        +-----+-----+
-        | 1   | 2   |
-        | 123456789 |
-        +-----+-----+
-      EOF
-    end
-
-    it "should determine length of largest cell in a column with multi-column rows, rounding up" do
-      @table << [1,2]
-      @table << [{:value => '1234567890', :colspan => 2}]
-      @table.length_of_largest_cell_in_column(0).should == 4
-      @table.length_of_largest_cell_in_column(1).should == 4
-
-      @table.render.should == <<-EOF.deindent
-        +------+------+
-        | 1    | 2    |
-        | 1234567890  |
-        +------+------+
-      EOF
+      @table.column(0).should == ['a', 'b', 'c']
     end
 
     it "should find column length" do
       @table << ['foo', 'bar', 'a']
       @table << ['big foo', 'big foo bar']
-      @table.length_of_column(1).should == 11
+      @table.column_width(1).should == 11
     end
 
     it "should find column length with headings" do
       @table.headings = ['one', 'super long heading']
       @table << ['foo', 'bar', 'a']
       @table << ['big foo', 'big foo bar']
-      @table.length_of_column(1).should == 18
+      @table.column_width(1).should == 18
     end
 
     it "should render separators" do

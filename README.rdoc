@@ -1,4 +1,3 @@
-
 = Terminal Table
 
 Simple, feature rich ASCII table generator.
@@ -15,6 +14,8 @@ Simple, feature rich ASCII table generator.
 * Optional headings
 * Alignment of columns, headings, or cells
 * Supports column span
+* Supports multiline cell content
+* Supports colorized cell content
 * Easy modification of table strings (+, -, |)
 
 == Examples:
