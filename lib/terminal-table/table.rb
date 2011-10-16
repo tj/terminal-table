@@ -113,17 +113,18 @@ module Terminal
     ##
     # Return column _n_.
     
-    def column n
-      rows.map { |row| 
-        row[n] 
+    def column n, method = :value, array = rows
+      array.map { |row| 
+        cell = row[n]
+        cell && method ? cell.__send__(method) : cell
       }.compact 
     end
     
     ##
     # Return _n_ column including headings.
     
-    def column_with_headings n
-      headings_with_rows.map { |row| row_with_hash(row)[n] }.compact
+    def column_with_headings n, method = :value
+      column n, method, headings_with_rows
     end
 
     def row_with_hash row
@@ -160,7 +161,7 @@ module Terminal
     ##
     # Return columns.
     
-    def columns 
+    def columns
       (0...number_of_columns).map { |n| column n } 
     end
     
@@ -219,8 +220,8 @@ module Terminal
     # if it contains the same headings and rows.
 
     def == other
-      if other.respond_to? :headings and other.respond_to? :rows
-        @headings == other.headings and rows == other.rows
+      if other.respond_to? :render and other.respond_to? :rows
+        self.headings == other.headings and self.rows == other.rows
       end
     end
   end

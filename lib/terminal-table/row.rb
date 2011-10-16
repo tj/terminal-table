@@ -44,9 +44,9 @@ module Terminal
         cells.each &block unless separator?
       end
       
-      def method_missing m, &block
+      def method_missing m, *args, &block
         if cells.respond_to?(m)
-          cells.__send__(m, &block)
+          cells.__send__(m, *args, &block)
         else
           super
         end
@@ -71,7 +71,6 @@ module Terminal
       def separator?
         cells == :separator
       end
-      
     end
   end
 end
