@@ -48,8 +48,13 @@ module Terminal
         @value.to_s.split(/\n/)
       end
       
+      # Returns the longest line in the cell and
+      # removes all ANSI escape sequences (e.g. color)
       def value_for_column_width_recalc
-        lines.sort_by { |s| s.size }.last
+        str = lines.sort_by { |s| s.size }.last.to_s
+        str = str.gsub(/\x1b(\[|\(|\))[;?0-9]*[0-9A-Za-z]/, '')
+        str = str.gsub(/\x1b(\[|\(|\))[;?0-9]*[0-9A-Za-z]/, '')
+        str.gsub(/[\x03|\x1a]/, '')
       end
       
       def width
