@@ -5,13 +5,13 @@ describe Terminal::Table do
   Cell = Terminal::Table::Cell
   
   it "should default alignment to the left" do
-    cell = Cell.new 'foo'
+    cell = Cell.new :value => 'foo', :table => Terminal::Table.new, :index => 0
     cell.value.should == 'foo'
     cell.alignment.should == :left
   end
 
   it "should allow overriding of alignment" do
-    cell = Cell.new :value => 'foo', :alignment => :center
+    cell = Cell.new :value => 'foo', :alignment => :center, :table => Terminal::Table.new, :index => 0
     cell.value.should == 'foo'
     cell.alignment.should == :center
   end
