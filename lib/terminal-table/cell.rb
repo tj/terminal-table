@@ -49,7 +49,7 @@ module Terminal
       end
       
       def value_for_column_width_recalc
-        lines.sort.last
+        lines.sort_by { |s| s.size }.last
       end
       
       def width
