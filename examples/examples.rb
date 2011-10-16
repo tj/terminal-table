@@ -2,6 +2,7 @@
 $:.unshift File.dirname(__FILE__) + '/../lib'
 require 'terminal-table/import'
 
+
 puts
 puts table(['a', 'b'], [1, 2], [3, 4])
 
@@ -38,7 +39,9 @@ puts
 user_table = table do
   self.headings = ['First Name', 'Last Name', {:value => 'Phones', :colspan => 2, :alignment => :center}]
   add_row ['Bob', 'Someone',     '123', '456']
-  add_row ['TJ',  'Holowaychuk', {:value => "No phones", :colspan => 2, :alignment => :center}]
+  add_row :separator
+  add_row ['TJ',  'Holowaychuk', {:value => "No phones\navaiable", :colspan => 2, :alignment => :center}]
+  add_row :separator
   add_row ['Joe', 'Whatever',    '4324', '343242']
 end
 puts user_table

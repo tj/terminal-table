@@ -52,15 +52,20 @@ module Terminal
         end
       end
       
+      def height
+        cells.map { |c| c.lines.count }.max
+      end
+      
       def render
-        
-          if separator?
-            @table.separator
-          else
+        if separator?
+          @table.separator
+        else
+          (0...height).to_a.map do |line|
             Y + self.map_with_index do |cell, i|
-              cell.render
+              cell.render(line)
             end.join(Y) + Y
-          end
+          end.join("\n")
+        end
       end
       
       def separator?
