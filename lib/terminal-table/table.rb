@@ -100,6 +100,10 @@ module Terminal
       Cell.new(width, cell).render
     end
     
+    def rows= array
+      array.each { |arr| self << arr }
+    end
+    
     ##
     # Create a separator based on colum lengths.
     
