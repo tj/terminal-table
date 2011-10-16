@@ -13,11 +13,11 @@ t << [4, 6]
 puts t
 
 puts
-user_table = table do |t|
-  t.headings = 'First Name', 'Last Name', 'Email'
-  t << %w( TJ Holowaychuk tj@vision-media.ca )
-  t << %w( Bob Someone bob@vision-media.ca )
-  t << %w( Joe Whatever bob@vision-media.ca )
+user_table = table do |v|
+  v.headings = 'First Name', 'Last Name', 'Email'
+  v << %w( TJ Holowaychuk tj@vision-media.ca )
+  v << %w( Bob Someone bob@vision-media.ca )
+  v << %w( Joe Whatever bob@vision-media.ca )
 end
 puts user_table
 

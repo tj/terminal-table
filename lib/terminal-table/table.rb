@@ -13,11 +13,6 @@ module Terminal
     
     X, Y, I = '-', '|', '+'
     
-    ##
-    # Rows array.
-    
-    attr_accessor :rows
-    
     attr_reader :headings
     
     ##
@@ -28,7 +23,7 @@ module Terminal
       self.headings = options.fetch :headings, []
       @rows = []
       options.fetch(:rows, []).each { |row| add_row row }
-      yield_or_eval &block if block
+      yield_or_eval(&block) if block
     end
 
     def headings= array
@@ -52,10 +47,6 @@ module Terminal
       buffer.join
     end
     alias :to_s :render
-    
-    def rows= array
-      array.each { |arr| self << arr }
-    end
     
     ##
     # Create a separator based on colum lengths.
@@ -207,7 +198,11 @@ module Terminal
     def rows
       @rows.reject { |row| row.separator? }
     end
-
+    
+    def rows= array
+      array.each { |arr| self << arr }
+    end
+    
     ##
     # Return rows including separator rows.
 
@@ -225,8 +220,4 @@ module Terminal
       end
     end
   end
-end
-
-if __FILE__ == $0
-  require File.join(File.dirname(__FILE__), '..', '..', 'examples', 'examples')
 end
