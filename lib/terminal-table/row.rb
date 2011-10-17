@@ -40,6 +40,10 @@ module Terminal
         cells.each &block unless separator?
       end
       
+      def height
+        cells.map { |c| c.lines.count }.max
+      end
+      
       def method_missing m, *args, &block
         if cells.respond_to?(m)
           cells.__send__(m, *args, &block)
@@ -48,17 +52,13 @@ module Terminal
         end
       end
       
-      def height
-        cells.map { |c| c.lines.count }.max
-      end
-      
       def render
         y = Terminal::Table::Y
         if separator?
           @table.separator
         else
           (0...height).to_a.map do |line|
-            y + self.map_with_index do |cell, i|
+            y + cells.map do |cell|
               cell.render(line)
             end.join(y) + y
           end.join("\n")

@@ -14,11 +14,6 @@ module Terminal
       attr_reader :value
       
       ##
-      # Cell alignment.
-      
-      attr_accessor :alignment
-      
-      ##
       # Column span.
       
       attr_reader :colspan
@@ -29,27 +24,46 @@ module Terminal
       def initialize options = nil
         @value, options = options, {} unless Hash === options
         @value = options.fetch :value, value
-        @alignment = options.fetch :alignment, :left
+        @alignment = options.fetch :alignment, nil
         @colspan = options.fetch :colspan, 1
         @width = options.fetch :width, @value.to_s.size
         @index = options.fetch :index
         @table = options.fetch :table
       end
       
-      ##
-      # Render the cell.
-      
-      def render(line = 0)
-        " #{lines[line]} ".align alignment, width + 2
+      def alignment?
+        !@alignment.nil?
       end
-      alias :to_s :render
+      
+      def alignment
+        @alignment || :left
+      end
+      
+      def alignment=(val)
+        supported = %w(left center right)
+        if supported.include?(val.to_s)
+          @alignment = val
+        else
+          raise "Aligment must be one of: #{supported.join(' ')}"
+        end
+      end
       
       def lines
         @value.to_s.split(/\n/)
       end
       
+      ##
+      # Render the cell.
+      
+      def render(line = 0)
+        " #{lines[line]} ".align(alignment, width + 2)
+      end
+      alias :to_s :render
+      
+      ##
       # Returns the longest line in the cell and
       # removes all ANSI escape sequences (e.g. color)
+      
       def value_for_column_width_recalc
         str = lines.sort_by { |s| s.size }.last.to_s
         str = str.gsub(/\x1b(\[|\(|\))[;?0-9]*[0-9A-Za-z]/, '')
@@ -57,19 +71,15 @@ module Terminal
         str.gsub(/[\x03|\x1a]/, '')
       end
       
+      ##
+      # Returns the width of this cell
+      
       def width
-        padding = (colspan - 1) * 3
+        padding = (colspan - 1) * (2 + @table.class::Y.length)
         inner_width = (1..@colspan).to_a.inject(0) do |w, counter|
           w + @table.column_width(@index + counter - 1)
         end
         inner_width + padding
-      end
-      
-      ##
-      # Cell length.
-      
-      def length
-        value.to_s.size + 2
       end
     end
   end

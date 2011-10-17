@@ -93,7 +93,6 @@ module Terminal
       @table.add_separator
       @table << ['b', 2]
       @table.rows.size.should == 2
-      @table.all_rows.size.should == 3
     end
 
     it "should bitch and complain when you have no rows" do
@@ -113,6 +112,42 @@ module Terminal
         | b    | 2   |
         | c    | 3   |
         +------+-----+
+      EOF
+    end
+
+    it "should render width properly" do
+      @table.headings = ['Char', 'Num']
+      @table << ['a', 1]
+      @table << ['b', 2]
+      @table << ['c', 3]
+      @table.width = 21
+      @table.render.should == <<-EOF.deindent
+        +---------+---------+
+        | Char    | Num     |
+        +---------+---------+
+        | a       | 1       |
+        | b       | 2       |
+        | c       | 3       |
+        +---------+---------+
+      EOF
+    end
+
+    it "should render title properly" do
+      @table.title = "Title"
+      @table.headings = ['Char', 'Num']
+      @table << ['a', 1]
+      @table << ['b', 2]
+      @table << ['c', 3]
+      @table.render.should == <<-EOF.deindent
+        +-------+-----+
+        |    Title    |
+        +-------+-----+
+        | Char  | Num |
+        +-------+-----+
+        | a     | 1   |
+        | b     | 2   |
+        | c     | 3   |
+        +-------+-----+
       EOF
     end
 
@@ -401,6 +436,80 @@ module Terminal
         | c    | 7 | 8 | 9 |
         +------+---+---+---+
       EOF
+    end
+    
+    it "should handle multiple colspan" do
+      @table.headings = [
+        'name',
+        { :value => 'Values', :alignment => :right, :colspan => 2},
+        { :value => 'Other values', :alignment => :right, :colspan => 2},
+        { :value => 'Column 3', :alignment => :right, :colspan => 2}
+      ]
+
+      3.times do |row_index|
+        row = ["row ##{row_index+1}"]
+        6.times do |i|
+          row << row_index*6 + i
+        end
+        @table.add_row(row)
+      end
+
+      @table.render.should == <<-EOF.deindent
+        +--------+----+----+-------+-------+-----+-----+
+        | name   |  Values |  Other values |  Column 3 |
+        +--------+----+----+-------+-------+-----+-----+
+        | row #1 | 0  | 1  | 2     | 3     | 4   | 5   |
+        | row #2 | 6  | 7  | 8     | 9     | 10  | 11  |
+        | row #3 | 12 | 13 | 14    | 15    | 16  | 17  |
+        +--------+----+----+-------+-------+-----+-----+
+      EOF
+    end
+    
+    it "should render a table with only X cell borders" do
+      Terminal::Table::X = "-"
+      Terminal::Table::Y = ""
+      Terminal::Table::I = ""
+      
+      @table.headings = ['name', { :value => 'values', :alignment => :right, :colspan => 3}]
+      @table.headings = ['name', { :value => 'values', :colspan => 3}]
+      @table.rows = [['a', 1, 2, 3], ['b', 4, 5, 6], ['c', 7, 8, 9]]
+
+      @table.render.should == <<-EOF.strip
+---------------
+ name  values  
+---------------
+ a     1  2  3 
+ b     4  5  6 
+ c     7  8  9 
+---------------
+      EOF
+      
+      Terminal::Table::X = "-"
+      Terminal::Table::Y = "|"
+      Terminal::Table::I = "+"
+    end
+    
+    it "should render a table without cell borders" do
+      Terminal::Table::X = ""
+      Terminal::Table::Y = ""
+      Terminal::Table::I = ""
+
+      @table.headings = ['name', { :value => 'values', :alignment => :right, :colspan => 3}]
+      @table.headings = ['name', { :value => 'values', :colspan => 3}]
+      @table.rows = [['a', 1, 2, 3], ['b', 4, 5, 6], ['c', 7, 8, 9]]
+
+      @table.render.should == <<-EOF
+
+ name  values  
+
+ a     1  2  3 
+ b     4  5  6 
+ c     7  8  9 
+      EOF
+
+      Terminal::Table::X = "-"
+      Terminal::Table::Y = "|"
+      Terminal::Table::I = "+"
     end
   end
 end
