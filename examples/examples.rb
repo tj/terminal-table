@@ -14,6 +14,7 @@ puts t
 
 puts
 user_table = table do |v|
+  v.title = "Contact Information"
   v.headings = 'First Name', 'Last Name', 'Email'
   v << %w( TJ Holowaychuk tj@vision-media.ca )
   v << %w( Bob Someone bob@vision-media.ca )

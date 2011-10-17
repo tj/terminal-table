@@ -13,6 +13,7 @@ module Terminal
     
     X, Y, I = '-', '|', '+'
     
+    attr_reader :title
     attr_reader :headings
     attr_accessor :width
     
@@ -112,6 +113,11 @@ module Terminal
     def render
       @seperator = nil
       buffer = [separator]
+      unless @title.nil?
+        opts = {:value => @title, :alignment => :center, :colspan => number_of_columns}
+        buffer << Row.new(self, [opts]).render
+        buffer << separator
+      end
       unless @headings.empty?
         buffer << @headings.render
         buffer << separator
@@ -136,16 +142,6 @@ module Terminal
     end
 
     ##
-    # Check if _other_ is equal to self. _other_ is considered equal
-    # if it contains the same headings and rows.
-
-    def == other
-      if other.respond_to? :render and other.respond_to? :rows
-        self.headings == other.headings and self.rows == other.rows
-      end
-    end
-
-    ##
     # Create a separator based on colum lengths.
     
     def separator
@@ -156,6 +152,21 @@ module Terminal
       end
     end
     
+    def title=(title)
+      @title = title
+      recalc_column_widths Row.new(self, [title])
+    end
+    
+    ##
+    # Check if _other_ is equal to self. _other_ is considered equal
+    # if it contains the same headings and rows.
+
+    def == other
+      if other.respond_to? :render and other.respond_to? :rows
+        self.headings == other.headings and self.rows == other.rows
+      end
+    end
+
     private
     
     def columns_width
@@ -203,7 +214,6 @@ module Terminal
     def headings_with_rows
       [@headings] + rows
     end
-    
     
     def yield_or_eval &block
       return unless block
