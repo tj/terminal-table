@@ -34,5 +34,13 @@ describe Terminal::Table do
     cell.value_for_column_width_recalc.should == 'foo'
     cell.render.should == " \e[31mfoo\e[0m "
   end
+  
+  it "should render padding properly" do
+    @table = Terminal::Table.new(:rows => [['foo', '2'], ['3', '4']], :style => {:padding_right => 3})
+    cell = @table.rows.first.cells.first
+    cell.value.should == 'foo'
+    cell.alignment.should == :left
+    cell.render.should == " foo   "
+  end
 
 end

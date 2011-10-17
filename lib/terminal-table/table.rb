@@ -8,24 +8,21 @@ module Terminal
     
     Error = Class.new StandardError
     
-    ##
-    # Table characters, x axis, y axis, and intersection.
-    
-    X, Y, I = '-', '|', '+'
-    
     attr_reader :title
     attr_reader :headings
     attr_accessor :width
+    
+    attr_reader :style
     
     ##
     # Generates a ASCII table with the given _options_.
   
     def initialize options = {}, &block
       @column_widths = []
+      self.style = options.fetch :style, {}
+      self.title = options.fetch :title, nil
       self.headings = options.fetch :headings, []
-      @rows = []
-      @width = options[:width]
-      options.fetch(:rows, []).each { |row| add_row row }
+      self.rows = options.fetch :rows, []
       yield_or_eval(&block) if block
     end
     
@@ -57,19 +54,11 @@ module Terminal
     end
     
     def cell_spacing
-      cell_padding + Y.length
+      cell_padding + style.border_y.length
     end
     
     def cell_padding
-      cell_padding_left + cell_padding_right
-    end
-    
-    def cell_padding_left
-      1
-    end
-    
-    def cell_padding_right
-      1
+      style.padding_left + style.padding_right
     end
     
     ##
@@ -155,6 +144,7 @@ module Terminal
     end
     
     def rows= array
+      @rows = []
       array.each { |arr| self << arr }
     end
 
@@ -163,10 +153,18 @@ module Terminal
     
     def separator
       @separator ||= begin
-        I + (0...number_of_columns).to_a.map do |i|
-          X * (column_width(i) + cell_padding) 
-        end.join(I) + I 
+        style.border_i + (0...number_of_columns).to_a.map do |i|
+          style.border_x * (column_width(i) + cell_padding) 
+        end.join(style.border_i) + style.border_i
       end
+    end
+    
+    def style=(options)
+      style.apply options
+    end
+    
+    def style
+      @style ||= Style.new
     end
     
     def title=(title)
@@ -187,12 +185,12 @@ module Terminal
     private
     
     def columns_width
-      @column_widths.inject(0) { |s, i| s + i + cell_spacing } + Y.length
+      @column_widths.inject(0) { |s, i| s + i + cell_spacing } + style.border_y.length
     end
     
     def additional_column_widths
-      return [] if @width.nil?
-      spacing = @width - columns_width
+      return [] if style.width.nil?
+      spacing = style.width - columns_width
       if spacing < 0
         raise "Table width exceeds wanted width of #{wanted} characters."
       else

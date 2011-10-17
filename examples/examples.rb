@@ -6,6 +6,7 @@ puts table(['a', 'b'], [1, 2], [3, 4])
 
 puts
 t = table ['a', 'b']
+t.style = {:padding_left => 2, :width => 80}
 t << [1, 2]
 t << [3, 4]
 t << :separator

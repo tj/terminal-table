@@ -53,7 +53,7 @@ module Terminal
       end
       
       def render
-        y = Terminal::Table::Y
+        y = @table.style.border_y
         if separator?
           @table.separator
         else

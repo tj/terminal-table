@@ -56,9 +56,9 @@ module Terminal
       # Render the cell.
       
       def render(line = 0)
-        left = " " * table.cell_padding_left
-        right = " " * table.cell_padding_right
-        "#{left}#{lines[line]}#{right}".align(alignment, width + table.cell_padding)
+        left = " " * @table.style.padding_left
+        right = " " * @table.style.padding_right
+        "#{left}#{lines[line]}#{right}".align(alignment, width + @table.cell_padding)
       end
       alias :to_s :render
       
