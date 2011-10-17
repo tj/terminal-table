@@ -4,7 +4,6 @@ module Terminal
     
     attr_reader :title
     attr_reader :headings
-    attr_accessor :width
     
     ##
     # Generates a ASCII table with the given _options_.
