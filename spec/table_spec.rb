@@ -93,7 +93,6 @@ module Terminal
       @table.add_separator
       @table << ['b', 2]
       @table.rows.size.should == 2
-      @table.all_rows.size.should == 3
     end
 
     it "should bitch and complain when you have no rows" do
@@ -113,6 +112,24 @@ module Terminal
         | b    | 2   |
         | c    | 3   |
         +------+-----+
+      EOF
+    end
+
+    it "should render width properly" do
+      @table.headings = ['Char', 'Num']
+      @table << ['a', 1]
+      @table << ['b', 2]
+      @table << ['c', 3]
+      @table.width = 21
+      @table.additional_column_widths == 21
+      @table.render.should == <<-EOF.deindent
+        +---------+---------+
+        | Char    | Num     |
+        +---------+---------+
+        | a       | 1       |
+        | b       | 2       |
+        | c       | 3       |
+        +---------+---------+
       EOF
     end
 
