@@ -110,6 +110,7 @@ module Terminal
     # Render the table.
   
     def render
+      @seperator = nil
       buffer = [separator]
       unless @headings.empty?
         buffer << @headings.render
@@ -194,37 +195,6 @@ module Terminal
           i = i + 1
         end
       end
-    end
-
-    def row_with_hash row
-      # this method duplicates the multi-column columns in each column they are in
-      index = 0
-      row.inject [] do |columns, column|
-        if column.is_a?(Hash) && column[:colspan] && column[:colspan] > 1
-          column[:start_index] = index
-          column[:colspan].times do
-            columns << column
-            index += 1
-          end
-        else
-          columns << column
-          index += 1
-        end
-        columns
-      end
-    end
-
-    def row_to_index row, index
-      new_index = -1
-      0.upto(index) do |i|
-        column = row[i]
-        if column.is_a?(Hash) && column[:colspan] && column[:colspan] > 1 && index != i
-          new_index = new_index + column[:colspan]
-        else
-          new_index += 1
-        end
-      end
-      return new_index
     end
     
     ##

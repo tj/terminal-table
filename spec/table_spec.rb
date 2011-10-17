@@ -121,7 +121,6 @@ module Terminal
       @table << ['b', 2]
       @table << ['c', 3]
       @table.width = 21
-      @table.additional_column_widths == 21
       @table.render.should == <<-EOF.deindent
         +---------+---------+
         | Char    | Num     |
