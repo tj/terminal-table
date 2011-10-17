@@ -20,6 +20,14 @@ describe Terminal::Table do
     cell.alignment.should == :center
   end
   
+  it "should allow :left, :right and :center for alignment" do
+    @cell = Cell.new :value => 'foo', :table => Terminal::Table.new, :index => 0
+    @cell.alignment = :left
+    @cell.alignment = :right
+    @cell.alignment = :center
+    lambda { @cell.alignment = "foo" }.should raise_error
+  end
+  
   it "should allow multiline content" do
     cell = Cell.new :value => "foo\nbarrissimo", :table => Terminal::Table.new, :index => 0
     cell.value.should == "foo\nbarrissimo"
