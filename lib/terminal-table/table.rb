@@ -2,12 +2,6 @@
 module Terminal
   class Table
     
-    #--
-    # Exceptions
-    #++
-    
-    Error = Class.new StandardError
-    
     attr_reader :title
     attr_reader :headings
     attr_accessor :width
@@ -96,11 +90,7 @@ module Terminal
     # Return total number of columns available.
      
     def number_of_columns
-      if rows.empty?
-        raise Error, 'your table needs some rows'
-      else
-        rows.map { |r| r.size }.max
-      end
+      headings_with_rows.map { |r| r.size }.max
     end
 
     ##

@@ -95,8 +95,11 @@ module Terminal
       @table.rows.size.should == 2
     end
 
-    it "should bitch and complain when you have no rows" do
-      lambda { @table.render }.should raise_error(Terminal::Table::Error)
+    it "should render an empty table properly" do
+      @table.render.should == <<-EOF.deindent
+        ++
+        ++
+      EOF
     end
 
     it "should render properly" do
