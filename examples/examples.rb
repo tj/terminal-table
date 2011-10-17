@@ -22,6 +22,16 @@ end
 puts user_table
 
 puts
+user_table = table do |v|
+  v.width = 80
+  v.headings = 'First Name', 'Last Name', 'Email'
+  v << %w( TJ Holowaychuk tj@vision-media.ca )
+  v << %w( Bob Someone bob@vision-media.ca )
+  v << %w( Joe Whatever bob@vision-media.ca )
+end
+puts user_table
+
+puts
 user_table = table do
   self.headings = 'First Name', 'Last Name', 'Email'
   add_row ['TJ',  'Holowaychuk', 'tj@vision-media.ca']

@@ -14,6 +14,7 @@ module Terminal
     X, Y, I = '-', '|', '+'
     
     attr_reader :headings
+    attr_accessor :width
     
     ##
     # Generates a ASCII table with the given _options_.
@@ -22,6 +23,7 @@ module Terminal
       @column_widths = []
       self.headings = options.fetch :headings, []
       @rows = []
+      @width = options[:width]
       options.fetch(:rows, []).each { |row| add_row row }
       yield_or_eval(&block) if block
     end
@@ -80,7 +82,8 @@ module Terminal
     # Return length of column _n_.
     
     def column_width n
-      @column_widths[n] || 0
+      width = @column_widths[n] || 0
+      width + additional_column_widths[n].to_i
     end
     alias length_of_column column_width # for legacy support
     
@@ -153,6 +156,24 @@ module Terminal
     end
     
     private
+    
+    def columns_width
+      @column_widths.inject(0) { |s, i| s + i + 2 + Y.length } + Y.length
+    end
+    
+    def additional_column_widths
+      return [] if @width.nil?
+      spacing = @width - columns_width
+      if spacing < 0
+        raise "Table width exceeds wanted width of #{wanted} characters."
+      else
+        per_col = spacing / number_of_columns
+        arr = (1...number_of_columns).to_a.map { |i| per_col }
+        other_cols = arr.inject(0) { |s, i| s + i }
+        arr << spacing - other_cols
+        arr
+      end
+    end
     
     def recalc_column_widths row
       if row.is_a?(Symbol) then return end
