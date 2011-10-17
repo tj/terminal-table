@@ -49,7 +49,7 @@ module Terminal
     # Add a separator.
 
     def add_separator
-      @rows << Row.new(self, :separator)
+      self << :separator
     end
 
     ##
@@ -107,16 +107,16 @@ module Terminal
     # Render the table.
   
     def render
-      buffer = [separator, "\n"]
-      if !!@headings
+      buffer = [separator]
+      unless @headings.empty?
         buffer << @headings.render
-        buffer << "\n" << separator << "\n"
+        buffer << separator
       end
-      buffer << @rows.map do |row| 
+      buffer += @rows.map do |row| 
         row.render
-      end.join("\n")
-      buffer << "\n" << separator << "\n"
-      buffer.join
+      end
+      buffer << separator
+      buffer.join("\n")
     end
     alias :to_s :render
     
@@ -145,9 +145,11 @@ module Terminal
     # Create a separator based on colum lengths.
     
     def separator
-      I + columns.collect_with_index do |col, i| 
-        X * (column_width(i) + 2) 
-      end.join(I) + I 
+      @separator ||= begin
+        I + columns.collect_with_index do |col, i| 
+          X * (column_width(i) + 2) 
+        end.join(I) + I 
+      end
     end
     
     private
