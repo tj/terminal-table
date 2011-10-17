@@ -12,8 +12,6 @@ module Terminal
     attr_reader :headings
     attr_accessor :width
     
-    attr_reader :style
-    
     ##
     # Generates a ASCII table with the given _options_.
   
