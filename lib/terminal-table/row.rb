@@ -40,16 +40,16 @@ module Terminal
         cells.each &block unless separator?
       end
       
+      def height
+        cells.map { |c| c.lines.count }.max
+      end
+      
       def method_missing m, *args, &block
         if cells.respond_to?(m)
           cells.__send__(m, *args, &block)
         else
           super
         end
-      end
-      
-      def height
-        cells.map { |c| c.lines.count }.max
       end
       
       def render

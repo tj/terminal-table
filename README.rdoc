@@ -13,6 +13,7 @@ Simple, feature rich ASCII table generator.
 * Simple
 * Optional headings
 * Alignment of columns, headings, or cells
+* Supports arbitrary width
 * Supports column span
 * Supports multiline cell content
 * Supports colorized cell content
