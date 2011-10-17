@@ -35,7 +35,8 @@ module Terminal
     def align_column n, alignment
       r = rows
       column(n).each_with_index do |col, i|
-        r[i][n].alignment = alignment
+        cell = r[i][n]
+        cell.alignment = alignment unless cell.alignment?
       end
     end
     

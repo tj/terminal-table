@@ -14,11 +14,6 @@ module Terminal
       attr_reader :value
       
       ##
-      # Cell alignment.
-      
-      attr_accessor :alignment
-      
-      ##
       # Column span.
       
       attr_reader :colspan
@@ -29,11 +24,28 @@ module Terminal
       def initialize options = nil
         @value, options = options, {} unless Hash === options
         @value = options.fetch :value, value
-        @alignment = options.fetch :alignment, :left
+        @alignment = options.fetch :alignment, nil
         @colspan = options.fetch :colspan, 1
         @width = options.fetch :width, @value.to_s.size
         @index = options.fetch :index
         @table = options.fetch :table
+      end
+      
+      def alignment?
+        !@alignment.nil?
+      end
+      
+      def alignment
+        @alignment || :left
+      end
+      
+      def alignment=(val)
+        supported = %w(left center right)
+        if supported.include?(val.to_s)
+          @alignment = val
+        else
+          raise "Aligment must be one of: #{supported.join(' ')}"
+        end
       end
       
       def lines
@@ -44,7 +56,7 @@ module Terminal
       # Render the cell.
       
       def render(line = 0)
-        " #{lines[line]} ".align alignment, width + 2
+        " #{lines[line]} ".align(alignment, width + 2)
       end
       alias :to_s :render
       
