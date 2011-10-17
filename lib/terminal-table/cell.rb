@@ -75,7 +75,7 @@ module Terminal
       # Returns the width of this cell
       
       def width
-        padding = (colspan - 1) * 3
+        padding = (colspan - 1) * (2 + @table.class::Y.length)
         inner_width = (1..@colspan).to_a.inject(0) do |w, counter|
           w + @table.column_width(@index + counter - 1)
         end

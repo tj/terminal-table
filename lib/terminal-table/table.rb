@@ -197,7 +197,7 @@ module Terminal
         colspan.downto(1) do |j|
           cell_length = cell_value.to_s.length
           if colspan > 1
-            spacing_length = (3 * (colspan - 1))
+            spacing_length = (2 + Y.length) * (colspan - 1)
             length_in_columns = (cell_length - spacing_length)
             cell_length = (length_in_columns.to_f / colspan).ceil
           end

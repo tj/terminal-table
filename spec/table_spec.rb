@@ -464,5 +464,52 @@ module Terminal
         +--------+----+----+-------+-------+-----+-----+
       EOF
     end
+    
+    it "should render a table with only X cell borders" do
+      Terminal::Table::X = "-"
+      Terminal::Table::Y = ""
+      Terminal::Table::I = ""
+      
+      @table.headings = ['name', { :value => 'values', :alignment => :right, :colspan => 3}]
+      @table.headings = ['name', { :value => 'values', :colspan => 3}]
+      @table.rows = [['a', 1, 2, 3], ['b', 4, 5, 6], ['c', 7, 8, 9]]
+
+      @table.render.should == <<-EOF.strip
+---------------
+ name  values  
+---------------
+ a     1  2  3 
+ b     4  5  6 
+ c     7  8  9 
+---------------
+      EOF
+      
+      Terminal::Table::X = "-"
+      Terminal::Table::Y = "|"
+      Terminal::Table::I = "+"
+    end
+    
+    it "should render a table without cell borders" do
+      Terminal::Table::X = ""
+      Terminal::Table::Y = ""
+      Terminal::Table::I = ""
+
+      @table.headings = ['name', { :value => 'values', :alignment => :right, :colspan => 3}]
+      @table.headings = ['name', { :value => 'values', :colspan => 3}]
+      @table.rows = [['a', 1, 2, 3], ['b', 4, 5, 6], ['c', 7, 8, 9]]
+
+      @table.render.should == <<-EOF
+
+ name  values  
+
+ a     1  2  3 
+ b     4  5  6 
+ c     7  8  9 
+      EOF
+
+      Terminal::Table::X = "-"
+      Terminal::Table::Y = "|"
+      Terminal::Table::I = "+"
+    end
   end
 end
