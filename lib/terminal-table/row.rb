@@ -58,7 +58,7 @@ module Terminal
           @table.separator
         else
           (0...height).to_a.map do |line|
-            y + self.map_with_index do |cell, i|
+            y + cells.map do |cell|
               cell.render(line)
             end.join(y) + y
           end.join("\n")
