@@ -55,7 +55,23 @@ module Terminal
     def add_separator
       self << :separator
     end
-
+    
+    def cell_spacing
+      cell_padding + Y.length
+    end
+    
+    def cell_padding
+      cell_padding_left + cell_padding_right
+    end
+    
+    def cell_padding_left
+      1
+    end
+    
+    def cell_padding_right
+      1
+    end
+    
     ##
     # Return column _n_.
     
@@ -148,7 +164,7 @@ module Terminal
     def separator
       @separator ||= begin
         I + (0...number_of_columns).to_a.map do |i|
-          X * (column_width(i) + 2) 
+          X * (column_width(i) + cell_padding) 
         end.join(I) + I 
       end
     end
@@ -171,7 +187,7 @@ module Terminal
     private
     
     def columns_width
-      @column_widths.inject(0) { |s, i| s + i + 2 + Y.length } + Y.length
+      @column_widths.inject(0) { |s, i| s + i + cell_spacing } + Y.length
     end
     
     def additional_column_widths
@@ -197,7 +213,7 @@ module Terminal
         colspan.downto(1) do |j|
           cell_length = cell_value.to_s.length
           if colspan > 1
-            spacing_length = (2 + Y.length) * (colspan - 1)
+            spacing_length = cell_spacing * (colspan - 1)
             length_in_columns = (cell_length - spacing_length)
             cell_length = (length_in_columns.to_f / colspan).ceil
           end

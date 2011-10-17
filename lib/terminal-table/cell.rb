@@ -56,7 +56,9 @@ module Terminal
       # Render the cell.
       
       def render(line = 0)
-        " #{lines[line]} ".align(alignment, width + 2)
+        left = " " * table.cell_padding_left
+        right = " " * table.cell_padding_right
+        "#{left}#{lines[line]}#{right}".align(alignment, width + table.cell_padding)
       end
       alias :to_s :render
       
@@ -75,7 +77,7 @@ module Terminal
       # Returns the width of this cell
       
       def width
-        padding = (colspan - 1) * (2 + @table.class::Y.length)
+        padding = (colspan - 1) * @table.cell_spacing
         inner_width = (1..@colspan).to_a.inject(0) do |w, counter|
           w + @table.column_width(@index + counter - 1)
         end
