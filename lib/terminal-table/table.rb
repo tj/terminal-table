@@ -150,7 +150,7 @@ module Terminal
     
     def separator
       @separator ||= begin
-        I + columns.collect_with_index do |col, i| 
+        I + (0...number_of_columns).to_a.map do |i|
           X * (column_width(i) + 2) 
         end.join(I) + I 
       end
@@ -202,6 +202,16 @@ module Terminal
     
     def headings_with_rows
       [@headings] + rows
+    end
+    
+    
+    def yield_or_eval &block
+      return unless block
+      if block.arity > 0
+        yield self
+      else
+        self.instance_eval(&block)
+      end
     end
   end
 end
