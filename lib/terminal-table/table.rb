@@ -25,7 +25,79 @@ module Terminal
       options.fetch(:rows, []).each { |row| add_row row }
       yield_or_eval(&block) if block
     end
+    
+    ##
+    # Align column _n_ to the given _alignment_ of :center, :left, or :right.
+    
+    def align_column n, alignment
+      r = rows
+      column(n).each_with_index do |col, i|
+        r[i][n].alignment = alignment
+      end
+    end
+    
+    ##
+    # Add a row. 
+    
+    def add_row array
+      @rows << Row.new(self, array)
+      recalc_column_widths @rows.last
+    end
+    alias :<< :add_row
 
+    ##
+    # Add a separator.
+
+    def add_separator
+      @rows << Row.new(self, :separator)
+    end
+
+    ##
+    # Return column _n_.
+    
+    def column n, method = :value, array = rows
+      array.map { |row| 
+        cell = row[n]
+        cell && method ? cell.__send__(method) : cell
+      }.compact 
+    end
+    
+    ##
+    # Return _n_ column including headings.
+    
+    def column_with_headings n, method = :value
+      column n, method, headings_with_rows
+    end
+    
+    ##
+    # Return columns.
+    
+    def columns
+      (0...number_of_columns).map { |n| column n } 
+    end
+    
+    ##
+    # Return length of column _n_.
+    
+    def column_width n
+      @column_widths[n] || 0
+    end
+    alias length_of_column column_width # for legacy support
+    
+    ##
+    # Return total number of columns available.
+     
+    def number_of_columns
+      if rows.empty?
+        raise Error, 'your table needs some rows'
+      else
+        rows.map { |r| r.size }.max
+      end
+    end
+
+    ##
+    # Set the headings
+    
     def headings= array
       @headings = Row.new(self, array)
       recalc_column_widths @headings
@@ -36,7 +108,7 @@ module Terminal
   
     def render
       buffer = [separator, "\n"]
-      if has_headings?
+      if !!@headings
         buffer << @headings.render
         buffer << "\n" << separator << "\n"
       end
@@ -49,6 +121,27 @@ module Terminal
     alias :to_s :render
     
     ##
+    # Return rows without separator rows.
+
+    def rows
+      @rows.reject { |row| row.separator? }
+    end
+    
+    def rows= array
+      array.each { |arr| self << arr }
+    end
+
+    ##
+    # Check if _other_ is equal to self. _other_ is considered equal
+    # if it contains the same headings and rows.
+
+    def == other
+      if other.respond_to? :render and other.respond_to? :rows
+        self.headings == other.headings and self.rows == other.rows
+      end
+    end
+
+    ##
     # Create a separator based on colum lengths.
     
     def separator
@@ -57,14 +150,8 @@ module Terminal
       end.join(I) + I 
     end
     
-    ##
-    # Add a row. 
+    private
     
-    def add_row array
-      @rows << Row.new(self, array)
-      recalc_column_widths @rows.last
-    end
-
     def recalc_column_widths row
       if row.is_a?(Symbol) then return end
       i = 0
@@ -84,38 +171,6 @@ module Terminal
           i = i + 1
         end
       end
-    end
-    alias :<< :add_row
-
-    ##
-    # Add a separator.
-
-    def add_separator
-      @rows << Row.new(self, :separator)
-    end
-
-    ##
-    # Weither or not any headings are present, since they are optional.
-    
-    def has_headings?
-      not @headings.empty?
-    end
-    
-    ##
-    # Return column _n_.
-    
-    def column n, method = :value, array = rows
-      array.map { |row| 
-        cell = row[n]
-        cell && method ? cell.__send__(method) : cell
-      }.compact 
-    end
-    
-    ##
-    # Return _n_ column including headings.
-    
-    def column_with_headings n, method = :value
-      column n, method, headings_with_rows
     end
 
     def row_with_hash row
@@ -150,74 +205,10 @@ module Terminal
     end
     
     ##
-    # Return columns.
-    
-    def columns
-      (0...number_of_columns).map { |n| column n } 
-    end
-    
-    ##
-    # Return length of column _n_.
-    
-    def column_width n
-      @column_widths[n] || 0
-    end
-    alias length_of_column column_width # for legacy support
-    
-    ##
-    # Return total number of columns available.
-     
-    def number_of_columns
-      if rows.empty?
-        raise Error, 'your table needs some rows'
-      else
-        rows.map { |r| r.size }.max
-      end
-    end
-    
-    ##
-    # Align column _n_ to the given _alignment_ of :center, :left, or :right.
-    
-    def align_column n, alignment
-      r = rows
-      column(n).each_with_index do |col, i|
-        r[i][n].alignment = alignment
-      end
-    end
-    
-    ##
     # Return headings combined with rows.
     
     def headings_with_rows
       [@headings] + rows
-    end
-
-    ##
-    # Return rows without separator rows.
-
-    def rows
-      @rows.reject { |row| row.separator? }
-    end
-    
-    def rows= array
-      array.each { |arr| self << arr }
-    end
-    
-    ##
-    # Return rows including separator rows.
-
-    def all_rows
-      @rows
-    end
-
-    ##
-    # Check if _other_ is equal to self. _other_ is considered equal
-    # if it contains the same headings and rows.
-
-    def == other
-      if other.respond_to? :render and other.respond_to? :rows
-        self.headings == other.headings and self.rows == other.rows
-      end
     end
   end
 end
