@@ -6,6 +6,7 @@ puts table(['a', 'b'], [1, 2], [3, 4])
 
 puts
 t = table ['a', 'b']
+t.style = {:padding_left => 2, :width => 80}
 t << [1, 2]
 t << [3, 4]
 t << :separator
@@ -24,7 +25,7 @@ puts user_table
 
 puts
 user_table = table do |v|
-  v.width = 80
+  v.style.width = 80
   v.headings = 'First Name', 'Last Name', 'Email'
   v << %w( TJ Holowaychuk tj@vision-media.ca )
   v << %w( Bob Someone bob@vision-media.ca )
