@@ -85,7 +85,8 @@ module Terminal
     it "should render separators" do
       @table.headings = ['Char', 'Num']
       @table << ['a', 1]
-      @table.separator.should == '+------+-----+'
+      separator = Terminal::Table::Separator.new(@table)
+      separator.render.should == '+------+-----+'
     end
 
     it "should add separator" do
