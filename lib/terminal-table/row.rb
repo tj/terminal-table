@@ -12,15 +12,11 @@ module Terminal
       ##
       # Initialize with _width_ and _options_.
       
-      def initialize table, array
+      def initialize table, array = []
         @cell_index = 0
         @table = table
-        if array == :separator
-          @cells = array
-        else
-          @cells = []
-          array.each { |item| self << item }
-        end
+        @cells = []
+        array.each { |item| self << item }
       end
       
       def add_cell item
@@ -32,36 +28,20 @@ module Terminal
       alias << add_cell
       
       def [] index
-        cells[index] unless separator?
+        cells[index]
       end
       
       def height
         cells.map { |c| c.lines.count }.max
       end
       
-      def empty?
-        cells.empty?
-      end
-      
-      def size
-        cells.size
-      end
-      
       def render
         y = @table.style.border_y
-        if separator?
-          @table.separator
-        else
-          (0...height).to_a.map do |line|
-            y + cells.map do |cell|
-              cell.render(line)
-            end.join(y) + y
-          end.join("\n")
-        end
-      end
-      
-      def separator?
-        cells == :separator
+        (0...height).to_a.map do |line|
+          y + cells.map do |cell|
+            cell.render(line)
+          end.join(y) + y
+        end.join("\n")
       end
     end
   end
