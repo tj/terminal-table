@@ -25,7 +25,8 @@ module Terminal
     class Style
       @@defaults = {
         :border_x => "-", :border_y => "|", :border_i => "+",
-        :padding_left => 1, :padding_right => 1
+        :padding_left => 1, :padding_right => 1,
+        :width => nil
       }
       
       attr_accessor :border_x
