@@ -95,8 +95,11 @@ module Terminal
       @table.rows.size.should == 2
     end
 
-    it "should bitch and complain when you have no rows" do
-      lambda { @table.render }.should raise_error(Terminal::Table::Error)
+    it "should render an empty table properly" do
+      @table.render.should == <<-EOF.deindent
+        ++
+        ++
+      EOF
     end
 
     it "should render properly" do
@@ -115,12 +118,30 @@ module Terminal
       EOF
     end
 
+    it "should render styles properly" do
+      @table.headings = ['Char', 'Num']
+      @table.style = {:border_x => "=", :border_y => ":", :border_i => "x", :padding_left => 0, :padding_right => 2}
+      @table << ['a', 1]
+      @table << ['b', 2]
+      @table << ['c', 3]
+      @table.style.padding_right.should == 2
+      @table.render.should == <<-EOF.deindent
+        x======x=====x
+        :Char  :Num  :
+        x======x=====x
+        :a     :1    :
+        :b     :2    :
+        :c     :3    :
+        x======x=====x
+      EOF
+    end
+
     it "should render width properly" do
       @table.headings = ['Char', 'Num']
       @table << ['a', 1]
       @table << ['b', 2]
       @table << ['c', 3]
-      @table.width = 21
+      @table.style.width = 21
       @table.render.should == <<-EOF.deindent
         +---------+---------+
         | Char    | Num     |
@@ -466,10 +487,8 @@ module Terminal
     end
     
     it "should render a table with only X cell borders" do
-      Terminal::Table::X = "-"
-      Terminal::Table::Y = ""
-      Terminal::Table::I = ""
-      
+      @table.style = {:border_x => "-", :border_y => "", :border_i => ""}
+
       @table.headings = ['name', { :value => 'values', :alignment => :right, :colspan => 3}]
       @table.headings = ['name', { :value => 'values', :colspan => 3}]
       @table.rows = [['a', 1, 2, 3], ['b', 4, 5, 6], ['c', 7, 8, 9]]
@@ -483,16 +502,10 @@ module Terminal
  c     7  8  9 
 ---------------
       EOF
-      
-      Terminal::Table::X = "-"
-      Terminal::Table::Y = "|"
-      Terminal::Table::I = "+"
     end
     
     it "should render a table without cell borders" do
-      Terminal::Table::X = ""
-      Terminal::Table::Y = ""
-      Terminal::Table::I = ""
+      @table.style = {:border_x => "", :border_y => "", :border_i => ""}
 
       @table.headings = ['name', { :value => 'values', :alignment => :right, :colspan => 3}]
       @table.headings = ['name', { :value => 'values', :colspan => 3}]
@@ -506,10 +519,6 @@ module Terminal
  b     4  5  6 
  c     7  8  9 
       EOF
-
-      Terminal::Table::X = "-"
-      Terminal::Table::Y = "|"
-      Terminal::Table::I = "+"
     end
   end
 end
