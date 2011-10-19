@@ -1,24 +1,52 @@
 = Terminal Table
 
-Simple, feature rich ASCII table generator.
+== 
 
-== Installation:
+Terminal Table is a fast and simple, yet feature rich ASCII table generator written in Ruby.
 
-  Install [Gemcutter](http://gemcutter.org) then execute:
+== Installation
+
+Install [Gemcutter](http://gemcutter.org) then execute:
+  
   $ sudo gem install terminal-table
 
-== Features:
+== Features
 
-* Fast
-* Simple
-* Optional headings
-* Alignment of columns, headings, or cells
-* Supports arbitrary width
+* Fast and simple
+* Table headings
+* Alignment of entire columns and individual cells
 * Supports column span
 * Supports multiline cell content
 * Supports colorized cell content
-* Easy modification of table strings (+, -, |)
+* Supports table styles (borders, paddings, width)
 
+== Usage
+
+
+To generate a table you have to provide an array of arrays, which are interpreted as rows:
+
+  require 'terminal-table'
+  
+  rows = []
+  rows << ['One', 1]
+  rows << ['Three', 2]
+  rows << ['Two', 3]
+  Terminal::Table.new :rows => rows
+
+To add a head to the table:
+
+  Terminal::Table.new :headings => ['Word', 'Number'], :rows => rows
+
+To specifify style options:
+  
+  Terminal::Table.new :headings => ['Word', 'Number'], :rows => rows, :style => {:width => 80}
+  
+To change the default style options:
+
+  Terminal::Style.defaults = {:width => 80}
+
+
+  
 == Examples:
 
   require 'rubygems'
@@ -134,7 +162,7 @@ Simple, feature rich ASCII table generator.
   | JavaScript | 30  |
   +------------+-----+
 
-== License:
+== License
 
 (The MIT License)
 
