@@ -32,8 +32,9 @@ module Terminal
     # Add a row. 
     
     def add_row array
-      @rows << Row.new(self, array)
-      recalc_column_widths @rows.last
+      row = array == :separator ? Row.new(self, :separator) : Row.new(self, array)
+      @rows << row
+      recalc_column_widths row
     end
     alias :<< :add_row
 
@@ -190,9 +191,9 @@ module Terminal
     end
     
     def recalc_column_widths row
-      if row.is_a?(Symbol) then return end
+      return if row.separator?
       i = 0
-      row.each do |cell|
+      row.cells.each do |cell|
         colspan = cell.colspan
         cell_value = cell.value_for_column_width_recalc
         colspan.downto(1) do |j|

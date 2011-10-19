@@ -1,7 +1,6 @@
 module Terminal
   class Table
     class Row
-      include Enumerable
       
       ##
       # Row cells
@@ -14,42 +13,38 @@ module Terminal
       # Initialize with _width_ and _options_.
       
       def initialize table, array
+        @cell_index = 0
         @table = table
-        @cells = if array == :separator
-          array
+        if array == :separator
+          @cells = array
         else
-          index = 0
-          array.map do |item| 
-            options = item.is_a?(Hash) ? item : {:value => item}
-            cell = Cell.new(options.merge(:index => index, :table => @table))
-            index += cell.colspan
-            cell
-          end
+          @cells = []
+          array.each { |item| self << item }
         end
       end
       
+      def add_cell item
+        options = item.is_a?(Hash) ? item : {:value => item}
+        cell = Cell.new(options.merge(:index => @cell_index, :table => @table))
+        @cell_index += cell.colspan
+        @cells << cell
+      end
+      alias << add_cell
+      
       def [] index
         cells[index] unless separator?
-      end
-      
-      def []= index, value
-        cells[index] = value
-      end
-      
-      def each &block
-        cells.each &block unless separator?
       end
       
       def height
         cells.map { |c| c.lines.count }.max
       end
       
-      def method_missing m, *args, &block
-        if cells.respond_to?(m)
-          cells.__send__(m, *args, &block)
-        else
-          super
-        end
+      def empty?
+        cells.empty?
+      end
+      
+      def size
+        cells.size
       end
       
       def render
