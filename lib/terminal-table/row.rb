@@ -20,7 +20,7 @@ module Terminal
         else
           index = 0
           array.map do |item| 
-            options = item.is_a?(Hash) ? item : {:value => item, :index => index}
+            options = item.is_a?(Hash) ? item : {:value => item}
             cell = Cell.new(options.merge(:index => index, :table => @table))
             index += cell.colspan
             cell
