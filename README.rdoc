@@ -1,6 +1,6 @@
 = Terminal Table
 
-== 
+== Description
 
 Terminal Table is a fast and simple, yet feature rich ASCII table generator written in Ruby.
 
