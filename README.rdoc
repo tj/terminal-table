@@ -1,140 +1,220 @@
 = Terminal Table
 
-Simple, feature rich ASCII table generator.
+== Description
 
-== Installation:
+Terminal Table is a fast and simple, yet feature rich ASCII table generator written in Ruby.
 
-  Install [Gemcutter](http://gemcutter.org) then execute:
-  $ sudo gem install terminal-table
+== Installation
 
-== Features:
+Install http://gemcutter.org and execute:
+  
+  $ gem install terminal-table
 
-* Fast
-* Simple
-* Optional headings
-* Alignment of columns, headings, or cells
-* Supports arbitrary width
-* Supports column span
-* Supports multiline cell content
-* Supports colorized cell content
-* Easy modification of table strings (+, -, |)
+== Usage
 
-== Examples:
+=== Basics
 
-  require 'rubygems'
-  require 'terminal-table/import'
-   
-  puts table(['a', 'b'], [1, 2], [3, 4], :separator, [4, 6])
-   
-  v = table ['a', 'b']
-  v << [1, 2]
-  v << [3, 4]
-  v.add_separator
-  v << [4, 6]
-  puts t
-   
-  user_table = table do |t|
-    t.headings = 'First Name', 'Last Name', 'Email'
-    t << ['TJ',  'Holowaychuk', 'tj@vision-media.ca']
-    t << ['Bob', 'Someone',     'bob@vision-media.ca']
-    t << ['Joe', 'Whatever',    'joe@vision-media.ca']
-  end
-  puts user_table
-   
-  user_table = table do
-    self.headings = 'First Name', 'Last Name', 'Email'
-    add_row ['TJ',  'Holowaychuk', { :value => 'tj@vision-media.ca', :alignment => :right }]
-    add_row ['Bob', 'Someone',     'bob@vision-media.ca']
-    add_row ['Joe', 'Whatever',    'joe@vision-media.ca']
-    align_column 1, :center
-  end
-  puts user_table
+To use Terminal Table:
 
-  puts
-  user_table = table do
-    self.headings = ['First Name', 'Last Name', {:value => 'Phones', :colspan => 2, :alignment => :center}]
-    add_row ['Bob', 'Someone',     '123', '456']
-    add_row ['TJ',  'Holowaychuk', {:value => "No phones", :colspan => 2, :alignment => :center}]
-    add_row ['Joe', 'Whatever',    '4324', '343242']
-  end
-  puts user_table
-   
+  require 'terminal-table'
+
+To generate a table, provide an array of arrays (which are interpreted as rows):
+
   rows = []
-  rows << ['Lines',      100]
-  rows << ['Comments',   20]
-  rows << ['Ruby',       70]
-  rows << ['JavaScript', 30]
-  puts table([nil, 'Lines'], *rows)
-   
-  rows = []
-  rows << ['Lines',      100]
-  rows << ['Comments',   20]
-  rows << ['Ruby',       70]
-  rows << ['JavaScript', 30]
-  puts table(nil, *rows)
+  rows << ['One', 1]
+  rows << ['Two', 2]
+  rows << ['Three', 3]
+  table = Terminal::Table.new :rows => rows
+  
+  # > puts table
+  #
+  # +-------+---+
+  # | One   | 1 |
+  # | Two   | 2 |
+  # | Three | 3 |
+  # +-------+---+
 
-== Results:
 
-  +---+---+
-  | a | b |
-  +---+---+
-  | 1 | 2 |
-  | 3 | 4 |
-  +---+---+
-  | 4 | 6 |
-  +---+---+
+The constructor can also be given a block which is either yielded the Table object or instance evaluated:
 
-   
-  +---+---+
-  | a | b |
-  +---+---+
-  | 1 | 2 |
-  | 3 | 4 |
-  +---+---+
-  | 4 | 6 |
-  +---+---+
-   
-  +------------+-------------+---------------------+
-  | First Name | Last Name   | Email               |
-  +------------+-------------+---------------------+
-  | TJ         | Holowaychuk | tj@vision-media.ca  |
-  | Bob        | Someone     | bob@vision-media.ca |
-  | Joe        | Whatever    | joe@vision-media.ca |
-  +------------+-------------+---------------------+
-   
-  +------------+-----------------------------+---------------------+
-  | First Name | Last Name                   | Email               |
-  +------------+-----------------------------+---------------------+
-  | TJ         |         Holowaychuk         |  tj@vision-media.ca |
-  | Bob        |           Someone           | bob@vision-media.ca |
-  | Joe        |          Whatever           | joe@vision-media.ca |
-  +------------+-----------------------------+---------------------+
+  table = Terminal::Table.new do |t|
+    t.rows = rows
+  end
 
-  +------------+-------------+-----------+--------+
-  | First Name | Last Name   |       Phones       |
-  +------------+-------------+-----------+--------+
-  | Bob        | Someone     | 123       | 456    |
-  | TJ         | Holowaychuk |     No phones      |
-  | Joe        | Whatever    | 4324      | 343242 |
-  +------------+-------------+-----------+--------+
+  table = Terminal::Table.new do
+    self.rows = rows
+  end
 
-  +------------+-------+
-  |            | Lines |
-  +------------+-------+
-  | Lines      | 100   |
-  | Comments   | 20    |
-  | Ruby       | 70    |
-  | JavaScript | 30    |
-  +------------+-------+
+Adding rows one by one:
 
-  +------------+-----+
-  | Lines      | 100 |
-  | Comments   | 20  |
-  | Ruby       | 70  |
-  | JavaScript | 30  |
-  +------------+-----+
+  table = Terminal::Table.new do |t|
+    t << ['One', 1]
+    t.add_row ['Two', 2]
+  end
 
-== License:
+To add separators between rows:
+  
+  table = Terminal::Table.new do |t|
+    t << ['One', 1]
+    t << :separator
+    t.add_row ['Two', 2]
+    t.add_separator
+    t.add_row ['Three', 3]
+  end
+  
+  # > puts table
+  #
+  # +-------+---+
+  # | One   | 1 |
+  # +-------+---+
+  # | Two   | 2 |
+  # +-------+---+
+  # | Three | 3 |
+  # +-------+---+
+
+Cells can handle multiline content:
+  
+  table = Terminal::Table.new do |t|
+    t << ['One', 1]
+    t << :separator
+    t.add_row ["Two\nDouble", 2]
+    t.add_separator
+    t.add_row ['Three', 3]
+  end
+  
+  # > puts table
+  #
+  # +--------+---+
+  # | One    | 1 |
+  # +--------+---+
+  # | Two    | 2 |
+  # | Double |   |
+  # +--------+---+
+  # | Three  | 3 |
+  # +--------+---+
+
+=== Head
+
+To add a head to the table:
+
+  table = Terminal::Table.new :headings => ['Word', 'Number'], :rows => rows
+  
+  # > puts table
+  #
+  # +-------+--------+
+  # | Word  | Number |
+  # +-------+--------+
+  # | One   | 1      |
+  # | Two   | 2      |
+  # | Three | 3      |
+  # +-------+--------+
+
+=== Title
+
+To add a title to the table:
+
+  table = Terminal::Table.new :title => "Cheatsheet", :headings => ['Word', 'Number'], :rows => rows
+  
+  # > puts table
+  #
+  # +------------+--------+
+  # |     Cheatsheet      |
+  # +------------+--------+
+  # | Word       | Number |
+  # +------------+--------+
+  # | One        | 1      |
+  # | Two        | 2      |
+  # | Three      | 3      |
+  # +------------+--------+
+
+=== Alignment
+
+To align the second column to the right:
+
+  table.align_column(1, :right)
+  
+  # > puts table
+  #
+  # +-------+--------+
+  # | Word  | Number |
+  # +-------+--------+
+  # | One   |      1 |
+  # | Two   |      2 |
+  # | Three |      3 |
+  # +-------+--------+
+
+To align an individual cell, you specify the cell value in a hash along the alignment:
+
+  table << ["Four", {:value => 4.0, :alignment => :center}]
+  
+  # > puts table
+  #
+  # +-------+--------+
+  # | Word  | Number |
+  # +-------+--------+
+  # | One   |      1 |
+  # | Two   |      2 |
+  # | Three |      3 |
+  # | Four  |  4.0   |
+  # +-------+--------+
+  
+=== Style
+
+To specifify style options:
+  
+  table = Terminal::Table.new :headings => ['Word', 'Number'], :rows => rows, :style => {:width => 80}
+  
+  # > puts table
+  #
+  # +--------------------------------------+---------------------------------------+
+  # | Word                                 | Number                                |
+  # +--------------------------------------+---------------------------------------+
+  # | One                                  | 1                                     |
+  # | Two                                  | 2                                     |
+  # | Three                                | 3                                     |
+  # +--------------------------------------+---------------------------------------+
+
+And change styles on the fly:
+  
+  table.style = {:width => 40, :padding_left => 3, :border_x => "=", :border_i => "x"}
+  
+  # > puts table
+  #
+  # x====================x=================x
+  # |               Cheatsheet             |
+  # x====================x=================x
+  # |   Word             |   Number        |
+  # x====================x=================x
+  # |   One              |   1             |
+  # |   Two              |   2             |
+  # |   Three            |   3             |
+  # x====================x=================x
+  
+To change the default style options:
+
+  Terminal::Style.defaults = {:width => 80}
+
+All Table objects created afterwards will inherit these defaults.
+
+=== Constructor options and setter methods
+
+Valid options for the constructor are :rows, :headings, :style and :title - and all options can also be set on the created table object by their setter method:
+
+  table = Terminal::Table.new
+  table.title = "Cheatsheet"
+  table.headings = ['Word', 'Number']
+  table.rows = rows
+  table.style = {:width => 40}
+
+== More examples
+
+For more examples, please see the examples/examples.rb file included in the source distribution.
+
+== Author
+
+TJ Holowaychuk <tj@vision-media.ca>
+
+== License
 
 (The MIT License)
 
