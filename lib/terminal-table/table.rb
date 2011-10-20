@@ -32,8 +32,9 @@ module Terminal
     # Add a row. 
     
     def add_row array
-      @rows << Row.new(self, array)
-      recalc_column_widths @rows.last
+      row = array == :separator ? Separator.new(self) : Row.new(self, array)
+      @rows << row
+      recalc_column_widths row
     end
     alias :<< :add_row
 
@@ -89,7 +90,7 @@ module Terminal
     # Return total number of columns available.
      
     def number_of_columns
-      headings_with_rows.map { |r| r.size }.max
+      headings_with_rows.map { |r| r.cells.size }.max
     end
 
     ##
@@ -104,22 +105,20 @@ module Terminal
     # Render the table.
   
     def render
-      @seperator = nil
+      separator = Separator.new(self)
       buffer = [separator]
       unless @title.nil?
         opts = {:value => @title, :alignment => :center, :colspan => number_of_columns}
-        buffer << Row.new(self, [opts]).render
+        buffer << Row.new(self, [opts])
         buffer << separator
       end
-      unless @headings.empty?
-        buffer << @headings.render
+      unless @headings.cells.empty?
+        buffer << @headings
         buffer << separator
       end
-      buffer += @rows.map do |row| 
-        row.render
-      end
+      buffer += @rows
       buffer << separator
-      buffer.join("\n")
+      buffer.map { |r| r.render }.join("\n")
     end
     alias :to_s :render
     
@@ -127,7 +126,7 @@ module Terminal
     # Return rows without separator rows.
 
     def rows
-      @rows.reject { |row| row.separator? }
+      @rows.reject { |row| row.is_a? Separator }
     end
     
     def rows= array
@@ -135,17 +134,6 @@ module Terminal
       array.each { |arr| self << arr }
     end
 
-    ##
-    # Create a separator based on colum lengths.
-    
-    def separator
-      @separator ||= begin
-        style.border_i + (0...number_of_columns).to_a.map do |i|
-          style.border_x * (column_width(i) + cell_padding) 
-        end.join(style.border_i) + style.border_i
-      end
-    end
-    
     def style=(options)
       style.apply options
     end
@@ -190,9 +178,9 @@ module Terminal
     end
     
     def recalc_column_widths row
-      if row.is_a?(Symbol) then return end
+      return if row.is_a? Separator
       i = 0
-      row.each do |cell|
+      row.cells.each do |cell|
         colspan = cell.colspan
         cell_value = cell.value_for_column_width_recalc
         colspan.downto(1) do |j|

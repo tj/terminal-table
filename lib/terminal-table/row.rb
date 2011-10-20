@@ -1,7 +1,6 @@
 module Terminal
   class Table
     class Row
-      include Enumerable
       
       ##
       # Row cells
@@ -13,60 +12,36 @@ module Terminal
       ##
       # Initialize with _width_ and _options_.
       
-      def initialize table, array
+      def initialize table, array = []
+        @cell_index = 0
         @table = table
-        @cells = if array == :separator
-          array
-        else
-          index = 0
-          array.map do |item| 
-            options = item.is_a?(Hash) ? item : {:value => item, :index => index}
-            cell = Cell.new(options.merge(:index => index, :table => @table))
-            index += cell.colspan
-            cell
-          end
-        end
+        @cells = []
+        array.each { |item| self << item }
       end
+      
+      def add_cell item
+        options = item.is_a?(Hash) ? item : {:value => item}
+        cell = Cell.new(options.merge(:index => @cell_index, :table => @table))
+        @cell_index += cell.colspan
+        @cells << cell
+      end
+      alias << add_cell
       
       def [] index
-        cells[index] unless separator?
-      end
-      
-      def []= index, value
-        cells[index] = value
-      end
-      
-      def each &block
-        cells.each &block unless separator?
+        cells[index]
       end
       
       def height
         cells.map { |c| c.lines.count }.max
       end
       
-      def method_missing m, *args, &block
-        if cells.respond_to?(m)
-          cells.__send__(m, *args, &block)
-        else
-          super
-        end
-      end
-      
       def render
         y = @table.style.border_y
-        if separator?
-          @table.separator
-        else
-          (0...height).to_a.map do |line|
-            y + cells.map do |cell|
-              cell.render(line)
-            end.join(y) + y
-          end.join("\n")
-        end
-      end
-      
-      def separator?
-        cells == :separator
+        (0...height).to_a.map do |line|
+          y + cells.map do |cell|
+            cell.render(line)
+          end.join(y) + y
+        end.join("\n")
       end
     end
   end
