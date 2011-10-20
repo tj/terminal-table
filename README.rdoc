@@ -6,7 +6,7 @@ Terminal Table is a fast and simple, yet feature rich ASCII table generator writ
 
 == Installation
 
-Install [Gemcutter](http://gemcutter.org) then execute:
+Install http://gemcutter.org and execute:
   
   $ gem install terminal-table
 
