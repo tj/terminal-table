@@ -1,6 +1,41 @@
 $:.unshift File.dirname(__FILE__) + '/../lib'
 require 'terminal-table/import'
 
+
+
+rows = []
+rows << ['One', 1]
+rows << ['Two', 2]
+rows << ['Three', 3]
+puts Terminal::Table.new :rows => rows
+
+
+puts Terminal::Table.new :headings => ['Word', 'Number'], :rows => rows
+
+t = Terminal::Table.new :headings => ['Word', 'Number'], :rows => rows
+t.align_column 1, :right
+t << ["Four", {:value => 4.0, :alignment => :center}]
+
+puts t
+
+table = Terminal::Table.new :title => "Cheatsheet", :headings => ['Word', 'Number'], :rows => rows
+
+puts table
+
+table.style = {:width => 40, :padding_left => 3, :border_x => "=", :border_i => "x"}
+puts table
+
+table = Terminal::Table.new do |t|
+  t << ['One', 1]
+  t << :separator
+  t.add_row ["Two\nDouble", 2]
+  t.add_separator
+  t.add_row ['Three', 3]
+end
+puts table
+
+exit
+
 puts
 puts table(['a', 'b'], [1, 2], [3, 4])
 
