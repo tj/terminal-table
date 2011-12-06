@@ -29,11 +29,11 @@ describe Terminal::Table do
   end
   
   it "should allow multiline content" do
-    cell = Cell.new :value => "foo\nbarrissimo", :table => Terminal::Table.new, :index => 0
-    cell.value.should == "foo\nbarrissimo"
-    cell.lines.should == ['foo', 'barrissimo']
+    cell = Cell.new :value => "barrissimo\n"+"foo".yellow, :table => Terminal::Table.new, :index => 0
+    cell.value.should == "barrissimo\n"+"foo".yellow
+    cell.lines.should == ['barrissimo','foo'.yellow]
     cell.value_for_column_width_recalc.should == 'barrissimo'
-    cell.render(1).should == " barrissimo "
+    cell.render(0).should == " barrissimo "
   end
   
   it "should allow colorized content" do

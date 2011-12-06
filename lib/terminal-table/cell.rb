@@ -58,7 +58,8 @@ module Terminal
       def render(line = 0)
         left = " " * @table.style.padding_left
         right = " " * @table.style.padding_right
-        "#{left}#{lines[line]}#{right}".align(alignment, width + @table.cell_padding)
+        render_width = lines[line].to_s.size - escape(lines[line]).size + width
+        "#{left}#{lines[line]}#{right}".align(alignment, render_width + @table.cell_padding)
       end
       alias :to_s :render
       
@@ -67,10 +68,7 @@ module Terminal
       # removes all ANSI escape sequences (e.g. color)
       
       def value_for_column_width_recalc
-        str = lines.sort_by { |s| s.size }.last.to_s
-        str = str.gsub(/\x1b(\[|\(|\))[;?0-9]*[0-9A-Za-z]/, '')
-        str = str.gsub(/\x1b(\[|\(|\))[;?0-9]*[0-9A-Za-z]/, '')
-        str.gsub(/[\x03|\x1a]/, '')
+        lines.map{ |s| escape(s) }.max_by{ |s| s.size }
       end
       
       ##
@@ -82,6 +80,14 @@ module Terminal
           w + @table.column_width(@index + counter - 1)
         end
         inner_width + padding
+      end
+
+      ##
+      # removes all ANSI escape sequences (e.g. color)      
+      def escape(line)
+        line.to_s.gsub(/\x1b(\[|\(|\))[;?0-9]*[0-9A-Za-z]/, '').
+          gsub(/\x1b(\[|\(|\))[;?0-9]*[0-9A-Za-z]/, '').
+          gsub(/[\x03|\x1a]/, '')
       end
     end
   end
