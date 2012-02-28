@@ -11,9 +11,9 @@ module Terminal
     def initialize options = {}, &block
       @column_widths = []
       self.style = options.fetch :style, {}
-      self.title = options.fetch :title, nil
       self.headings = options.fetch :headings, []
       self.rows = options.fetch :rows, []
+      self.title = options.fetch :title, nil
       yield_or_eval(&block) if block
     end
     
@@ -108,8 +108,7 @@ module Terminal
       separator = Separator.new(self)
       buffer = [separator]
       unless @title.nil?
-        opts = {:value => @title, :alignment => :center, :colspan => number_of_columns}
-        buffer << Row.new(self, [opts])
+        buffer << Row.new(self, [title_cell_options])
         buffer << separator
       end
       unless @headings.cells.empty?
@@ -144,7 +143,7 @@ module Terminal
     
     def title=(title)
       @title = title
-      recalc_column_widths Row.new(self, [title])
+      recalc_column_widths Row.new(self, [title_cell_options])
     end
     
     ##
@@ -212,6 +211,10 @@ module Terminal
       else
         self.instance_eval(&block)
       end
+    end
+
+    def title_cell_options
+      {:value => @title, :alignment => :center, :colspan => number_of_columns}
     end
   end
 end
