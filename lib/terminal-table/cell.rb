@@ -36,7 +36,7 @@ module Terminal
       end
       
       def alignment
-        @alignment || :left
+        @alignment || @table.style.alignment || :left
       end
       
       def alignment=(val)

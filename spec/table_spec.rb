@@ -137,6 +137,25 @@ module Terminal
       EOF
     end
 
+
+    it "should render default alignment properly" do
+      @table.headings = ['Char', 'Num']
+      @table << ['a', 1]
+      @table << ['b', 2]
+      @table << ['c', 3]
+      @table.style.width = 21
+      @table.style.alignment = :right
+      @table.render.should == <<-EOF.deindent
+        +---------+---------+
+        |    Char |     Num |
+        +---------+---------+
+        |       a |       1 |
+        |       b |       2 |
+        |       c |       3 |
+        +---------+---------+
+      EOF
+    end
+
     it "should render width properly" do
       @table.headings = ['Char', 'Num']
       @table << ['a', 1]
