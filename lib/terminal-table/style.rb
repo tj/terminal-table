@@ -26,7 +26,7 @@ module Terminal
       @@defaults = {
         :border_x => "-", :border_y => "|", :border_i => "+",
         :padding_left => 1, :padding_right => 1,
-        :width => nil
+        :width => nil, :alignment => nil
       }
       
       attr_accessor :border_x
@@ -37,6 +37,7 @@ module Terminal
       attr_accessor :padding_right
       
       attr_accessor :width
+      attr_accessor :alignment
       
       
       def initialize options = {}
