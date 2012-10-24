@@ -87,7 +87,7 @@ module Terminal
       def escape(line)
         line.to_s.gsub(/\x1b(\[|\(|\))[;?0-9]*[0-9A-Za-z]/, '').
           gsub(/\x1b(\[|\(|\))[;?0-9]*[0-9A-Za-z]/, '').
-          gsub(/[\x03|\x1a]/, '')
+          gsub(/(\x03|\x1a)/, '')
       end
     end
   end
