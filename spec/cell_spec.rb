@@ -51,4 +51,10 @@ describe Terminal::Table do
     cell.render.should == " foo   "
   end
 
+  it "should not ignore pipe characters" do
+    cell = Cell.new :value => "f|o|o", :table => Terminal::Table.new, :index => 0
+    cell.value.should == "f|o|o"
+    cell.value_for_column_width_recalc.should == 'f|o|o'
+    cell.render.should == " f|o|o "
+  end
 end
