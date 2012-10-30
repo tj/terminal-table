@@ -5,6 +5,9 @@ puts
 puts table(['a', 'b'], [1, 2], [3, 4])
 
 puts
+puts table(['name', 'content'], ['ftp.example.com', '1.1.1.1'], ['www.example.com', '|lalalala|lalala|'])
+
+puts
 t = table ['a', 'b']
 t.style = {:padding_left => 2, :width => 80}
 t << [1, 2]
