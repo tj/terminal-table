@@ -160,7 +160,7 @@ To align an individual cell, you specify the cell value in a hash along the alig
   
 === Style
 
-To specifify style options:
+To specify style options:
   
   table = Terminal::Table.new :headings => ['Word', 'Number'], :rows => rows, :style => {:width => 80}
   
