@@ -6,7 +6,7 @@ module Terminal
     before :each do
       @table = Table.new
     end
-    
+
     it "should select columns" do
       @table << ['foo', 'bar']
       @table << ['big foo', 'big foo bar']
@@ -121,19 +121,23 @@ module Terminal
 
     it "should render styles properly" do
       @table.headings = ['Char', 'Num']
-      @table.style = {:border_x => "=", :border_y => ":", :border_i => "x", :padding_left => 0, :padding_right => 2}
+      @table.style = {
+        :border_x => "=", :border_y => ":", :border_i => "x",
+        :padding_left => 0, :padding_right => 2,
+        :margin_left => 'y' * 2
+      }
       @table << ['a', 1]
       @table << ['b', 2]
       @table << ['c', 3]
       @table.style.padding_right.should == 2
       @table.render.should == <<-EOF.deindent
-        x======x=====x
-        :Char  :Num  :
-        x======x=====x
-        :a     :1    :
-        :b     :2    :
-        :c     :3    :
-        x======x=====x
+        yyx======x=====x
+        yy:Char  :Num  :
+        yyx======x=====x
+        yy:a     :1    :
+        yy:b     :2    :
+        yy:c     :3    :
+        yyx======x=====x
       EOF
     end
 
@@ -343,7 +347,7 @@ module Terminal
      # it "should be equal with two empty tables" do
      #   table_one = Table.new
      #   table_two = Table.new
-     # 
+     #
      #   table_one.should == table_two
      #   table_two.should == table_one
      # end
@@ -467,7 +471,7 @@ module Terminal
       @table.headings = ['name', { :value => 'values', :alignment => :right, :colspan => 3}]
       @table.headings = ['name', { :value => 'values', :colspan => 3}]
       @table.rows = [['a', 1, 2, 3], ['b', 4, 5, 6], ['c', 7, 8, 9]]
-      
+
       @table.render.should == <<-EOF.deindent
         +------+---+---+---+
         | name | values    |
@@ -478,7 +482,7 @@ module Terminal
         +------+---+---+---+
       EOF
     end
-    
+
     it "should handle multiple colspan" do
       @table.headings = [
         'name',
@@ -505,7 +509,7 @@ module Terminal
         +--------+----+----+-------+-------+-----+-----+
       EOF
     end
-    
+
     it "should render a table with only X cell borders" do
       @table.style = {:border_x => "-", :border_y => "", :border_i => ""}
 
@@ -523,7 +527,7 @@ module Terminal
 ---------------
       EOF
     end
-    
+
     it "should render a table without cell borders" do
       @table.style = {:border_x => "", :border_y => "", :border_i => ""}
 
