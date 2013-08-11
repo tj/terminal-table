@@ -34,6 +34,11 @@ module Terminal
       def height
         cells.map { |c| c.lines.count }.max
       end
+
+      def wrap_cell(index, width) 
+        return if @cells.nil? or @cells[index].nil?
+        @cells[index].wrap(width)
+      end
       
       def render
         y = @table.style.border_y
