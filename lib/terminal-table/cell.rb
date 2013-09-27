@@ -2,12 +2,6 @@
 module Terminal
   class Table
     class Cell
-      
-      ##
-      # Cell width.
-      
-      attr_reader :width
-      
       ##
       # Cell value.
       
