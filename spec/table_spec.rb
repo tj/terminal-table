@@ -1,12 +1,12 @@
 
-require File.dirname(__FILE__) + '/spec_helper'
+require 'spec_helper'
 
 module Terminal
   describe Table do
     before :each do
       @table = Table.new
     end
-    
+
     it "should select columns" do
       @table << ['foo', 'bar']
       @table << ['big foo', 'big foo bar']
@@ -343,7 +343,7 @@ module Terminal
      # it "should be equal with two empty tables" do
      #   table_one = Table.new
      #   table_two = Table.new
-     # 
+     #
      #   table_one.should == table_two
      #   table_two.should == table_one
      # end
@@ -467,7 +467,7 @@ module Terminal
       @table.headings = ['name', { :value => 'values', :alignment => :right, :colspan => 3}]
       @table.headings = ['name', { :value => 'values', :colspan => 3}]
       @table.rows = [['a', 1, 2, 3], ['b', 4, 5, 6], ['c', 7, 8, 9]]
-      
+
       @table.render.should == <<-EOF.deindent
         +------+---+---+---+
         | name | values    |
@@ -478,7 +478,7 @@ module Terminal
         +------+---+---+---+
       EOF
     end
-    
+
     it "should handle multiple colspan" do
       @table.headings = [
         'name',
@@ -505,7 +505,7 @@ module Terminal
         +--------+----+----+-------+-------+-----+-----+
       EOF
     end
-    
+
     it "should render a table with only X cell borders" do
       @table.style = {:border_x => "-", :border_y => "", :border_i => ""}
 
@@ -515,15 +515,15 @@ module Terminal
 
       @table.render.should == <<-EOF.strip
 ---------------
- name  values  
+ name  values
 ---------------
- a     1  2  3 
- b     4  5  6 
- c     7  8  9 
+ a     1  2  3
+ b     4  5  6
+ c     7  8  9
 ---------------
       EOF
     end
-    
+
     it "should render a table without cell borders" do
       @table.style = {:border_x => "", :border_y => "", :border_i => ""}
 
@@ -533,11 +533,11 @@ module Terminal
 
       @table.render.should == <<-EOF
 
- name  values  
+ name  values
 
- a     1  2  3 
- b     4  5  6 
- c     7  8  9 
+ a     1  2  3
+ b     4  5  6
+ c     7  8  9
       EOF
     end
   end
