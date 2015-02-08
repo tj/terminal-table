@@ -1,4 +1,3 @@
-
 module Terminal
   class Table
     
@@ -166,7 +165,7 @@ module Terminal
       return [] if style.width.nil?
       spacing = style.width - columns_width
       if spacing < 0
-        raise "Table width exceeds wanted width of #{wanted} characters."
+        raise "Table width exceeds wanted width of #{style.width} characters."
       else
         per_col = spacing / number_of_columns
         arr = (1...number_of_columns).to_a.map { |i| per_col }
