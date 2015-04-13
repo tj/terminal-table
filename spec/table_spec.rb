@@ -173,6 +173,16 @@ module Terminal
       EOF
     end
 
+    it "should raise an error if the table width exceeds style width" do
+      @table.headings = ['Char', 'Num']
+      @table << ['a', 1]
+      @table << ['b', 2]
+      @table << ['c', 3]
+      @table << ['d', 'x' * 22]
+      @table.style.width = 21
+      expect { @table.render }.to raise_error "Table width exceeds wanted width of 21 characters."
+    end
+
     it "should render title properly" do
       @table.title = "Title"
       @table.headings = ['Char', 'Num']
