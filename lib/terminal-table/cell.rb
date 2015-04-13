@@ -82,6 +82,10 @@ module Terminal
         inner_width + padding
       end
 
+      def wrap(width)
+        @value.gsub!(/(.{1,#{width}})( +|$\n?)|(.{1,#{width}})/, "\\1\\3\n") 
+      end
+
       ##
       # removes all ANSI escape sequences (e.g. color)      
       def escape(line)
