@@ -515,11 +515,11 @@ module Terminal
 
       @table.render.should == <<-EOF.strip
 ---------------
- name  values
+ name  values  
 ---------------
- a     1  2  3
- b     4  5  6
- c     7  8  9
+ a     1  2  3 
+ b     4  5  6 
+ c     7  8  9 
 ---------------
       EOF
     end
@@ -533,11 +533,11 @@ module Terminal
 
       @table.render.should == <<-EOF
 
- name  values
+ name  values  
 
- a     1  2  3
- b     4  5  6
- c     7  8  9
+ a     1  2  3 
+ b     4  5  6 
+ c     7  8  9 
       EOF
     end
   end
