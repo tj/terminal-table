@@ -22,6 +22,6 @@
 #++
 
 $:.unshift File.dirname(__FILE__)
-%w(version core_ext table cell row separator style table_helper).each do |file|
+%w(version table cell row separator style table_helper).each do |file|
   require "terminal-table/#{file}"
 end
