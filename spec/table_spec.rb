@@ -283,6 +283,24 @@ module Terminal
       EOF
     end
 
+    it "should render multi-row headings properly" do
+      @table.headings = [['Char', 'Num'], [{ :value => "2nd heading", :colspan => 2 }]]
+      @table << ['a', 1]
+      @table << ['b', 2]
+      @table << ['c', 3]
+      @table.render.should == <<-EOF.deindent
+        +------+------+
+        | Char | Num  |
+        +------+------+
+        | 2nd heading |
+        +------+------+
+        | a    | 1    |
+        | b    | 2    |
+        | c    | 3    |
+        +------+------+
+      EOF
+    end
+
     it "should allows a hash of options for creation" do
       headings = ['Char', 'Num']
       rows = [['a', 1], ['b', 2], ['c', 3]]

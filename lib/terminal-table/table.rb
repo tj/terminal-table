@@ -96,9 +96,13 @@ module Terminal
     ##
     # Set the headings
     
-    def headings= array
-      @headings = Row.new(self, array)
-      recalc_column_widths @headings
+    def headings= arrays
+      arrays = [arrays] unless arrays.first.is_a?(Array)
+      @headings = arrays.map do |array|
+        row = Row.new(self, array)
+        recalc_column_widths row
+        row
+      end
     end
 
     ##
@@ -111,9 +115,11 @@ module Terminal
         buffer << Row.new(self, [title_cell_options])
         buffer << separator
       end
-      unless @headings.cells.empty?
-        buffer << @headings
-        buffer << separator
+      @headings.each do |row|
+        unless row.cells.empty?
+          buffer << row
+          buffer << separator
+        end
       end
       buffer += @rows
       buffer << separator
@@ -201,7 +207,7 @@ module Terminal
     # Return headings combined with rows.
     
     def headings_with_rows
-      [@headings] + rows
+      @headings + rows
     end
     
     def yield_or_eval &block
