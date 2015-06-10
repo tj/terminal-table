@@ -12,7 +12,6 @@ lib/terminal-table/table_helper.rb
 lib/terminal-table/version.rb
 spec/cell_spec.rb
 spec/import_spec.rb
-spec/spec.opts
 spec/spec_helper.rb
 spec/table_spec.rb
 tasks/docs.rake
