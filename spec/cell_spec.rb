@@ -1,8 +1,3 @@
-require 'rubygems'
-require 'term/ansicolor'
-
-class String; include Term::ANSIColor; end
-
 require 'spec_helper'
 
 describe Terminal::Table do

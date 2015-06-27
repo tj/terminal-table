@@ -1,4 +1,3 @@
-
 require 'spec_helper'
 
 module Terminal
@@ -180,7 +179,7 @@ module Terminal
       @table << ['c', 3]
       @table << ['d', 'x' * 22]
       @table.style.width = 21
-      expect { @table.render }.to raise_error "Table width exceeds wanted width of 21 characters."
+      lambda { @table.render }.should raise_error "Table width exceeds wanted width of 21 characters."
     end
 
     it "should render title properly" do
@@ -397,14 +396,14 @@ module Terminal
       it "should not be equal if the other object does not respond_to? :headings" do
         table_one = Table.new
         table_two = Object.new
-        table_two.stub!(:rows).and_return([])
+        allow(table_two).to receive(:rows).and_return([])
         table_one.should_not == table_two
       end
 
       it "should not be equal if the other object does not respond_to? :rows" do
         table_one = Table.new
         table_two = Object.new
-        table_two.stub!(:rows).and_return([])
+        allow(table_two).to receive(:rows).and_return([])
         table_one.should_not == table_two
       end
     end
