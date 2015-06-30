@@ -1,9 +1,8 @@
-
-require File.dirname(__FILE__) + '/spec_helper'
+require 'spec_helper'
 
 describe Terminal::Table do
   Row = Terminal::Table::Row
-  
+
   it "should default alignment to the left" do
     row = Row.new Terminal::Table.new, ["a", "b", "c"]
     cell = row.cells.first

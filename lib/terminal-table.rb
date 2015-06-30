@@ -21,7 +21,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-$:.unshift File.dirname(__FILE__)
-%w(version core_ext table cell row separator style table_helper).each do |file|
+%w(cell row separator style table table_helper version).each do |file|
   require "terminal-table/#{file}"
 end

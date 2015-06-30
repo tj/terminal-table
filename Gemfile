@@ -1,7 +1,4 @@
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
-group :test do
-  gem 'echoe'
-  gem 'rspec', '1.3.1'
-  gem 'term-ansicolor', :require => "term/ansicolor"
-end
+# Specify your gem's dependencies in test-gem.gemspec
+gemspec

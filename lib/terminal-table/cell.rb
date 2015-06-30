@@ -2,12 +2,6 @@
 module Terminal
   class Table
     class Cell
-      
-      ##
-      # Cell width.
-      
-      attr_reader :width
-      
       ##
       # Cell value.
       
@@ -48,6 +42,10 @@ module Terminal
         end
       end
       
+      def align(val, position, length)
+        positions = { :left => :ljust, :right => :rjust, :center => :center }
+        val.public_send(positions[position], length)
+      end
       def lines
         @value.to_s.split(/\n/)
       end
@@ -59,7 +57,7 @@ module Terminal
         left = " " * @table.style.padding_left
         right = " " * @table.style.padding_right
         render_width = lines[line].to_s.size - escape(lines[line]).size + width
-        "#{left}#{lines[line]}#{right}".align(alignment, render_width + @table.cell_padding)
+        align("#{left}#{lines[line]}#{right}", alignment, render_width + @table.cell_padding)
       end
       alias :to_s :render
       

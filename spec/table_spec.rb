@@ -1,5 +1,4 @@
-
-require File.dirname(__FILE__) + '/spec_helper'
+require 'spec_helper'
 
 module Terminal
   describe Table do
@@ -177,6 +176,16 @@ module Terminal
       EOF
     end
 
+    it "should raise an error if the table width exceeds style width" do
+      @table.headings = ['Char', 'Num']
+      @table << ['a', 1]
+      @table << ['b', 2]
+      @table << ['c', 3]
+      @table << ['d', 'x' * 22]
+      @table.style.width = 21
+      lambda { @table.render }.should raise_error "Table width exceeds wanted width of 21 characters."
+    end
+
     it "should render title properly" do
       @table.title = "Title"
       @table.headings = ['Char', 'Num']
@@ -277,6 +286,24 @@ module Terminal
       EOF
     end
 
+    it "should render multi-row headings properly" do
+      @table.headings = [['Char', 'Num'], [{ :value => "2nd heading", :colspan => 2 }]]
+      @table << ['a', 1]
+      @table << ['b', 2]
+      @table << ['c', 3]
+      @table.render.should == <<-EOF.deindent
+        +------+------+
+        | Char | Num  |
+        +------+------+
+        | 2nd heading |
+        +------+------+
+        | a    | 1    |
+        | b    | 2    |
+        | c    | 3    |
+        +------+------+
+      EOF
+    end
+
     it "should allows a hash of options for creation" do
       headings = ['Char', 'Num']
       rows = [['a', 1], ['b', 2], ['c', 3]]
@@ -373,14 +400,14 @@ module Terminal
       it "should not be equal if the other object does not respond_to? :headings" do
         table_one = Table.new
         table_two = Object.new
-        table_two.stub!(:rows).and_return([])
+        allow(table_two).to receive(:rows).and_return([])
         table_one.should_not == table_two
       end
 
       it "should not be equal if the other object does not respond_to? :rows" do
         table_one = Table.new
         table_two = Object.new
-        table_two.stub!(:rows).and_return([])
+        allow(table_two).to receive(:rows).and_return([])
         table_one.should_not == table_two
       end
     end
