@@ -120,19 +120,23 @@ module Terminal
 
     it "should render styles properly" do
       @table.headings = ['Char', 'Num']
-      @table.style = {:border_x => "=", :border_y => ":", :border_i => "x", :padding_left => 0, :padding_right => 2}
+      @table.style = {
+        :border_x => "=", :border_y => ":", :border_i => "x",
+        :padding_left => 0, :padding_right => 2,
+        :margin_left => 'y' * 2
+      }
       @table << ['a', 1]
       @table << ['b', 2]
       @table << ['c', 3]
       @table.style.padding_right.should == 2
       @table.render.should == <<-EOF.deindent
-        x======x=====x
-        :Char  :Num  :
-        x======x=====x
-        :a     :1    :
-        :b     :2    :
-        :c     :3    :
-        x======x=====x
+        yyx======x=====x
+        yy:Char  :Num  :
+        yyx======x=====x
+        yy:a     :1    :
+        yy:b     :2    :
+        yy:c     :3    :
+        yyx======x=====x
       EOF
     end
 

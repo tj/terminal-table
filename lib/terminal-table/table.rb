@@ -1,13 +1,13 @@
 
 module Terminal
   class Table
-    
+
     attr_reader :title
     attr_reader :headings
-    
+
     ##
     # Generates a ASCII table with the given _options_.
-  
+
     def initialize options = {}, &block
       @column_widths = []
       self.style = options.fetch :style, {}
@@ -16,10 +16,10 @@ module Terminal
       self.title = options.fetch :title, nil
       yield_or_eval(&block) if block
     end
-    
+
     ##
     # Align column _n_ to the given _alignment_ of :center, :left, or :right.
-    
+
     def align_column n, alignment
       r = rows
       column(n).each_with_index do |col, i|
@@ -27,10 +27,10 @@ module Terminal
         cell.alignment = alignment unless cell.alignment?
       end
     end
-    
+
     ##
-    # Add a row. 
-    
+    # Add a row.
+
     def add_row array
       row = array == :separator ? Separator.new(self) : Row.new(self, array)
       @rows << row
@@ -44,58 +44,58 @@ module Terminal
     def add_separator
       self << :separator
     end
-    
+
     def cell_spacing
       cell_padding + style.border_y.length
     end
-    
+
     def cell_padding
       style.padding_left + style.padding_right
     end
-    
+
     ##
     # Return column _n_.
-    
+
     def column n, method = :value, array = rows
-      array.map { |row| 
+      array.map { |row|
         cell = row[n]
         cell && method ? cell.__send__(method) : cell
-      }.compact 
+      }.compact
     end
-    
+
     ##
     # Return _n_ column including headings.
-    
+
     def column_with_headings n, method = :value
       column n, method, headings_with_rows
     end
-    
+
     ##
     # Return columns.
-    
+
     def columns
-      (0...number_of_columns).map { |n| column n } 
+      (0...number_of_columns).map { |n| column n }
     end
-    
+
     ##
     # Return length of column _n_.
-    
+
     def column_width n
       width = @column_widths[n] || 0
       width + additional_column_widths[n].to_i
     end
     alias length_of_column column_width # for legacy support
-    
+
     ##
     # Return total number of columns available.
-     
+
     def number_of_columns
       headings_with_rows.map { |r| r.cells.size }.max
     end
 
     ##
     # Set the headings
-    
+
     def headings= arrays
       arrays = [arrays] unless arrays.first.is_a?(Array)
       @headings = arrays.map do |array|
@@ -107,7 +107,7 @@ module Terminal
 
     ##
     # Render the table.
-  
+
     def render
       separator = Separator.new(self)
       buffer = [separator]
@@ -123,17 +123,17 @@ module Terminal
       end
       buffer += @rows
       buffer << separator
-      buffer.map { |r| r.render }.join("\n")
+      buffer.map { |r| style.margin_left + r.render }.join("\n")
     end
     alias :to_s :render
-    
+
     ##
     # Return rows without separator rows.
 
     def rows
       @rows.reject { |row| row.is_a? Separator }
     end
-    
+
     def rows= array
       @rows = []
       array.each { |arr| self << arr }
@@ -142,16 +142,16 @@ module Terminal
     def style=(options)
       style.apply options
     end
-    
+
     def style
       @style ||= Style.new
     end
-    
+
     def title=(title)
       @title = title
       recalc_column_widths Row.new(self, [title_cell_options])
     end
-    
+
     ##
     # Check if _other_ is equal to self. _other_ is considered equal
     # if it contains the same headings and rows.
@@ -163,11 +163,11 @@ module Terminal
     end
 
     private
-    
+
     def columns_width
       @column_widths.inject(0) { |s, i| s + i + cell_spacing } + style.border_y.length
     end
-    
+
     def additional_column_widths
       return [] if style.width.nil?
       spacing = style.width - columns_width
@@ -181,7 +181,7 @@ module Terminal
         arr
       end
     end
-    
+
     def recalc_column_widths row
       return if row.is_a? Separator
       i = 0
@@ -202,14 +202,14 @@ module Terminal
         end
       end
     end
-    
+
     ##
     # Return headings combined with rows.
-    
+
     def headings_with_rows
       @headings + rows
     end
-    
+
     def yield_or_eval &block
       return unless block
       if block.arity > 0
