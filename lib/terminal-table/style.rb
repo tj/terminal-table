@@ -27,7 +27,8 @@ module Terminal
         :border_x => "-", :border_y => "|", :border_i => "+",
         :padding_left => 1, :padding_right => 1,
         :margin_left => '',
-        :width => nil, :alignment => nil
+        :width => nil, :alignment => nil,
+        :all_separators => false
       }
 
       attr_accessor :border_x
@@ -41,6 +42,8 @@ module Terminal
 
       attr_accessor :width
       attr_accessor :alignment
+
+      attr_accessor :all_separators
 
 
       def initialize options = {}

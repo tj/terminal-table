@@ -571,5 +571,25 @@ module Terminal
  c     7  8  9 
       EOF
     end
+
+    it "should render a table with all separators" do
+      @table.style = {:all_separators => true}
+      @table.headings = ['name', { :value => 'values', :alignment => :right, :colspan => 3}]
+      @table.headings = ['name', { :value => 'values', :colspan => 3}]
+      @table.rows = [['a', 1, 2, 3], ['b', 4, 5, 6], ['c', 7, 8, 9]]
+
+      @table.render.should == <<-EOF.deindent
+        +------+---+---+---+
+        | name | values    |
+        +------+---+---+---+
+        | a    | 1 | 2 | 3 |
+        +------+---+---+---+
+        | b    | 4 | 5 | 6 |
+        +------+---+---+---+
+        | c    | 7 | 8 | 9 |
+        +------+---+---+---+
+      EOF
+    end
+
   end
 end
