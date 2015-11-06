@@ -121,8 +121,12 @@ module Terminal
           buffer << separator
         end
       end
-      buffer += @rows
-      buffer << separator
+      if style.all_separators
+        buffer += @rows.product([separator]).flatten
+      else
+        buffer += @rows
+        buffer << separator
+      end
       buffer.map { |r| style.margin_left + r.render }.join("\n")
     end
     alias :to_s :render
