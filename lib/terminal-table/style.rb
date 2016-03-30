@@ -1,4 +1,3 @@
-
 module Terminal
   class Table
     # A Style object holds all the formatting information for a Table object

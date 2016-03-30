@@ -1,4 +1,3 @@
-
 module Terminal
   class Table
 
