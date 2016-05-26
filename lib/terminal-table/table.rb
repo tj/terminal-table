@@ -155,6 +155,11 @@ module Terminal
       recalc_column_widths Row.new(self, [title_cell_options])
     end
 
+    # a table is empty if its rows have no useful content (separators aside)
+    def empty?
+      rows.empty?
+    end
+
     ##
     # Check if _other_ is equal to self. _other_ is considered equal
     # if it contains the same headings and rows.

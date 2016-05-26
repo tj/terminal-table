@@ -591,5 +591,27 @@ module Terminal
       EOF
     end
 
+    describe "#empty?" do
+      it "should return true if there are rows" do
+        @table.empty?.should == true
+      end
+
+      it "should return true if there are just separator rows" do
+        @table << :separator
+        @table << :separator
+        @table.empty?.should == true
+      end
+
+      it "should return true if there are headers set but no rows" do
+        @table.headings = ["Header 1", "Header 2"]
+        @table.empty?.should == true
+      end
+
+      it "should return false if there are non-separator rows" do
+        @table << ["a", "b"]
+        @table << :separator
+        @table.empty?.should == false
+      end
+    end
   end
 end
