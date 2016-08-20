@@ -190,7 +190,7 @@ And change styles on the fly:
   
 To change the default style options:
 
-  Terminal::Style.defaults = {:width => 80}
+  Terminal::Table::Style.defaults = {:width => 80}
 
 All Table objects created afterwards will inherit these defaults.
 
