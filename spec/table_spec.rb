@@ -591,5 +591,15 @@ module Terminal
       EOF
     end
 
+    it "should render a table with CJK characters" do
+      @table << ['中文', 'にっぽんご', '한국어']
+      @table << ['Chinese','Japanese','Korean']
+      @table.render.should == <<-EOF.deindent
+        +---------+------------+--------+
+        | 中文    | にっぽんご | 한국어 |
+        | Chinese | Japanese   | Korean |
+        +---------+------------+--------+
+      EOF
+    end
   end
 end
