@@ -57,7 +57,15 @@ module Terminal
 
     def column n, method = :value, array = rows
       array.map { |row|
-        cell = row[n]
+        # for each cells in a row, find the column with index
+        # just greater than the required one, and go back one.
+        index = col = 0
+        row.cells.each do |cell|
+          break if index > n
+          index += cell.colspan
+          col += 1
+        end
+        cell = row[col - 1]
         cell && method ? cell.__send__(method) : cell
       }.compact
     end
