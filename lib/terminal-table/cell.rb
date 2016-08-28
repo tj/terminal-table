@@ -56,6 +56,7 @@ module Terminal
         left = " " * @table.style.padding_left
         right = " " * @table.style.padding_right
         render_width = lines[line].to_s.size - escape(lines[line]).size + width
+        render_width -= cjk_chars_count(lines[line])
         align("#{left}#{lines[line]}#{right}", alignment, render_width + @table.cell_padding)
       end
       alias :to_s :render
@@ -65,7 +66,7 @@ module Terminal
       # removes all ANSI escape sequences (e.g. color)
 
       def value_for_column_width_recalc
-        lines.map{ |s| escape(s) }.max_by{ |s| s.size }
+        lines.map{ |s| escape(s) }.max_by{ |s| s.size + cjk_chars_count(s) }
       end
 
       ##
@@ -85,6 +86,10 @@ module Terminal
         line.to_s.gsub(/\x1b(\[|\(|\))[;?0-9]*[0-9A-Za-z]/, '').
           gsub(/\x1b(\[|\(|\))[;?0-9]*[0-9A-Za-z]/, '').
           gsub(/(\x03|\x1a)/, '')
+      end
+
+      def cjk_chars_count str
+        str.scan(/\p{Han}|\p{Katakana}|\p{Hiragana}|\p{Hangul}/).count
       end
     end
   end
