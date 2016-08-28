@@ -134,7 +134,7 @@ module Terminal
         buffer += @rows
         buffer << separator
       end
-      buffer.map { |r| style.margin_left + r.render }.join("\n")
+      buffer.map { |r| style.margin_left + r.render.rstrip }.join("\n")
     end
     alias :to_s :render
 
