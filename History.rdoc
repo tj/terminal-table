@@ -1,3 +1,11 @@
+1.7.0 / 2016-08-29
+==================
+
+All props to @vizv for this release!
+
+  * Fixed some spec failures
+  * Added support for full-width characters (East Asian alphabets, etc)
+
 1.6.0 / 2016-06-06
 ==================
 
