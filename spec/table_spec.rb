@@ -591,5 +591,18 @@ module Terminal
       EOF
     end
 
+    it "should render a table with fullwidth characters" do
+      @table.headings = ['COL 1', 'ＣＯＬ ２', 'COL ３', 'ＣＯＬ４']
+      @table << ['中文', 'にっぽんご', '한국어', 'ＡＢＣ']
+      @table << ['Chinese','Japanese','Korean', '.......']
+      @table.render.should == <<-EOF.deindent
+        +---------+------------+--------+----------+
+        | COL 1   | ＣＯＬ ２  | COL ３ | ＣＯＬ４ |
+        +---------+------------+--------+----------+
+        | 中文    | にっぽんご | 한국어 | ＡＢＣ   |
+        | Chinese | Japanese   | Korean | .......  |
+        +---------+------------+--------+----------+
+      EOF
+    end
   end
 end
