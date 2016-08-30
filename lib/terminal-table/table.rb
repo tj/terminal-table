@@ -18,6 +18,8 @@ module Terminal
       self.rows = options.fetch :rows, []
       self.title = options.fetch :title, nil
       yield_or_eval(&block) if block
+
+      style.on_change(:width) { require_column_widths_recalc }
     end
 
     ##
@@ -37,7 +39,7 @@ module Terminal
     def add_row array
       row = array == :separator ? Separator.new(self) : Row.new(self, array)
       @rows << row
-      recalc_column_widths row
+      require_column_widths_recalc unless row.is_a?(Separator)
     end
     alias :<< :add_row
 
@@ -92,8 +94,7 @@ module Terminal
     # Return length of column _n_.
 
     def column_width n
-      width = @column_widths[n] || 0
-      width + additional_column_widths[n].to_i
+      width = column_widths[n] || 0
     end
     alias length_of_column column_width # for legacy support
 
@@ -111,7 +112,7 @@ module Terminal
       arrays = [arrays] unless arrays.first.is_a?(Array)
       @headings = arrays.map do |array|
         row = Row.new(self, array)
-        recalc_column_widths row
+        require_column_widths_recalc
         row
       end
     end
@@ -164,7 +165,7 @@ module Terminal
 
     def title=(title)
       @title = title
-      recalc_column_widths Row.new(self, [title_cell_options])
+      require_column_widths_recalc
     end
 
     ##
@@ -180,27 +181,14 @@ module Terminal
     private
 
     def columns_width
-      @column_widths.inject(0) { |s, i| s + i + cell_spacing } + style.border_y.length
+      column_widths.inject(0) { |s, i| s + i + cell_spacing } + style.border_y.length
     end
 
-    def additional_column_widths
-      return [] if style.width.nil?
-      spacing = style.width - columns_width
-      if spacing < 0
-        raise "Table width exceeds wanted width of #{style.width} characters."
-      else
-        per_col = spacing / number_of_columns
-        arr = (1...number_of_columns).to_a.map { |i| per_col }
-        other_cols = arr.inject(0) { |s, i| s + i }
-        arr << spacing - other_cols
-        arr
-      end
-    end
-
-    def recalc_column_widths row
+    def recalc_column_widths
+      @require_column_widths_recalc = false
       n_cols = number_of_columns
       space_width = cell_spacing
-      return if row and row.is_a?(Separator) or (n_cols == 0)
+      return if n_cols == 0
 
       # prepare rows
       all_rows = headings_with_rows
@@ -261,16 +249,13 @@ module Terminal
         end
       end
 
-      resolve = -> (colspan, index = 0, full_width = nil) do
-        current = dp[colspan][index]
-        full_width = current.keys.first if full_width.nil?
-
+      resolve = -> (colspan, full_width, index = 0) do
         # stop if reaches the bottom level.
         return @column_widths[index] = full_width if colspan == 1
 
         # choose best split offset for partition, or second best result
         # if first one is not dividable.
-        candidate_offsets = current.collect(&:last).flatten
+        candidate_offsets = dp[colspan][index].collect(&:last).flatten
         offset = candidate_offsets[0]
         offset = candidate_offsets[1] if offset == colspan
 
@@ -309,11 +294,21 @@ module Terminal
         end
 
         # run next round.
-        resolve.call(left_colspan, left_index, left_width)
-        resolve.call(right_colspan, right_index, right_width)
+        resolve.call(left_colspan, left_width, left_index)
+        resolve.call(right_colspan, right_width, right_index)
       end
 
-      resolve.call(n_cols)
+      full_width = dp[n_cols][0].keys.first
+      unless style.width.nil?
+        new_width = style.width - space_width - style.border_y.length
+        if new_width < full_width
+          raise "Table width exceeds wanted width " +
+                "of #{style.width} characters."
+        end
+        full_width = new_width
+      end
+
+      resolve.call(n_cols, full_width)
     end
 
     ##
@@ -334,6 +329,15 @@ module Terminal
 
     def title_cell_options
       {:value => @title, :alignment => :center, :colspan => number_of_columns}
+    end
+
+    def require_column_widths_recalc
+      @require_column_widths_recalc = true
+    end
+
+    def column_widths
+      recalc_column_widths if @require_column_widths_recalc
+      @column_widths
     end
   end
 end
