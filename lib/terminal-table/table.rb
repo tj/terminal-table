@@ -10,6 +10,8 @@ module Terminal
     # Generates a ASCII table with the given _options_.
 
     def initialize options = {}, &block
+      @headings = []
+      @rows = []
       @column_widths = []
       self.style = options.fetch :style, {}
       self.headings = options.fetch :headings, []
@@ -99,7 +101,7 @@ module Terminal
     # Return total number of columns available.
 
     def number_of_columns
-      headings_with_rows.map { |r| r.cells.size }.max
+      headings_with_rows.map { |r| r.number_of_columns }.max || 0
     end
 
     ##
@@ -196,24 +198,122 @@ module Terminal
     end
 
     def recalc_column_widths row
-      return if row.is_a? Separator
-      i = 0
-      row.cells.each do |cell|
-        colspan = cell.colspan
-        cell_value = cell.value_for_column_width_recalc
-        colspan.downto(1) do |j|
-          cell_length = Unicode::DisplayWidth.of(cell_value.to_s)
-          if colspan > 1
-            spacing_length = cell_spacing * (colspan - 1)
-            length_in_columns = (cell_length - spacing_length)
-            cell_length = (length_in_columns.to_f / colspan).ceil
-          end
-          if @column_widths[i].to_i < cell_length
-            @column_widths[i] = cell_length
-          end
-          i = i + 1
+      n_cols = number_of_columns
+      space_width = cell_spacing
+      return if row and row.is_a?(Separator) or (n_cols == 0)
+
+      # prepare rows
+      all_rows = headings_with_rows
+      all_rows << Row.new(self, [title_cell_options]) unless @title.nil?
+
+      # DP states, dp[colspan][index][split_offset] => column_width.
+      dp = []
+
+      # prepare initial value for DP.
+      all_rows.each do |row|
+        index = 0
+        row.cells.each do |cell|
+          cell_value = cell.value_for_column_width_recalc
+          cell_width = Unicode::DisplayWidth.of(cell_value.to_s)
+          colspan = cell.colspan
+
+          # find column width from each single cell.
+          dp[colspan] ||= []
+          dp[colspan][index] ||= [0]        # add a fake cell with length 0.
+          dp[colspan][index][colspan] ||= 0 # initialize column length to 0.
+
+          # the last index `colspan` means width of the single column (split
+          # at end of each column), not a width made up of multiple columns.
+          single_column_length = [cell_width, dp[colspan][index][colspan]].max
+          dp[colspan][index][colspan] = single_column_length
+
+          index += colspan
         end
       end
+
+      # run DP.
+      (1..n_cols).each do |colspan|
+        dp[colspan] ||= []
+        (0..n_cols-colspan).each do |index|
+          dp[colspan][index] ||= [1]
+          (1...colspan).each do |offset|
+            # processed level became reverse map from width => [offset, ...].
+            left_colspan = offset
+            left_index = index
+            left_width = dp[left_colspan][left_index].keys.first
+
+            right_colspan = colspan - left_colspan
+            right_index = index + offset
+            right_width = dp[right_colspan][right_index].keys.first
+
+            dp[colspan][index][offset] = left_width + right_width + space_width
+          end
+
+          # reverse map it for resolution (max width and short offset first).
+          rmap = {}
+          dp[colspan][index].each_with_index do |width, offset|
+            rmap[width] ||= []
+            rmap[width] << offset
+          end
+
+          # sort reversely and store it back.
+          dp[colspan][index] = rmap.sort.reverse.to_h
+        end
+      end
+
+      resolve = -> (colspan, index = 0, full_width = nil) do
+        current = dp[colspan][index]
+        full_width = current.keys.first if full_width.nil?
+
+        # stop if reaches the bottom level.
+        return @column_widths[index] = full_width if colspan == 1
+
+        # choose best split offset for partition, or second best result
+        # if first one is not dividable.
+        candidate_offsets = current.collect(&:last).flatten
+        offset = candidate_offsets[0]
+        offset = candidate_offsets[1] if offset == colspan
+
+        # prepare for next round.
+        left_colspan = offset
+        left_index = index
+        left_width = dp[left_colspan][left_index].keys.first
+
+        right_colspan = colspan - left_colspan
+        right_index = index + offset
+        right_width = dp[right_colspan][right_index].keys.first
+
+        # calculate reference column width, give remaining spaces to left.
+        total_non_space_width = full_width - (colspan - 1) * space_width
+        ref_column_width = total_non_space_width / colspan
+        remainder = total_non_space_width % colspan
+        rem_left_width = [remainder, left_colspan].min
+        rem_right_width = remainder - rem_left_width
+        ref_left_width = ref_column_width * left_colspan +
+                         (left_colspan - 1) * space_width + rem_left_width
+        ref_right_width = ref_column_width * right_colspan +
+                          (right_colspan - 1) * space_width + rem_right_width
+
+        # at most one width can be greater than the reference width.
+        if left_width <= ref_left_width and right_width <= ref_right_width
+          # use refernce width (evenly partition).
+          left_width = ref_left_width
+          right_width = ref_right_width
+        else
+          # the wider one takes its value, shorter one takes the rest.
+          if left_width > ref_left_width
+            right_width = full_width - left_width - space_width
+          else
+            left_width = full_width - right_width - space_width
+          end
+        end
+
+        # run next round.
+        resolve.call(left_colspan, left_index, left_width)
+        resolve.call(right_colspan, right_index, right_width)
+      end
+
+      resolve.call(n_cols)
     end
 
     ##
