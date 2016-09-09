@@ -45,7 +45,8 @@ module Terminal
     end
 
     it "should count columns" do
-      @table << [1, 2, 3]
+      @table << [1, {:value => "2", :colspan => 2}]
+      @table << [{:value => "3", :colspan => 2}, 4]
       @table.number_of_columns.should == 3
     end
 
@@ -142,20 +143,20 @@ module Terminal
 
 
     it "should render default alignment properly" do
-      @table.headings = ['Char', 'Num']
+      @table.headings = ['Character', 'Num']
       @table << ['a', 1]
       @table << ['b', 2]
       @table << ['c', 3]
       @table.style.width = 21
       @table.style.alignment = :right
       @table.render.should == <<-EOF.deindent
-        +---------+---------+
-        |    Char |     Num |
-        +---------+---------+
-        |       a |       1 |
-        |       b |       2 |
-        |       c |       3 |
-        +---------+---------+
+        +-----------+-------+
+        | Character |   Num |
+        +-----------+-------+
+        |         a |     1 |
+        |         b |     2 |
+        |         c |     3 |
+        +-----------+-------+
       EOF
     end
 
@@ -479,6 +480,37 @@ module Terminal
       EOF
     end
 
+    it "should handle extreme case with complex table layout" do
+      @table << [1, 2, 33, 4]
+      @table << [12345, {:value => 54321, :colspan => 2}, '']
+      @table << [{:value => 123456789, :colspan => 2}, 4, '']
+      @table << [{:value => 123, :colspan => 2}, {:value => 444444444, :colspan => 2}]
+      @table << [{:value => 0, :colspan => 3}, '']
+      @table.render.should == <<-EOF.deindent
+        +-------+---+-----+-----+
+        | 1     | 2 | 33  | 4   |
+        | 12345 | 54321   |     |
+        | 123456789 | 4   |     |
+        | 123       | 444444444 |
+        | 0               |     |
+        +-------+---+-----+-----+
+      EOF
+    end
+
+    it "should try to evenly divide contents over colspans" do
+      @table << [1, 2, 3]
+      @table << [4, {:value => 5555555, :colspan => 2}]
+      @table << [{:value => 66666666 , :colspan => 2}, 777]
+      @table << [{:value => 20202020202020202020, :colspan => 3}]
+      @table.render.should == <<-EOF.deindent
+        +-------+-------+------+
+        | 1     | 2     | 3    |
+        | 4     | 5555555      |
+        | 66666666      | 777  |
+        | 20202020202020202020 |
+        +-------+-------+------+
+      EOF
+    end
 
     it "should handle colspan 1" do
       @table.headings = ['name', { :value => 'values', :colspan => 1}]
@@ -527,13 +559,13 @@ module Terminal
       end
 
       @table.render.should == <<-EOF.deindent
-        +--------+----+----+-------+-------+-----+-----+
-        | name   |  Values |  Other values |  Column 3 |
-        +--------+----+----+-------+-------+-----+-----+
-        | row #1 | 0  | 1  | 2     | 3     | 4   | 5   |
-        | row #2 | 6  | 7  | 8     | 9     | 10  | 11  |
-        | row #3 | 12 | 13 | 14    | 15    | 16  | 17  |
-        +--------+----+----+-------+-------+-----+-----+
+        +--------+----+----+-------+------+-----+----+
+        | name   |  Values | Other values | Column 3 |
+        +--------+----+----+-------+------+-----+----+
+        | row #1 | 0  | 1  | 2     | 3    | 4   | 5  |
+        | row #2 | 6  | 7  | 8     | 9    | 10  | 11 |
+        | row #3 | 12 | 13 | 14    | 15   | 16  | 17 |
+        +--------+----+----+-------+------+-----+----+
       EOF
     end
 

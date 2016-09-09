@@ -43,6 +43,10 @@ module Terminal
           end.join(y) + y
         end.join("\n")
       end
+
+      def number_of_columns
+        @cells.collect(&:colspan).inject(0, &:+)
+      end
     end
   end
 end

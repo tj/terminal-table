@@ -62,6 +62,15 @@ module Terminal
           @@defaults = defaults.merge(options)
         end
       end
+
+      def on_change attr
+        method_name = :"#{attr}="
+        old_method = method method_name
+        define_singleton_method(method_name) do |value|
+          old_method.call value
+          yield attr.to_sym, value
+        end
+      end
     end
   end
 end
