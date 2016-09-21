@@ -249,7 +249,7 @@ module Terminal
         end
       end
 
-      resolve = -> (colspan, full_width, index = 0) do
+      resolve = lambda do |colspan, full_width, index = 0|
         # stop if reaches the bottom level.
         return @column_widths[index] = full_width if colspan == 1
 
