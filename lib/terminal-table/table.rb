@@ -245,7 +245,7 @@ module Terminal
           end
 
           # sort reversely and store it back.
-          dp[colspan][index] = rmap.sort.reverse.to_h
+          dp[colspan][index] = Hash[rmap.sort.reverse]
         end
       end
 
