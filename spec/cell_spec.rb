@@ -20,7 +20,7 @@ describe Terminal::Table do
     @cell.alignment = :left
     @cell.alignment = :right
     @cell.alignment = :center
-    lambda { @cell.alignment = "foo" }.should raise_error
+    lambda { @cell.alignment = "foo" }.should raise_error(RuntimeError)
   end
 
   it "should allow multiline content" do
