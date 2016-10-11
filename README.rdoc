@@ -188,6 +188,25 @@ And change styles on the fly:
   # |   Three            |   3             |
   # x====================x=================x
   
+You can also use styles to add a separator after every row:
+
+  table = Terminal::Table.new do |t|
+    t.add_row [1, 'One']
+    t.add_row [2, 'Two']
+    t.add_row [3, 'Three']
+    t.style = {:all_separators => true}
+  end
+
+  # > puts table
+  #
+  # +---+-------+
+  # | 1 | One   |
+  # +---+-------+
+  # | 2 | Two   |
+  # +---+-------+
+  # | 3 | Three |
+  # +---+-------+
+  
 To change the default style options:
 
   Terminal::Table::Style.defaults = {:width => 80}
