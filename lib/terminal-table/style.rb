@@ -24,6 +24,7 @@ module Terminal
     class Style
       @@defaults = {
         :border_x => "-", :border_y => "|", :border_i => "+",
+        :border_top => true, :border_bottom => true,
         :padding_left => 1, :padding_right => 1,
         :margin_left => '',
         :width => nil, :alignment => nil,
@@ -33,6 +34,8 @@ module Terminal
       attr_accessor :border_x
       attr_accessor :border_y
       attr_accessor :border_i
+      attr_accessor :border_top
+      attr_accessor :border_bottom
 
       attr_accessor :padding_left
       attr_accessor :padding_right

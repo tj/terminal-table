@@ -637,5 +637,33 @@ module Terminal
         +---------+------------+--------+----------+
       EOF
     end
+
+    it "should allow to not generate top border" do
+      @table.style = { :border_top => false }
+      @table.headings = ['name', 'value']
+      @table.rows = [['a', 1], ['b', 2], ['c', 3]]
+      @table.render.should == <<-EOF.deindent
+        | name | value |
+        +------+-------+
+        | a    | 1     |
+        | b    | 2     |
+        | c    | 3     |
+        +------+-------+
+      EOF
+    end
+
+    it "should allow to not generate bottom border" do
+      @table.style = { :border_bottom => false }
+      @table.headings = ['name', 'value']
+      @table.rows = [['a', 1], ['b', 2], ['c', 3]]
+      @table.render.should == <<-EOF.deindent
+        +------+-------+
+        | name | value |
+        +------+-------+
+        | a    | 1     |
+        | b    | 2     |
+        | c    | 3     |
+      EOF
+    end
   end
 end
