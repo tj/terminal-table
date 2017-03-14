@@ -122,7 +122,7 @@ module Terminal
 
     def render
       separator = Separator.new(self)
-      buffer = [separator]
+      buffer = style.border_top ? [separator] : []
       unless @title.nil?
         buffer << Row.new(self, [title_cell_options])
         buffer << separator
@@ -137,7 +137,7 @@ module Terminal
         buffer += @rows.product([separator]).flatten
       else
         buffer += @rows
-        buffer << separator
+        buffer << separator if style.border_bottom
       end
       buffer.map { |r| style.margin_left + r.render.rstrip }.join("\n")
     end

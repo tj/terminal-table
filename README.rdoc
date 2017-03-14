@@ -23,7 +23,7 @@ To generate a table, provide an array of arrays (which are interpreted as rows):
   rows << ['Two', 2]
   rows << ['Three', 3]
   table = Terminal::Table.new :rows => rows
-  
+
   # > puts table
   #
   # +-------+---+
@@ -51,7 +51,7 @@ Adding rows one by one:
   end
 
 To add separators between rows:
-  
+
   table = Terminal::Table.new do |t|
     t << ['One', 1]
     t << :separator
@@ -59,7 +59,7 @@ To add separators between rows:
     t.add_separator
     t.add_row ['Three', 3]
   end
-  
+
   # > puts table
   #
   # +-------+---+
@@ -71,7 +71,7 @@ To add separators between rows:
   # +-------+---+
 
 Cells can handle multiline content:
-  
+
   table = Terminal::Table.new do |t|
     t << ['One', 1]
     t << :separator
@@ -79,7 +79,7 @@ Cells can handle multiline content:
     t.add_separator
     t.add_row ['Three', 3]
   end
-  
+
   # > puts table
   #
   # +--------+---+
@@ -96,7 +96,7 @@ Cells can handle multiline content:
 To add a head to the table:
 
   table = Terminal::Table.new :headings => ['Word', 'Number'], :rows => rows
-  
+
   # > puts table
   #
   # +-------+--------+
@@ -112,7 +112,7 @@ To add a head to the table:
 To add a title to the table:
 
   table = Terminal::Table.new :title => "Cheatsheet", :headings => ['Word', 'Number'], :rows => rows
-  
+
   # > puts table
   #
   # +------------+--------+
@@ -130,7 +130,7 @@ To add a title to the table:
 To align the second column to the right:
 
   table.align_column(1, :right)
-  
+
   # > puts table
   #
   # +-------+--------+
@@ -144,7 +144,7 @@ To align the second column to the right:
 To align an individual cell, you specify the cell value in a hash along the alignment:
 
   table << ["Four", {:value => 4.0, :alignment => :center}]
-  
+
   # > puts table
   #
   # +-------+--------+
@@ -155,13 +155,13 @@ To align an individual cell, you specify the cell value in a hash along the alig
   # | Three |      3 |
   # | Four  |  4.0   |
   # +-------+--------+
-  
+
 === Style
 
 To specify style options:
-  
+
   table = Terminal::Table.new :headings => ['Word', 'Number'], :rows => rows, :style => {:width => 80}
-  
+
   # > puts table
   #
   # +--------------------------------------+---------------------------------------+
@@ -173,9 +173,9 @@ To specify style options:
   # +--------------------------------------+---------------------------------------+
 
 And change styles on the fly:
-  
+
   table.style = {:width => 40, :padding_left => 3, :border_x => "=", :border_i => "x"}
-  
+
   # > puts table
   #
   # x====================x=================x
@@ -187,7 +187,7 @@ And change styles on the fly:
   # |   Two              |   2             |
   # |   Three            |   3             |
   # x====================x=================x
-  
+
 You can also use styles to add a separator after every row:
 
   table = Terminal::Table.new do |t|
@@ -206,7 +206,22 @@ You can also use styles to add a separator after every row:
   # +---+-------+
   # | 3 | Three |
   # +---+-------+
-  
+
+You can also use styles to disable top and bottom borders of the table
+
+  table = Terminal::Table.new do |t|
+    t.headings = ['id', 'name']
+    t.rows = [[1, 'One'], [2, 'Two'], [3, 'Three']]
+    t.style = { :border_top => false, :border_bottom => false }
+  end
+
+  # > puts table
+  # | id | name  |
+  # +----+-------+
+  # | 1  | One   |
+  # | 2  | Two   |
+  # | 3  | Three |
+
 To change the default style options:
 
   Terminal::Table::Style.defaults = {:width => 80}
