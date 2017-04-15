@@ -10,13 +10,13 @@ module Terminal
     it "should select columns" do
       @table << ['foo', 'bar']
       @table << ['big foo', 'big foo bar']
-      @table.column(1).should == ['bar', 'big foo bar']
+      @table.column(1).should eq ['bar', 'big foo bar']
     end
 
     it "should select the column with headings at an index" do
       @table << [1,2,3]
       @table << [4,5,6]
-      @table.column_with_headings(2).should == [3,6]
+      @table.column_with_headings(2).should eq [3,6]
     end
 
     #it "should select the columns with colspans > 1 in the index" do
@@ -27,16 +27,16 @@ module Terminal
     it "should account for the colspan when selecting columns" do
       @table << [1,2,3]
       @table << [{:value => "4,5", :colspan => 2}, 6]
-      @table.column_with_headings(0).should == [1,"4,5"]
-      @table.column_with_headings(1).should == [2,"4,5"]
-      @table.column_with_headings(2).should == [3,6]
+      @table.column_with_headings(0).should eq [1,"4,5"]
+      @table.column_with_headings(1).should eq [2,"4,5"]
+      @table.column_with_headings(2).should eq [3,6]
     end
 
     it "should render tables with colspan properly" do
       @table << [1,2,3]
       @table << [4,5,6]
       @table << [{:value => "7", :colspan => 2}, 88]
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +---+---+----+
         | 1 | 2 | 3  |
         | 4 | 5 | 6  |
@@ -48,57 +48,57 @@ module Terminal
     it "should count columns" do
       @table << [1, {:value => "2", :colspan => 2}]
       @table << [{:value => "3", :colspan => 2}, 4]
-      @table.number_of_columns.should == 3
+      @table.number_of_columns.should eq 3
     end
 
     it "should iterate columns" do
       @table << [1, 2, 3]
       @table << [4, 5, 6]
-      @table.columns.should == [[1, 4], [2, 5], [3, 6]]
+      @table.columns.should eq [[1, 4], [2, 5], [3, 6]]
     end
 
     it "should select columns" do
       @table.headings = ['one', 'two']
       @table << ['foo', 'bar']
       @table << ['big foo', 'big foo bar']
-      @table.column(1).should == ['bar', 'big foo bar']
+      @table.column(1).should eq ['bar', 'big foo bar']
     end
 
     it "should select columns when using hashes" do
       @table.headings = ['one', 'two']
       @table.rows = [[{ :value => 'a', :align => :left }, 1], ['b', 2], ['c', 3]]
-      @table.column(0).should == ['a', 'b', 'c']
+      @table.column(0).should eq ['a', 'b', 'c']
     end
 
     it "should find column length" do
       @table << ['foo', 'bar', 'a']
       @table << ['big foo', 'big foo bar']
-      @table.column_width(1).should == 11
+      @table.column_width(1).should eq 11
     end
 
     it "should find column length with headings" do
       @table.headings = ['one', 'super long heading']
       @table << ['foo', 'bar', 'a']
       @table << ['big foo', 'big foo bar']
-      @table.column_width(1).should == 18
+      @table.column_width(1).should eq 18
     end
 
     it "should render separators" do
       @table.headings = ['Char', 'Num']
       @table << ['a', 1]
       separator = Terminal::Table::Separator.new(@table)
-      separator.render.should == '+------+-----+'
+      separator.render.should eq '+------+-----+'
     end
 
     it "should add separator" do
       @table << ['a', 1]
       @table.add_separator
       @table << ['b', 2]
-      @table.rows.size.should == 2
+      @table.rows.size.should eq 2
     end
 
     it "should render an empty table properly" do
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         ++
         ++
       EOF
@@ -109,7 +109,7 @@ module Terminal
       @table << ['a', 1]
       @table << ['b', 2]
       @table << ['c', 3]
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +------+-----+
         | Char | Num |
         +------+-----+
@@ -130,8 +130,8 @@ module Terminal
       @table << ['a', 1]
       @table << ['b', 2]
       @table << ['c', 3]
-      @table.style.padding_right.should == 2
-      @table.render.should == <<-EOF.deindent
+      @table.style.padding_right.should eq 2
+      @table.render.should eq <<-EOF.deindent
         yyx======x=====x
         yy:Char  :Num  :
         yyx======x=====x
@@ -150,7 +150,7 @@ module Terminal
       @table << ['c', 3]
       @table.style.width = 21
       @table.style.alignment = :right
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +-----------+-------+
         | Character |   Num |
         +-----------+-------+
@@ -167,7 +167,7 @@ module Terminal
       @table << ['b', 2]
       @table << ['c', 3]
       @table.style.width = 21
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +---------+---------+
         | Char    | Num     |
         +---------+---------+
@@ -194,7 +194,7 @@ module Terminal
       @table << ['a', 1]
       @table << ['b', 2]
       @table << ['c', 3]
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +------+-----+
         |   Title    |
         +------+-----+
@@ -211,7 +211,7 @@ module Terminal
       @table << ['a', 1]
       @table << ['b', 2]
       @table << ['c', 3]
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +---+---+
         | a | 1 |
         | b | 2 |
@@ -226,7 +226,7 @@ module Terminal
       @table << ['b', 2]
       @table.add_separator
       @table << ['c', 3]
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +------+-----+
         | Char | Num |
         +------+-----+
@@ -245,7 +245,7 @@ module Terminal
       @table.add_separator
       @table << ['c', 3]
       @table.align_column 1, :right
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +------+-----+
         | Char | Num |
         +------+-----+
@@ -264,7 +264,7 @@ module Terminal
         t << ['b', 2]
         t << ['c', 3]
       end
-      table.render.should == <<-EOF.deindent
+      table.render.should eq <<-EOF.deindent
         +---+---+
         | a | 1 |
         | b | 2 |
@@ -279,7 +279,7 @@ module Terminal
         add_row ['b', 2]
         add_row ['c', 3]
       end
-      table.render.should == <<-EOF.deindent
+      table.render.should eq <<-EOF.deindent
         +---+---+
         | a | 1 |
         | b | 2 |
@@ -293,7 +293,7 @@ module Terminal
       @table << ['a', 1]
       @table << ['b', 2]
       @table << ['c', 3]
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +------+------+
         | Char | Num  |
         +------+------+
@@ -309,7 +309,7 @@ module Terminal
     it "should allows a hash of options for creation" do
       headings = ['Char', 'Num']
       rows = [['a', 1], ['b', 2], ['c', 3]]
-      Terminal::Table.new(:rows => rows, :headings => headings).render.should == <<-EOF.deindent
+      Terminal::Table.new(:rows => rows, :headings => headings).render.should eq <<-EOF.deindent
         +------+-----+
         | Char | Num |
         +------+-----+
@@ -323,7 +323,7 @@ module Terminal
     it "should flex for large cells" do
       @table.headings = ['Just some characters', 'Num']
       @table.rows = [['a', 1], ['b', 2], ['c', 3]]
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +----------------------+-----+
         | Just some characters | Num |
         +----------------------+-----+
@@ -339,7 +339,7 @@ module Terminal
       @table << [{:value => 'a', :alignment => :center}, 1]
       @table << ['b', 222222222222222]
       @table << ['c', 3]
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +------------+-----------------+
         | Characters |            Nums |
         +------------+-----------------+
@@ -356,7 +356,7 @@ module Terminal
       @table.rows = [[{:value => 'a', :alignment => :left}, 1], ['b', 2], ['c', 3]]
       @table.align_column 0, :center
       @table.align_column 1, :right
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +----------------------+-----+
         | Just some characters | Num |
         +----------------------+-----+
@@ -370,15 +370,15 @@ module Terminal
     describe "#==" do
       it "should be equal to itself" do
         t = Table.new
-        t.should == t
+        t.should eq t
       end
 
      # it "should be equal with two empty tables" do
      #   table_one = Table.new
      #   table_two = Table.new
      #
-     #   table_one.should == table_two
-     #   table_two.should == table_one
+     #   table_one.should eq table_two
+     #   table_two.should eq table_one
      # end
 
       it "should not be equal with different headings" do
@@ -387,37 +387,37 @@ module Terminal
 
         table_one.headings << "a"
 
-        table_one.should_not == table_two
-        table_two.should_not == table_one
+        table_one.should_not eq table_two
+        table_two.should_not eq table_one
       end
 
       it "should not be equal with different rows" do
         table_one = Table.new
         table_two = Table.new
 
-        table_one.should_not == table_two
-        table_two.should_not == table_one
+        table_one.should_not eq table_two
+        table_two.should_not eq table_one
       end
 
       it "should not be equal if the other object does not respond_to? :headings" do
         table_one = Table.new
         table_two = Object.new
         allow(table_two).to receive(:rows).and_return([])
-        table_one.should_not == table_two
+        table_one.should_not eq table_two
       end
 
       it "should not be equal if the other object does not respond_to? :rows" do
         table_one = Table.new
         table_two = Object.new
         allow(table_two).to receive(:rows).and_return([])
-        table_one.should_not == table_two
+        table_one.should_not eq table_two
       end
     end
 
     it "should handle colspan inside heading" do
       @table.headings = ['one', { :value => 'two', :alignment => :center, :colspan => 2}]
       @table.rows = [['a', 1, 2], ['b', 3, 4], ['c', 3, 4]]
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +-----+---+---+
         | one |  two  |
         +-----+---+---+
@@ -431,7 +431,7 @@ module Terminal
     it "should handle colspan inside cells" do
       @table.headings = ['one', 'two', 'three']
       @table.rows = [['a', 1, 2], ['b', 3, 4], [{:value => "joined", :colspan => 2,:alignment => :center}, 'c']]
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +-----+-----+-------+
         | one | two | three |
         +-----+-----+-------+
@@ -445,7 +445,7 @@ module Terminal
     it "should handle colspan inside cells regardless of colspan position" do
       @table.headings = ['one', 'two', 'three']
       @table.rows = [['a', 1, 2], ['b', 3, 4], ['c', {:value => "joined", :colspan => 2,:alignment => :center}]]
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +-----+-----+-------+
         | one | two | three |
         +-----+-----+-------+
@@ -459,7 +459,7 @@ module Terminal
     it "should handle overflowing colspans" do
       @table.headings = ['one', 'two', 'three']
       @table.rows = [['a', 1, 2], ['b', 3, 4], ['c', {:value => "joined that is very very long", :colspan => 2,:alignment => :center}]]
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +-----+---------------+---------------+
         | one | two           | three         |
         +-----+---------------+---------------+
@@ -473,7 +473,7 @@ module Terminal
     it "should only increase column size for multi-column if it is unavoidable" do
       @table << [12345,2,3]
       @table << [{:value => 123456789, :colspan => 2}, 4]
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +-------+---+---+
         | 12345 | 2 | 3 |
         | 123456789 | 4 |
@@ -487,7 +487,7 @@ module Terminal
       @table << [{:value => 123456789, :colspan => 2}, 4, '']
       @table << [{:value => 123, :colspan => 2}, {:value => 444444444, :colspan => 2}]
       @table << [{:value => 0, :colspan => 3}, '']
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +-------+---+-----+-----+
         | 1     | 2 | 33  | 4   |
         | 12345 | 54321   |     |
@@ -503,7 +503,7 @@ module Terminal
       @table << [4, {:value => 5555555, :colspan => 2}]
       @table << [{:value => 66666666 , :colspan => 2}, 777]
       @table << [{:value => 20202020202020202020, :colspan => 3}]
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +-------+-------+------+
         | 1     | 2     | 3    |
         | 4     | 5555555      |
@@ -516,7 +516,7 @@ module Terminal
     it "should handle colspan 1" do
       @table.headings = ['name', { :value => 'values', :colspan => 1}]
       @table.rows = [['a', 1], ['b', 4], ['c', 7]]
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +------+--------+
         | name | values |
         +------+--------+
@@ -532,7 +532,7 @@ module Terminal
       @table.headings = ['name', { :value => 'values', :colspan => 3}]
       @table.rows = [['a', 1, 2, 3], ['b', 4, 5, 6], ['c', 7, 8, 9]]
 
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +------+---+---+---+
         | name | values    |
         +------+---+---+---+
@@ -559,7 +559,7 @@ module Terminal
         @table.add_row(row)
       end
 
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +--------+----+----+-------+------+-----+----+
         | name   |  Values | Other values | Column 3 |
         +--------+----+----+-------+------+-----+----+
@@ -577,7 +577,7 @@ module Terminal
       @table.headings = ['name', { :value => 'values', :colspan => 3}]
       @table.rows = [['a', 1, 2, 3], ['b', 4, 5, 6], ['c', 7, 8, 9]]
 
-      @table.render.should == <<-EOF.strip
+      @table.render.should eq <<-EOF.strip
 ---------------
  name  values
 ---------------
@@ -595,7 +595,7 @@ module Terminal
       @table.headings = ['name', { :value => 'values', :colspan => 3}]
       @table.rows = [['a', 1, 2, 3], ['b', 4, 5, 6], ['c', 7, 8, 9]]
 
-      @table.render.should == <<-EOF
+      @table.render.should eq <<-EOF
 
  name  values
 
@@ -611,7 +611,7 @@ module Terminal
       @table.headings = ['name', { :value => 'values', :colspan => 3}]
       @table.rows = [['a', 1, 2, 3], ['b', 4, 5, 6], ['c', 7, 8, 9]]
 
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +------+---+---+---+
         | name | values    |
         +------+---+---+---+
@@ -628,7 +628,7 @@ module Terminal
       @table.headings = ['COL 1', 'ＣＯＬ ２', 'COL ３', 'ＣＯＬ４']
       @table << ['中文', 'にっぽんご', '한국어', 'ＡＢＣ']
       @table << ['Chinese','Japanese','Korean', '.......']
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +---------+------------+--------+----------+
         | COL 1   | ＣＯＬ ２  | COL ３ | ＣＯＬ４ |
         +---------+------------+--------+----------+
@@ -642,7 +642,7 @@ module Terminal
       @table.style = { :border_top => false }
       @table.headings = ['name', 'value']
       @table.rows = [['a', 1], ['b', 2], ['c', 3]]
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         | name | value |
         +------+-------+
         | a    | 1     |
@@ -656,7 +656,7 @@ module Terminal
       @table.style = { :border_bottom => false }
       @table.headings = ['name', 'value']
       @table.rows = [['a', 1], ['b', 2], ['c', 3]]
-      @table.render.should == <<-EOF.deindent
+      @table.render.should eq <<-EOF.deindent
         +------+-------+
         | name | value |
         +------+-------+
