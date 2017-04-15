@@ -94,7 +94,7 @@ module Terminal
     # Return length of column _n_.
 
     def column_width n
-      width = column_widths[n] || 0
+      column_widths[n] || 0
     end
     alias length_of_column column_width # for legacy support
 
