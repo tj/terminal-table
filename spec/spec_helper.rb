@@ -9,6 +9,6 @@ class String
   end
 end
 
-RSpec.configure do |c|
-  c.expect_with(:rspec) { |c| c.syntax = :should }
+RSpec.configure do |config|
+  config.expect_with(:rspec) { |c| c.syntax = :should }
 end

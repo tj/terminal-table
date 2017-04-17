@@ -5,14 +5,14 @@ describe Terminal::Table do
 
   it "should default alignment to the left" do
     cell = Cell.new :value => 'foo', :table => Terminal::Table.new, :index => 0
-    cell.value.should == 'foo'
-    cell.alignment.should == :left
+    cell.value.should eq 'foo'
+    cell.alignment.should eq :left
   end
 
   it "should allow overriding of alignment" do
     cell = Cell.new :value => 'foo', :alignment => :center, :table => Terminal::Table.new, :index => 0
-    cell.value.should == 'foo'
-    cell.alignment.should == :center
+    cell.value.should eq 'foo'
+    cell.alignment.should eq :center
   end
 
   it "should allow :left, :right and :center for alignment" do
@@ -25,31 +25,31 @@ describe Terminal::Table do
 
   it "should allow multiline content" do
     cell = Cell.new :value => "barrissimo\n"+"foo".yellow, :table => Terminal::Table.new, :index => 0
-    cell.value.should == "barrissimo\n"+"foo".yellow
-    cell.lines.should == ['barrissimo','foo'.yellow]
-    cell.value_for_column_width_recalc.should == 'barrissimo'
-    cell.render(0).should == " barrissimo "
+    cell.value.should eq "barrissimo\n"+"foo".yellow
+    cell.lines.should eq ['barrissimo','foo'.yellow]
+    cell.value_for_column_width_recalc.should eq 'barrissimo'
+    cell.render(0).should eq " barrissimo "
   end
 
   it "should allow colorized content" do
     cell = Cell.new :value => "foo".red, :table => Terminal::Table.new, :index => 0
-    cell.value.should == "\e[31mfoo\e[0m"
-    cell.value_for_column_width_recalc.should == 'foo'
-    cell.render.should == " \e[31mfoo\e[0m "
+    cell.value.should eq "\e[31mfoo\e[0m"
+    cell.value_for_column_width_recalc.should eq 'foo'
+    cell.render.should eq " \e[31mfoo\e[0m "
   end
 
   it "should render padding properly" do
     @table = Terminal::Table.new(:rows => [['foo', '2'], ['3', '4']], :style => {:padding_right => 3})
     cell = @table.rows.first.cells.first
-    cell.value.should == 'foo'
-    cell.alignment.should == :left
-    cell.render.should == " foo   "
+    cell.value.should eq 'foo'
+    cell.alignment.should eq :left
+    cell.render.should eq " foo   "
   end
 
   it "should not ignore pipe characters" do
     cell = Cell.new :value => "f|o|o", :table => Terminal::Table.new, :index => 0
-    cell.value.should == "f|o|o"
-    cell.value_for_column_width_recalc.should == 'f|o|o'
-    cell.render.should == " f|o|o "
+    cell.value.should eq "f|o|o"
+    cell.value_for_column_width_recalc.should eq 'f|o|o'
+    cell.render.should eq " f|o|o "
   end
 end
