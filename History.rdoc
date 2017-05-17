@@ -1,3 +1,12 @@
+1.8.0 / 2017-05-16
+==================
+
+* Top and bottom borders can be disabled (@kubakrzempek, #83)
+* `unicode-display-width` dependency relaxes (@mvz, #88)
+
+* Readme and docs fixes (@loualrid, #82 and @leoarnold, #86)
+* Fixed some test-related warnings (@juanitofatas, #81 and @mvz, #89)
+
 1.7.3 / 2016-09-21
 ==================
 
