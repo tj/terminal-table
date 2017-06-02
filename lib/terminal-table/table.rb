@@ -29,6 +29,7 @@ module Terminal
       r = rows
       column(n).each_with_index do |col, i|
         cell = r[i][n]
+        next unless cell
         cell.alignment = alignment unless cell.alignment?
       end
     end
