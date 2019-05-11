@@ -1,0 +1,58 @@
+version: 2
+jobs:
+  job_template: &job_template
+    environment:
+      GEM_HOME: vendor/bundle
+      BUNDLER_INSTALL_ARGS: -v 1.17.3
+    docker:
+      - image: ruby:$CIRCLE_JOB
+    working_directory: /tmp/project
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-bundle-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
+            - v1-bundle-{{ .Environment.CIRCLE_JOB }}-
+      - run:
+          name: Bundle install
+          #(gem uninstall -ax bundler || true)
+          command: >
+            gem install bundler -i vendor/bundle $BUNDLER_INSTALL_ARGS
+            && bundle install --path vendor/bundle
+      - save_cache:
+          key: v1-bundle-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - /tmp/project/vendor
+      - run:
+          name: Run Tests
+          command: bundle exec rake spec
+
+  1.9.3:
+    <<: *job_template
+  2.0.0:
+    <<: *job_template
+  2.1.1:
+    <<: *job_template
+  2.2.0:
+    <<: *job_template
+  2.3.0:
+    <<: *job_template
+  2.4.0:
+    <<: *job_template
+  2.5.0:
+    <<: *job_template
+  2.6.0:
+    <<: *job_template
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - 1.9.3
+      - 2.0.0
+      - 2.1.1
+      - 2.2.0
+      - 2.3.0
+      - 2.4.0
+      - 2.5.0
+      - 2.6.0

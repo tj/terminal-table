@@ -1,3 +1,5 @@
+[![Circle CI](https://circleci.com/gh/tj/terminal-table.svg?style=shield)](https://circleci.com/gh/tj/terminal-table)
+
 = Terminal Table
 
 == Description
