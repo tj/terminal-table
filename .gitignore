@@ -4,3 +4,4 @@ tmp
 *.cache
 doc
 Gemfile.lock
+vendor
