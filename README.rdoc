@@ -1,4 +1,4 @@
-{<img src="https://circleci.com/gh/tj/terminal-table/tree/master.svg?style=shield" alt="CircleCI" />}[https://circleci.com/gh/tj/terminal-table/tree/master]
+{<img src="https://circleci.com/gh/tj/terminal-table.svg?style=shield" alt="CircleCI" />}[https://circleci.com/gh/tj/terminal-table]
 
 = Terminal Table
 
