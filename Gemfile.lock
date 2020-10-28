@@ -13,7 +13,7 @@ GEM
     pry (0.13.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
-    rake (10.5.0)
+    rake (13.0.1)
     rspec (3.9.0)
       rspec-core (~> 3.9.0)
       rspec-expectations (~> 3.9.0)
@@ -38,7 +38,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 2)
   pry
-  rake (~> 10.0)
+  rake (~> 13.0)
   rspec (>= 3.0)
   term-ansicolor
   terminal-table!
