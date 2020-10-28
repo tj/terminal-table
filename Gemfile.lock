@@ -36,7 +36,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (~> 1.10)
+  bundler (~> 2)
   pry
   rake (~> 10.0)
   rspec (>= 3.0)
@@ -45,4 +45,4 @@ DEPENDENCIES
   tins (~> 1.0.0)
 
 BUNDLED WITH
-   1.17.3
+   2.1.4
