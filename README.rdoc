@@ -1,4 +1,4 @@
-[![Circle CI](https://circleci.com/gh/tj/terminal-table.svg?style=shield)](https://circleci.com/gh/tj/terminal-table)
+{<img src="https://github.com/tj/terminal-table/workflows/CI/badge.svg" />}[https://github.com/tj/terminal-table/actions]
 
 = Terminal Table
 
