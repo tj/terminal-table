@@ -2,13 +2,57 @@ module Terminal
   class Table
     class Separator < Row
 
-      def render
-        arr_x = (0...@table.number_of_columns).to_a.map do |i|
-          @table.style.border_x * (@table.column_width(i) + @table.cell_padding)
-        end
-        border_i = @table.style.border_i
-        border_i + arr_x.join(border_i) + border_i
+      def initialize(*args)
+        super
+        @prevrow, @nextrow = nil, nil # references to adjacent rows.
       end
+
+      def row_type
+        return :top if @prevrow.nil?
+        return :bot if @nextrow.nil?
+        return :below_heading if @prevrow.is_a?(HeadingRow)
+        return :mid
+      end
+      
+      def render
+        left_edge, ctrflat, ctrud, right_edge, ctrdn, ctrup = @table.style.horizontal(row_type)
+        
+        prev_crossings = @prevrow.respond_to?(:crossings) ? @prevrow.crossings : []
+        next_crossings = @nextrow.respond_to?(:crossings) ? @nextrow.crossings : []
+        rval = [left_edge]
+        numcols = @table.number_of_columns
+        (0...numcols).each do |idx|
+          rval << ctrflat * (@table.column_width(idx) + @table.cell_padding)
+          pcinc = prev_crossings.include?(idx+1)
+          ncinc = next_crossings.include?(idx+1)
+          border_center = if pcinc && ncinc
+                            ctrud
+                          elsif pcinc
+                            ctrup
+                          elsif ncinc
+                            ctrdn
+                          elsif !ctrud.empty?
+                            # special case if the center-up-down intersection is empty
+                            # which happens when verticals/intersections are removed. in that case
+                            # we do not want to replace with a flat element so return empty-string in else block
+                            ctrflat
+                          else
+                            ''
+                          end
+          rval << border_center if idx < numcols-1
+        end
+          
+        rval << right_edge
+        return rval.join
+      end
+
+      # save off neighboring rows.
+      # TODO: rename this function, name makes no sense.
+      def elab(prevrow, nextrow)
+        @prevrow = prevrow
+        @nextrow = nextrow
+      end
+      
     end
   end
 end

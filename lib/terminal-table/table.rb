@@ -112,7 +112,7 @@ module Terminal
     def headings= arrays
       arrays = [arrays] unless arrays.first.is_a?(Array)
       @headings = arrays.map do |array|
-        row = Row.new(self, array)
+        row = HeadingRow.new(self, array)
         require_column_widths_recalc
         row
       end
@@ -122,24 +122,38 @@ module Terminal
     # Render the table.
 
     def render
-      separator = Separator.new(self)
-      buffer = style.border_top ? [separator] : []
+
+      buffer = style.border_top ? [Separator.new(self)] : []
       unless @title.nil?
-        buffer << Row.new(self, [title_cell_options])
-        buffer << separator
+        buffer << TitleRow.new(self, [title_cell_options])
+        buffer << Separator.new(self)
       end
       @headings.each do |row|
         unless row.cells.empty?
           buffer << row
-          buffer << separator
+          buffer << Separator.new(self)
         end
       end
       if style.all_separators
-        buffer += @rows.product([separator]).flatten
+        buffer += @rows.product([Separator.new(self)]).flatten
       else
         buffer += @rows
-        buffer << separator if style.border_bottom
+        buffer << Separator.new(self) if style.border_bottom
       end
+      buffer.each_with_index do |r,idx|
+        #p [:zzz, r.class]
+        if r.is_a?(Separator)
+          prevrow = idx>0 ? buffer[idx-1] : nil
+          nextrow = buffer.fetch(idx+1, nil)
+          r.elab(prevrow, nextrow)
+        end
+      end
+      
+      #buffer.each do |r|
+      #  p(rr: r.edge) if r.is_a?(Separator)
+      #end
+
+      
       buffer.map { |r| style.margin_left + r.render.rstrip }.join("\n")
     end
     alias :to_s :render
