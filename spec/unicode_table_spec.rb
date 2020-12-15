@@ -132,15 +132,15 @@ module Terminal
         :padding_left => 0, :padding_right => 2,
         :margin_left => 'y' * 2
       }
-      @table.style.border[:border_hi] = "x"
-      @table.style.border[:border_y]  = ":"
-      @table.style.border[:border_nw] = "1"
-      @table.style.border[:border_ne] = "2"
-      @table.style.border[:border_sw] = "3"
-      @table.style.border[:border_se] = "4"
-      @table.style.border[:border_up] = "^"
-      @table.style.border[:border_hw] = "5"
-      @table.style.border[:border_he] = "6"
+      @table.style.border[:hi] = "x"
+      @table.style.border[:y]  = ":"
+      @table.style.border[:nw] = "1"
+      @table.style.border[:ne] = "2"
+      @table.style.border[:sw] = "3"
+      @table.style.border[:se] = "4"
+      @table.style.border[:up] = "^"
+      @table.style.border[:hw] = "5"
+      @table.style.border[:he] = "6"
       
       @table << ['a', 1]
       @table << ['b', 2]

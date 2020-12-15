@@ -1,27 +1,9 @@
 # coding: utf-8
+require 'forwardable'
+
 module Terminal
   class Table
-    # A Style object holds all the formatting information for a Table object
-    #
-    # To create a table with a certain style, use either the constructor
-    # option <tt>:style</tt>, the Table#style object or the Table#style= method
-    #
-    # All these examples have the same effect:
-    #
-    #     # by constructor
-    #     @table = Table.new(:style => {:padding_left => 2, :width => 40})
-    #
-    #     # by object
-    #     @table.style.padding_left = 2
-    #     @table.style.width = 40
-    #
-    #     # by method
-    #     @table.style = {:padding_left => 2, :width => 40}
-    #
-    # To set a default style for all tables created afterwards use Style.defaults=
-    #
-    #     Terminal::Table::Style.defaults = {:width => 80}
-    #
+
     class Border
       attr_accessor :data
       def []=(key, val)
@@ -44,64 +26,113 @@ module Terminal
     end
     
     class AsciiBorder < Border
-      HORIZONTALS = %i[border_x]
-      VERTICALS = %i[border_y]
-      INTERSECTIONS = %i[border_i]
+      HORIZONTALS = %i[x]
+      VERTICALS = %i[y]
+      INTERSECTIONS = %i[i]
       
       def initialize
-        @data = { border_x: "-", border_y: "|", border_i:  "+" }
+        @data = { x: "-", y: "|", i:  "+" }
       end
       
+      # Get vertical border elements
       # @return [Array] 3-element list of [left, center, right]
       def vertical
-        y = @data[:border_y]
+        y = @data[:y]
         [y, y, y] # left, center, right
       end
       
+      # Get horizontal border elements
       # @return [Array] a 6 element list of: [i-left, horizontal-bar, i-up/down, i-right, i-down, i-up]
       def horizontal(_type)
-        x, i = @data[:border_x], @data[:border_i]
+        x, i = @data[:x], @data[:i]
         [i, x, i, i, i, i]
       end
     end
     
     class UnicodeBorder < Border
-      HORIZONTALS = %i[border_x border_sx border_hx border_nx]
-      VERTICALS = %i[border_y border_yw border_ye]
-      INTERSECTIONS = %i[border_nw border_n border_ne border_nd 
-                         border_hw border_hi border_he border_hd border_hu
-                         border_w border_i border_e border_dn border_up 
-                         border_sw border_s border_se border_su]
+      HORIZONTALS = %i[x sx hx nx]
+      VERTICALS = %i[y yw ye]
+      INTERSECTIONS = %i[nw n ne nd 
+                         hw hi he hd hu
+                         w i e dn up 
+                         sw s se su]
       def initialize 
         @data = {
-          border_nw: "┌", border_nx: "─", border_n:  "┬", border_ne: "┐", border_nd: nil,
-          border_yw: "│",                 border_y:  "│", border_ye: "│", 
-          border_hw: "╞", border_hx: "═", border_hi: "╪", border_he: "╡", border_hd: '╤', border_hu: "╧",
-          border_w:  "├", border_x:  "─", border_i:  "┼", border_e:  "┤", border_dn: "┬", border_up: "┴",
-          border_sw: "└", border_sx: "─", border_s:  "┴", border_se: "┘", border_su:  nil,
+          nw: "┌", nx: "─", n:  "┬", ne: "┐",
+          yw: "│",          y:  "│", ye: "│", 
+          hw: "╞", hx: "═", hi: "╪", he: "╡", hd: '╤', hu: "╧",
+          w:  "├", x:  "─", i:  "┼", e:  "┤", dn: "┬", up: "┴",
+          sw: "└", sx: "─", s:  "┴", se: "┘",
         }
       end
+      # Get vertical border elements
       # @return [Array] 3-element list of [left, center, right]
       def vertical
-        [@data[:border_yw], @data[:border_y], @data[:border_ye]] 
+        [@data[:yw], @data[:y], @data[:ye]] 
       end
 
+      # Get horizontal border elements
       # @return [Array] a 6 element list of: [i-left, horizontal-bar, i-up/down, i-right, i-down, i-up]
       def horizontal(type)
         case type
         when :below_heading
-          [@data[:border_hw], @data[:border_hx], @data[:border_hi], @data[:border_he], @data[:border_hd] || @data[:border_dn], @data[:border_hu] || @data[:border_up] ]
+          [@data[:hw], @data[:hx], @data[:hi], @data[:he], @data[:hd], @data[:hu] ]
         when :top
-          [@data[:border_nw], @data[:border_nx], @data[:border_n], @data[:border_ne], @data[:border_nd] || @data[:border_dn], nil ]
+          [@data[:nw], @data[:nx], @data[:n], @data[:ne], @data[:n], nil ]
         when :bot
-          [@data[:border_sw], @data[:border_sx], @data[:border_s], @data[:border_se], nil, @data[:border_su] || @data[:border_up] ]
+          [@data[:sw], @data[:sx], @data[:s], @data[:se], nil, @data[:s] || @data[:up] ]
         else # center
-          [@data[:border_w], @data[:border_x], @data[:border_i], @data[:border_e], @data[:border_dn], @data[:border_up] ]
+          [@data[:w], @data[:x], @data[:i], @data[:e], @data[:dn], @data[:up] ]
         end
       end
     end
+
+    # Unicode Border With rounded edges
+    class UnicodeRoundBorder < UnicodeBorder
+      def initialize
+        super
+        @data.merge!({nw: '╭', ne: '╮', sw: '╰', se: '╯'})
+      end
+    end
+
+    # Unicode Border with thick outer edges
+    class UnicodeThickEdgeBorder < UnicodeBorder
+      def initialize
+        @data = {
+          nw: "┏", nx: "━", n:  "┯", ne: "┓", nd: nil,
+          yw: "┃",          y:  "│", ye: "┃", 
+          hw: "┣", hx: "═", hi: "╪", he: "┫", hd: '╤', hu: "╧",
+          w:  "┠", x:  "─", i:  "┼", e:  "┨", dn: "┬", up: "┴",
+          sw: "┗", sx: "━", s:  "┷", se: "┛", su:  nil,
+        }
+      end
+    end
     
+    # A Style object holds all the formatting information for a Table object
+    #
+    # To create a table with a certain style, use either the constructor
+    # option <tt>:style</tt>, the Table#style object or the Table#style= method
+    #
+    # All these examples have the same effect:
+    #
+    #     # by constructor
+    #     @table = Table.new(:style => {:padding_left => 2, :width => 40})
+    #
+    #     # by object
+    #     @table.style.padding_left = 2
+    #     @table.style.width = 40
+    #
+    #     # by method
+    #     @table.style = {:padding_left => 2, :width => 40}
+    #
+    # To set a default style for all tables created afterwards use Style.defaults=
+    #
+    #     Terminal::Table::Style.defaults = {:width => 80}
+    #
     class Style
+      extend Forwardable
+      def_delegators :@border, :vertical, :horizontal, :remove_verticals, :remove_horizontals
+      
       @@defaults = {
         :border => AsciiBorder.new,
         :border_top => true, :border_bottom => true,
@@ -110,22 +141,14 @@ module Terminal
         :width => nil, :alignment => nil,
         :all_separators => false,
       }
-      #@@defaults.merge!(@@ascii_borders)
 
-      def border_x=(val)
-        @border[:border_x] = val
-      end
-      def border_y=(val)
-        @border[:border_y] = val
-      end
-      def border_i=(val)
-        @border[:border_i] = val
-      end
-      def border_y
-        @border[:border_y]
-      end
+      ## settors/gettor for legacy ascii borders
+      def border_x=(val) ; @border[:x] = val ; end
+      def border_y=(val) ; @border[:y] = val ; end
+      def border_i=(val) ; @border[:i] = val ; end
+      def border_y ; @border[:y] ; end
 
-      #attr_reader :border_x, :border_y, :border_i
+      # Accessor for instance of Border
       attr_accessor :border
       
       attr_accessor :border_top
@@ -147,28 +170,9 @@ module Terminal
       end
 
       def apply options
-        
         options.each do |m, v|
-          #p "applying #{m.inspect} #{v}"
           __send__ "#{m}=", v
         end
-      end
-
-      # Get vertical border elements from Border instance
-      def vertical
-        @border.vertical
-      end
-      
-      # Get horizontal border elements from Border instance
-      def horizontal(args)
-        @border.horizontal(args)
-      end
-
-      def remove_verticals
-        @border.remove_verticals
-      end
-      def remove_horizontals
-        @border.remove_horizontals
       end
       
       class << self
@@ -194,7 +198,6 @@ module Terminal
           yield attr.to_sym, value
         end
       end
-
           
     end
   end
