@@ -16,6 +16,7 @@ module Terminal
       
       def render
         left_edge, ctrflat, ctrud, right_edge, ctrdn, ctrup = @table.style.horizontal(row_type)
+        #p [row_type, left_edge, ctrflat, ctrud, right_edge, ctrdn, ctrup, @prevrow.class, @nextrow.class]
         
         prev_crossings = @prevrow.respond_to?(:crossings) ? @prevrow.crossings : []
         next_crossings = @nextrow.respond_to?(:crossings) ? @nextrow.crossings : []

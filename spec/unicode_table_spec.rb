@@ -5,6 +5,8 @@ module Terminal
   describe Table do
     before :each do
       @table = Table.new
+      @table.style = { :border => Terminal::Table::UnicodeBorder.new() }
+
     end
 
     it "should select columns" do
@@ -37,11 +39,11 @@ module Terminal
       @table << [4,5,6]
       @table << [{:value => "7", :colspan => 2}, 88]
       @table.render.should eq <<-EOF.deindent
-        +---+---+----+
-        | 1 | 2 | 3  |
-        | 4 | 5 | 6  |
-        | 7     | 88 |
-        +-------+----+
+        ┌───┬───┬────┐
+        │ 1 │ 2 │ 3  │
+        │ 4 │ 5 │ 6  │
+        │ 7     │ 88 │
+        └───────┴────┘
       EOF
     end
 
@@ -87,7 +89,11 @@ module Terminal
       @table.headings = ['Char', 'Num']
       @table << ['a', 1]
       separator = Terminal::Table::Separator.new(@table)
-      separator.render.should eq '+------------+'
+      ##ascii## separator.render.should eq '+------------+'
+      # Ambiguous what this should be...
+      # Technically it is a both a 'top' and a 'bottom', however the logic
+      # for top has priority. :/
+      separator.render.should eq '┌────────────┐'
     end
 
     it "should add separator" do
@@ -99,8 +105,8 @@ module Terminal
 
     it "should render an empty table properly" do
       @table.render.should eq <<-EOF.deindent
-        ++
-        ++
+       ┌┐
+       └┘
       EOF
     end
 
@@ -110,36 +116,45 @@ module Terminal
       @table << ['b', 2]
       @table << ['c', 3]
       @table.render.should eq <<-EOF.deindent
-        +------+-----+
-        | Char | Num |
-        +------+-----+
-        | a    | 1   |
-        | b    | 2   |
-        | c    | 3   |
-        +------+-----+
+       ┌──────┬─────┐
+       │ Char │ Num │
+       ╞══════╪═════╡
+       │ a    │ 1   │
+       │ b    │ 2   │
+       │ c    │ 3   │
+       └──────┴─────┘
       EOF
     end
 
     it "should render styles properly" do
       @table.headings = ['Char', 'Num']
       @table.style = {
-        :border_x => "=", :border_y => ":", :border_i => "x",
         :padding_left => 0, :padding_right => 2,
         :margin_left => 'y' * 2
       }
+      @table.style.border[:border_hi] = "x"
+      @table.style.border[:border_y]  = ":"
+      @table.style.border[:border_nw] = "1"
+      @table.style.border[:border_ne] = "2"
+      @table.style.border[:border_sw] = "3"
+      @table.style.border[:border_se] = "4"
+      @table.style.border[:border_up] = "^"
+      @table.style.border[:border_hw] = "5"
+      @table.style.border[:border_he] = "6"
+      
       @table << ['a', 1]
       @table << ['b', 2]
       @table << ['c', 3]
       @table.style.padding_right.should eq 2
 
       @table.render.should eq <<-EOF.deindent
-        yyx======x=====x
-        yy:Char  :Num  :
-        yyx======x=====x
-        yy:a     :1    :
-        yy:b     :2    :
-        yy:c     :3    :
-        yyx======x=====x
+       yy1──────┬─────2
+       yy│Char  :Num  │
+       yy5══════x═════6
+       yy│a     :1    │
+       yy│b     :2    │
+       yy│c     :3    │
+       yy3──────^─────4
       EOF
     end
 
@@ -153,13 +168,13 @@ module Terminal
       @table.style.alignment = :right
 
       @table.render.should eq <<-EOF.deindent
-        +-----------+-------+
-        | Character |   Num |
-        +-----------+-------+
-        |         a |     1 |
-        |         b |     2 |
-        |         c |     3 |
-        +-----------+-------+
+       ┌───────────┬───────┐
+       │ Character │   Num │
+       ╞═══════════╪═══════╡
+       │         a │     1 │
+       │         b │     2 │
+       │         c │     3 │
+       └───────────┴───────┘
       EOF
     end
 
@@ -170,13 +185,13 @@ module Terminal
       @table << ['c', 3]
       @table.style.width = 21
       @table.render.should eq <<-EOF.deindent
-        +---------+---------+
-        | Char    | Num     |
-        +---------+---------+
-        | a       | 1       |
-        | b       | 2       |
-        | c       | 3       |
-        +---------+---------+
+        ┌─────────┬─────────┐
+        │ Char    │ Num     │
+        ╞═════════╪═════════╡
+        │ a       │ 1       │
+        │ b       │ 2       │
+        │ c       │ 3       │
+        └─────────┴─────────┘
       EOF
     end
 
@@ -197,15 +212,15 @@ module Terminal
       @table << ['b', 2]
       @table << ['c', 3]
       @table.render.should eq <<-EOF.deindent
-        +------------+
-        |   Title    |
-        +------+-----+
-        | Char | Num |
-        +------+-----+
-        | a    | 1   |
-        | b    | 2   |
-        | c    | 3   |
-        +------+-----+
+        ┌────────────┐
+        │   Title    │
+        ├──────┬─────┤
+        │ Char │ Num │
+        ╞══════╪═════╡
+        │ a    │ 1   │
+        │ b    │ 2   │
+        │ c    │ 3   │
+        └──────┴─────┘
       EOF
     end
 
@@ -214,11 +229,11 @@ module Terminal
       @table << ['b', 2]
       @table << ['c', 3]
       @table.render.should eq <<-EOF.deindent
-        +---+---+
-        | a | 1 |
-        | b | 2 |
-        | c | 3 |
-        +---+---+
+        ┌───┬───┐
+        │ a │ 1 │
+        │ b │ 2 │
+        │ c │ 3 │
+        └───┴───┘
       EOF
     end
 
@@ -229,14 +244,14 @@ module Terminal
       @table.add_separator
       @table << ['c', 3]
       @table.render.should eq <<-EOF.deindent
-        +------+-----+
-        | Char | Num |
-        +------+-----+
-        | a    | 1   |
-        | b    | 2   |
-        +------+-----+
-        | c    | 3   |
-        +------+-----+
+       ┌──────┬─────┐
+       │ Char │ Num │
+       ╞══════╪═════╡
+       │ a    │ 1   │
+       │ b    │ 2   │
+       ├──────┼─────┤
+       │ c    │ 3   │
+       └──────┴─────┘
       EOF
     end
 
@@ -248,14 +263,14 @@ module Terminal
       @table << ['c', 3]
       @table.align_column 1, :right
       @table.render.should eq <<-EOF.deindent
-        +------+-----+
-        | Char | Num |
-        +------+-----+
-        | a    |   1 |
-        | b    |   2 |
-        +------+-----+
-        | c    |   3 |
-        +------+-----+
+       ┌──────┬─────┐
+       │ Char │ Num │
+       ╞══════╪═════╡
+       │ a    │   1 │
+       │ b    │   2 │
+       ├──────┼─────┤
+       │ c    │   3 │
+       └──────┴─────┘
       EOF
     end
 
@@ -296,15 +311,15 @@ module Terminal
       @table << ['b', 2]
       @table << ['c', 3]
       @table.render.should eq <<-EOF.deindent
-        +------+------+
-        | Char | Num  |
-        +------+------+
-        | 2nd heading |
-        +------+------+
-        | a    | 1    |
-        | b    | 2    |
-        | c    | 3    |
-        +------+------+
+       ┌──────┬──────┐
+       │ Char │ Num  │
+       ╞══════╧══════╡
+       │ 2nd heading │
+       ╞══════╤══════╡
+       │ a    │ 1    │
+       │ b    │ 2    │
+       │ c    │ 3    │
+       └──────┴──────┘
       EOF
     end
 
@@ -326,13 +341,13 @@ module Terminal
       @table.headings = ['Just some characters', 'Num']
       @table.rows = [['a', 1], ['b', 2], ['c', 3]]
       @table.render.should eq <<-EOF.deindent
-        +----------------------+-----+
-        | Just some characters | Num |
-        +----------------------+-----+
-        | a                    | 1   |
-        | b                    | 2   |
-        | c                    | 3   |
-        +----------------------+-----+
+       ┌──────────────────────┬─────┐
+       │ Just some characters │ Num │
+       ╞══════════════════════╪═════╡
+       │ a                    │ 1   │
+       │ b                    │ 2   │
+       │ c                    │ 3   │
+       └──────────────────────┴─────┘
       EOF
     end
 
@@ -342,13 +357,13 @@ module Terminal
       @table << ['b', 222222222222222]
       @table << ['c', 3]
       @table.render.should eq <<-EOF.deindent
-        +------------+-----------------+
-        | Characters |            Nums |
-        +------------+-----------------+
-        |     a      | 1               |
-        | b          | 222222222222222 |
-        | c          | 3               |
-        +------------+-----------------+
+       ┌────────────┬─────────────────┐
+       │ Characters │            Nums │
+       ╞════════════╪═════════════════╡
+       │     a      │ 1               │
+       │ b          │ 222222222222222 │
+       │ c          │ 3               │
+       └────────────┴─────────────────┘
       EOF
 
     end
@@ -359,13 +374,13 @@ module Terminal
       @table.align_column 0, :center
       @table.align_column 1, :right
       @table.render.should eq <<-EOF.deindent
-        +----------------------+-----+
-        | Just some characters | Num |
-        +----------------------+-----+
-        | a                    |   1 |
-        |          b           |   2 |
-        |          c           |   3 |
-        +----------------------+-----+
+        ┌──────────────────────┬─────┐
+        │ Just some characters │ Num │
+        ╞══════════════════════╪═════╡
+        │ a                    │   1 │
+        │          b           │   2 │
+        │          c           │   3 │
+        └──────────────────────┴─────┘
       EOF
     end
 
@@ -420,13 +435,13 @@ module Terminal
       @table.headings = ['one', { :value => 'two', :alignment => :center, :colspan => 2}]
       @table.rows = [['a', 1, 2], ['b', 3, 4], ['c', 3, 4]]
       @table.render.should eq <<-EOF.deindent
-        +-----+-------+
-        | one |  two  |
-        +-----+---+---+
-        | a   | 1 | 2 |
-        | b   | 3 | 4 |
-        | c   | 3 | 4 |
-        +-----+---+---+
+        ┌─────┬───────┐
+        │ one │  two  │
+        ╞═════╪═══╤═══╡
+        │ a   │ 1 │ 2 │
+        │ b   │ 3 │ 4 │
+        │ c   │ 3 │ 4 │
+        └─────┴───┴───┘
       EOF
     end
 
@@ -434,13 +449,13 @@ module Terminal
       @table.headings = ['one', 'two', 'three']
       @table.rows = [['a', 1, 2], ['b', 3, 4], [{:value => "joined", :colspan => 2,:alignment => :center}, 'c']]
       @table.render.should eq <<-EOF.deindent
-        +-----+-----+-------+
-        | one | two | three |
-        +-----+-----+-------+
-        | a   | 1   | 2     |
-        | b   | 3   | 4     |
-        |  joined   | c     |
-        +-----------+-------+
+        ┌─────┬─────┬───────┐
+        │ one │ two │ three │
+        ╞═════╪═════╪═══════╡
+        │ a   │ 1   │ 2     │
+        │ b   │ 3   │ 4     │
+        │  joined   │ c     │
+        └───────────┴───────┘
       EOF
     end
 
@@ -448,13 +463,13 @@ module Terminal
       @table.headings = ['one', 'two', 'three']
       @table.rows = [['a', 1, 2], ['b', 3, 4], ['c', {:value => "joined", :colspan => 2,:alignment => :center}]]
       @table.render.should eq <<-EOF.deindent
-        +-----+-----+-------+
-        | one | two | three |
-        +-----+-----+-------+
-        | a   | 1   | 2     |
-        | b   | 3   | 4     |
-        | c   |   joined    |
-        +-----+-------------+
+        ┌─────┬─────┬───────┐
+        │ one │ two │ three │
+        ╞═════╪═════╪═══════╡
+        │ a   │ 1   │ 2     │
+        │ b   │ 3   │ 4     │
+        │ c   │   joined    │
+        └─────┴─────────────┘
       EOF
     end
 
@@ -462,13 +477,13 @@ module Terminal
       @table.headings = ['one', 'two', 'three']
       @table.rows = [['a', 1, 2], ['b', 3, 4], ['c', {:value => "joined that is very very long", :colspan => 2,:alignment => :center}]]
       @table.render.should eq <<-EOF.deindent
-        +-----+---------------+---------------+
-        | one | two           | three         |
-        +-----+---------------+---------------+
-        | a   | 1             | 2             |
-        | b   | 3             | 4             |
-        | c   | joined that is very very long |
-        +-----+-------------------------------+
+        ┌─────┬───────────────┬───────────────┐
+        │ one │ two           │ three         │
+        ╞═════╪═══════════════╪═══════════════╡
+        │ a   │ 1             │ 2             │
+        │ b   │ 3             │ 4             │
+        │ c   │ joined that is very very long │
+        └─────┴───────────────────────────────┘
       EOF
     end
 
@@ -476,10 +491,10 @@ module Terminal
       @table << [12345,2,3]
       @table << [{:value => 123456789, :colspan => 2}, 4]
       @table.render.should eq <<-EOF.deindent
-        +-------+---+---+
-        | 12345 | 2 | 3 |
-        | 123456789 | 4 |
-        +-----------+---+
+        ┌───────┬───┬───┐
+        │ 12345 │ 2 │ 3 │
+        │ 123456789 │ 4 │
+        └───────────┴───┘
       EOF
     end
 
@@ -490,13 +505,13 @@ module Terminal
       @table << [{:value => 123, :colspan => 2}, {:value => 444444444, :colspan => 2}]
       @table << [{:value => 0, :colspan => 3}, '']
       @table.render.should eq <<-EOF.deindent
-        +-------+---+-----+-----+
-        | 1     | 2 | 33  | 4   |
-        | 12345 | 54321   |     |
-        | 123456789 | 4   |     |
-        | 123       | 444444444 |
-        | 0               |     |
-        +-----------------+-----+
+        ┌───────┬───┬─────┬─────┐
+        │ 1     │ 2 │ 33  │ 4   │
+        │ 12345 │ 54321   │     │
+        │ 123456789 │ 4   │     │
+        │ 123       │ 444444444 │
+        │ 0               │     │
+        └─────────────────┴─────┘
       EOF
     end
 
@@ -506,12 +521,12 @@ module Terminal
       @table << [{:value => 66666666 , :colspan => 2}, 777]
       @table << [{:value => 20202020202020202020, :colspan => 3}]
       @table.render.should eq <<-EOF.deindent
-        +-------+-------+------+
-        | 1     | 2     | 3    |
-        | 4     | 5555555      |
-        | 66666666      | 777  |
-        | 20202020202020202020 |
-        +----------------------+
+        ┌───────┬───────┬──────┐
+        │ 1     │ 2     │ 3    │
+        │ 4     │ 5555555      │
+        │ 66666666      │ 777  │
+        │ 20202020202020202020 │
+        └──────────────────────┘
       EOF
     end
 
@@ -519,13 +534,13 @@ module Terminal
       @table.headings = ['name', { :value => 'values', :colspan => 1}]
       @table.rows = [['a', 1], ['b', 4], ['c', 7]]
       @table.render.should eq <<-EOF.deindent
-        +------+--------+
-        | name | values |
-        +------+--------+
-        | a    | 1      |
-        | b    | 4      |
-        | c    | 7      |
-        +------+--------+
+        ┌──────┬────────┐
+        │ name │ values │
+        ╞══════╪════════╡
+        │ a    │ 1      │
+        │ b    │ 4      │
+        │ c    │ 7      │
+        └──────┴────────┘
       EOF
     end
 
@@ -535,13 +550,13 @@ module Terminal
       @table.rows = [['a', 1, 2, 3], ['b', 4, 5, 6], ['c', 7, 8, 9]]
 
       @table.render.should eq <<-EOF.deindent
-        +------+-----------+
-        | name | values    |
-        +------+---+---+---+
-        | a    | 1 | 2 | 3 |
-        | b    | 4 | 5 | 6 |
-        | c    | 7 | 8 | 9 |
-        +------+---+---+---+
+        ┌──────┬───────────┐
+        │ name │ values    │
+        ╞══════╪═══╤═══╤═══╡
+        │ a    │ 1 │ 2 │ 3 │
+        │ b    │ 4 │ 5 │ 6 │
+        │ c    │ 7 │ 8 │ 9 │
+        └──────┴───┴───┴───┘
       EOF
     end
 
@@ -562,37 +577,39 @@ module Terminal
       end
 
       @table.render.should eq <<-EOF.deindent
-        +--------+---------+--------------+----------+
-        | name   |  Values | Other values | Column 3 |
-        +--------+----+----+-------+------+-----+----+
-        | row #1 | 0  | 1  | 2     | 3    | 4   | 5  |
-        | row #2 | 6  | 7  | 8     | 9    | 10  | 11 |
-        | row #3 | 12 | 13 | 14    | 15   | 16  | 17 |
-        +--------+----+----+-------+------+-----+----+
+        ┌────────┬─────────┬──────────────┬──────────┐
+        │ name   │  Values │ Other values │ Column 3 │
+        ╞════════╪════╤════╪═══════╤══════╪═════╤════╡
+        │ row #1 │ 0  │ 1  │ 2     │ 3    │ 4   │ 5  │
+        │ row #2 │ 6  │ 7  │ 8     │ 9    │ 10  │ 11 │
+        │ row #3 │ 12 │ 13 │ 14    │ 15   │ 16  │ 17 │
+        └────────┴────┴────┴───────┴──────┴─────┴────┘
       EOF
     end
 
     it "should render a table with only X cell borders" do
-      @table.style = {:border_x => "-", :border_y => "", :border_i => ""}
-      #@table.style.remove_verticals  # new methodology is to use remove_verticals method.
+      #@table.style = {:border_x => "-", :border_y => "", :border_i => ""}
+      @table.style.remove_verticals  # new methodology is to use remove_verticals method.
 
       @table.headings = ['name', { :value => 'values', :alignment => :right, :colspan => 3}]
       @table.headings = ['name', { :value => 'values', :colspan => 3}]
       @table.rows = [['a', 1, 2, 3], ['b', 4, 5, 6], ['c', 7, 8, 9]]
       @table.render.should eq <<-EOF.strip
----------------
+───────────────
  name  values
----------------
+═══════════════
  a     1  2  3
  b     4  5  6
  c     7  8  9
----------------
+───────────────
       EOF
     end
 
     it "should render a table without cell borders" do
-      @table.style = {:border_x => "", :border_y => "", :border_i => ""}
-
+      #@table.style = {:border_x => "", :border_y => "", :border_i => ""}
+      @table.style.remove_verticals    # new methodology is to use remove_verticals method.
+      @table.style.remove_horizontals  # new methodology is to use remove_horizontal method.
+      
       @table.headings = ['name', { :value => 'values', :alignment => :right, :colspan => 3}]
       @table.headings = ['name', { :value => 'values', :colspan => 3}]
       @table.rows = [['a', 1, 2, 3], ['b', 4, 5, 6], ['c', 7, 8, 9]]
@@ -614,15 +631,15 @@ module Terminal
       @table.rows = [['a', 1, 2, 3], ['b', 4, 5, 6], ['c', 7, 8, 9]]
 
       @table.render.should eq <<-EOF.deindent
-        +------+-----------+
-        | name | values    |
-        +------+---+---+---+
-        | a    | 1 | 2 | 3 |
-        +------+---+---+---+
-        | b    | 4 | 5 | 6 |
-        +------+---+---+---+
-        | c    | 7 | 8 | 9 |
-        +------+---+---+---+
+        ┌──────┬───────────┐
+        │ name │ values    │
+        ╞══════╪═══╤═══╤═══╡
+        │ a    │ 1 │ 2 │ 3 │
+        ├──────┼───┼───┼───┤
+        │ b    │ 4 │ 5 │ 6 │
+        ├──────┼───┼───┼───┤
+        │ c    │ 7 │ 8 │ 9 │
+        └──────┴───┴───┴───┘
       EOF
     end
 
@@ -631,12 +648,12 @@ module Terminal
       @table << ['中文', 'にっぽんご', '한국어', 'ＡＢＣ']
       @table << ['Chinese','Japanese','Korean', '.......']
       @table.render.should eq <<-EOF.deindent
-        +---------+------------+--------+----------+
-        | COL 1   | ＣＯＬ ２  | COL ３ | ＣＯＬ４ |
-        +---------+------------+--------+----------+
-        | 中文    | にっぽんご | 한국어 | ＡＢＣ   |
-        | Chinese | Japanese   | Korean | .......  |
-        +---------+------------+--------+----------+
+        ┌─────────┬────────────┬────────┬──────────┐
+        │ COL 1   │ ＣＯＬ ２  │ COL ３ │ ＣＯＬ４ │
+        ╞═════════╪════════════╪════════╪══════════╡
+        │ 中文    │ にっぽんご │ 한국어 │ ＡＢＣ   │
+        │ Chinese │ Japanese   │ Korean │ .......  │
+        └─────────┴────────────┴────────┴──────────┘
       EOF
     end
 
@@ -645,12 +662,12 @@ module Terminal
       @table.headings = ['name', 'value']
       @table.rows = [['a', 1], ['b', 2], ['c', 3]]
       @table.render.should eq <<-EOF.deindent
-        | name | value |
-        +------+-------+
-        | a    | 1     |
-        | b    | 2     |
-        | c    | 3     |
-        +------+-------+
+        │ name │ value │
+        ╞══════╪═══════╡
+        │ a    │ 1     │
+        │ b    │ 2     │
+        │ c    │ 3     │
+        └──────┴───────┘
       EOF
     end
 
@@ -659,12 +676,12 @@ module Terminal
       @table.headings = ['name', 'value']
       @table.rows = [['a', 1], ['b', 2], ['c', 3]]
       @table.render.should eq <<-EOF.deindent
-        +------+-------+
-        | name | value |
-        +------+-------+
-        | a    | 1     |
-        | b    | 2     |
-        | c    | 3     |
+        ┌──────┬───────┐
+        │ name │ value │
+        ╞══════╪═══════╡
+        │ a    │ 1     │
+        │ b    │ 2     │
+        │ c    │ 3     │
       EOF
     end
   end

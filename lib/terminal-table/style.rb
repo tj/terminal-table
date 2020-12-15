@@ -38,9 +38,13 @@ module Terminal
         self.class.const_get("VERTICALS").each { |key| @data[key] = "" }
         self.class.const_get("INTERSECTIONS").each { |key| @data[key] = "" }
       end
+      def remove_horizontals 
+        self.class.const_get("HORIZONTALS").each { |key| @data[key] = "" }
+      end
     end
     
     class AsciiBorder < Border
+      HORIZONTALS = %i[border_x]
       VERTICALS = %i[border_y]
       INTERSECTIONS = %i[border_i]
       
@@ -62,6 +66,7 @@ module Terminal
     end
     
     class UnicodeBorder < Border
+      HORIZONTALS = %i[border_x border_sx border_hx border_nx]
       VERTICALS = %i[border_y border_yw border_ye]
       INTERSECTIONS = %i[border_nw border_n border_ne border_nd 
                          border_hw border_hi border_he border_hd border_hu
@@ -90,7 +95,7 @@ module Terminal
           [@data[:border_nw], @data[:border_nx], @data[:border_n], @data[:border_ne], @data[:border_nd] || @data[:border_dn], nil ]
         when :bot
           [@data[:border_sw], @data[:border_sx], @data[:border_s], @data[:border_se], nil, @data[:border_su] || @data[:border_up] ]
-        else
+        else # center
           [@data[:border_w], @data[:border_x], @data[:border_i], @data[:border_e], @data[:border_dn], @data[:border_up] ]
         end
       end
@@ -161,6 +166,9 @@ module Terminal
 
       def remove_verticals
         @border.remove_verticals
+      end
+      def remove_horizontals
+        @border.remove_horizontals
       end
       
       class << self

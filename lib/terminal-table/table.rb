@@ -135,7 +135,11 @@ module Terminal
         end
       end
       if style.all_separators
-        buffer += @rows.product([Separator.new(self)]).flatten
+        @rows.each do |row|
+          buffer << row
+          buffer << Separator.new(self)
+        end
+        #buffer += @rows.product([Separator.new(self)]).flatten
       else
         buffer += @rows
         buffer << Separator.new(self) if style.border_bottom
