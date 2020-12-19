@@ -138,7 +138,7 @@ module Terminal
       @table.style.border[:ne] = "2"
       @table.style.border[:sw] = "3"
       @table.style.border[:se] = "4"
-      @table.style.border[:up] = "^"
+      @table.style.border[:s] = "^"
       @table.style.border[:hw] = "5"
       @table.style.border[:he] = "6"
       

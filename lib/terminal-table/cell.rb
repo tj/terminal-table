@@ -57,7 +57,7 @@ module Terminal
       def render(line = 0)
         left = " " * @table.style.padding_left
         right = " " * @table.style.padding_right
-        display_width = Unicode::DisplayWidth.of(escape(lines[line]))
+        display_width = Unicode::DisplayWidth.of(Util::ansi_escape(lines[line]))
         render_width = lines[line].to_s.size - display_width + width
         align("#{left}#{lines[line]}#{right}", alignment, render_width + @table.cell_padding)
       end
@@ -68,7 +68,7 @@ module Terminal
       # removes all ANSI escape sequences (e.g. color)
 
       def value_for_column_width_recalc
-        lines.map{ |s| escape(s) }.max_by{ |s| Unicode::DisplayWidth.of(s) }
+        lines.map{ |s| Util::ansi_escape(s) }.max_by{ |s| Unicode::DisplayWidth.of(s) }
       end
 
       ##
@@ -80,14 +80,6 @@ module Terminal
           w + @table.column_width(@index + counter - 1)
         end
         inner_width + padding
-      end
-
-      ##
-      # removes all ANSI escape sequences (e.g. color)
-      def escape(line)
-        line.to_s.gsub(/\x1b(\[|\(|\))[;?0-9]*[0-9A-Za-z]/, '').
-          gsub(/\x1b(\[|\(|\))[;?0-9]*[0-9A-Za-z]/, '').
-          gsub(/(\x03|\x1a)/, '')
       end
     end
   end

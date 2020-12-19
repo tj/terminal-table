@@ -667,5 +667,34 @@ module Terminal
         | c    | 3     |
       EOF
     end
+
+    it "should allow to not generate left and right border" do
+      @table.style = { :border_left => false, :border_right => false }
+      @table.headings = ['name', 'value']
+      @table.rows = [['a', 1], ['b', 2], ['c', 3]]
+      @table.render.should eq <<-EOF.chomp
+------+-------
+ name | value
+------+-------
+ a    | 1
+ b    | 2
+ c    | 3
+------+-------
+      EOF
+    end
+
+    it "create markdown compatible tables" do
+      @table.style.border = :markdown # Terminal::Table::MarkdownBorder.new
+      @table.headings = ['name', 'value']
+      @table.rows = [['a', 1], ['b', 2], ['c', 3]]
+      @table.render.should eq <<-EOF.deindent
+| name | value |
+|------|-------|
+| a    | 1     |
+| b    | 2     |
+| c    | 3     |
+      EOF
+    end
+    
   end
 end

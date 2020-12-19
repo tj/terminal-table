@@ -1,7 +1,8 @@
 $:.unshift File.dirname(__FILE__) + '/../lib'
 require 'terminal-table/import'
 
-Terminal::Table::Style.defaults = { :border => Terminal::Table::UnicodeThickEdgeBorder.new() }
+Terminal::Table::Style.defaults = { :border => :unicode_round }
+# Terminal::Table::UnicodeThickEdgeBorder.new()
 
 puts
 puts table(['a', 'b'], [1, 2], [3, 4])

@@ -52,7 +52,7 @@ module Terminal
     end
 
     def cell_spacing
-      cell_padding + style.border_y.length
+      cell_padding + style.border_y_width
     end
 
     def cell_padding
@@ -200,7 +200,7 @@ module Terminal
     private
 
     def columns_width
-      column_widths.inject(0) { |s, i| s + i + cell_spacing } + style.border_y.length
+      column_widths.inject(0) { |s, i| s + i + cell_spacing } + style.border_y_width
     end
 
     def recalc_column_widths
@@ -319,7 +319,7 @@ module Terminal
 
       full_width = dp[n_cols][0].keys.first
       unless style.width.nil?
-        new_width = style.width - space_width - style.border_y.length
+        new_width = style.width - space_width - style.border_y_width
         if new_width < full_width
           raise "Table width exceeds wanted width " +
                 "of #{style.width} characters."
