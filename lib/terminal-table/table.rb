@@ -139,24 +139,17 @@ module Terminal
           buffer << row
           buffer << Separator.new(self)
         end
-        #buffer += @rows.product([Separator.new(self)]).flatten
       else
         buffer += @rows
         buffer << Separator.new(self) if style.border_bottom
       end
       buffer.each_with_index do |r,idx|
-        #p [:zzz, r.class]
         if r.is_a?(Separator)
           prevrow = idx>0 ? buffer[idx-1] : nil
           nextrow = buffer.fetch(idx+1, nil)
-          r.elab(prevrow, nextrow)
+          r.save_adjacent_rows(prevrow, nextrow)
         end
       end
-      
-      #buffer.each do |r|
-      #  p(rr: r.edge) if r.is_a?(Separator)
-      #end
-
       
       buffer.map { |r| style.margin_left + r.render.rstrip }.join("\n")
     end

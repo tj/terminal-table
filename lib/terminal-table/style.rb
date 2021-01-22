@@ -226,7 +226,7 @@ module Terminal
           # border is an object that needs to be duplicated on instantiation,
           # otherwise everything will be referencing the same object-id.
           klass_defaults[:border] = klass_defaults[:border].dup
-          return klass_defaults
+          klass_defaults
         end
         
         def defaults= options

@@ -11,7 +11,7 @@ module Terminal
         return :top if @prevrow.nil?
         return :bot if @nextrow.nil?
         return :below_heading if @prevrow.is_a?(HeadingRow)
-        return :mid
+        :mid
       end
       
       def render
@@ -44,12 +44,12 @@ module Terminal
         end
           
         rval << right_edge
-        return rval.join
+        rval.join
       end
 
-      # save off neighboring rows.
-      # TODO: rename this function, name makes no sense.
-      def elab(prevrow, nextrow)
+      # Save off neighboring rows, so that we can use them later in determining
+      # which types of table edges to use.
+      def save_adjacent_rows(prevrow, nextrow)
         @prevrow = prevrow
         @nextrow = nextrow
       end
