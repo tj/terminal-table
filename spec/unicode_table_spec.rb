@@ -89,11 +89,8 @@ module Terminal
       @table.headings = ['Char', 'Num']
       @table << ['a', 1]
       separator = Terminal::Table::Separator.new(@table)
-      ##ascii## separator.render.should eq '+------------+'
-      # Ambiguous what this should be...
-      # Technically it is a both a 'top' and a 'bottom', however the logic
-      # for top has priority. :/
-      separator.render.should eq '┌────────────┐'
+      # For UnicodeBorder this now defaults to a :mid border_type
+      separator.render.should eq '├────────────┤'
     end
 
     it "should add separator" do

@@ -2,21 +2,16 @@ module Terminal
   class Table
     class Separator < Row
 
-      def initialize(*args)
+      def initialize(*args, border_type: :mid)
         super
         @prevrow, @nextrow = nil, nil # references to adjacent rows.
+        @border_type = border_type
       end
 
-      def row_type
-        return :top if @prevrow.nil?
-        return :bot if @nextrow.nil?
-        return :below_heading if @prevrow.is_a?(HeadingRow)
-        :mid
-      end
+      attr_accessor :border_type
       
       def render
-        left_edge, ctrflat, ctrud, right_edge, ctrdn, ctrup = @table.style.horizontal(row_type)
-        #p [row_type, left_edge, ctrflat, ctrud, right_edge, ctrdn, ctrup, @prevrow.class, @nextrow.class]
+        left_edge, ctrflat, ctrud, right_edge, ctrdn, ctrup = @table.style.horizontal(border_type)
         
         prev_crossings = @prevrow.respond_to?(:crossings) ? @prevrow.crossings : []
         next_crossings = @nextrow.respond_to?(:crossings) ? @nextrow.crossings : []

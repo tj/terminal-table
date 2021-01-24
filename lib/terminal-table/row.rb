@@ -61,8 +61,6 @@ module Terminal
       end
       
     end
-    # Yay, inheritance.
-    class HeadingRow < Row ; end
-    class TitleRow < Row ; end
+
   end
 end

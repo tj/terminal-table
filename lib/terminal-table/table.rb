@@ -10,6 +10,9 @@ module Terminal
     # Generates a ASCII table with the given _options_.
 
     def initialize options = {}, &block
+      # elaborated/elab_rows should be set just before rendering the table
+      @elaborated = false
+      @elab_rows = []
       @headings = []
       @rows = []
       @column_widths = []
@@ -47,8 +50,8 @@ module Terminal
     ##
     # Add a separator.
 
-    def add_separator
-      self << :separator
+    def add_separator(border_type: :mid)
+      @rows << Separator.new(self, border_type: border_type)
     end
 
     def cell_spacing
@@ -112,46 +115,64 @@ module Terminal
     def headings= arrays
       arrays = [arrays] unless arrays.first.is_a?(Array)
       @headings = arrays.map do |array|
-        row = HeadingRow.new(self, array)
+        row = Row.new(self, array)
         require_column_widths_recalc
         row
       end
     end
 
     ##
-    # Render the table.
+    # Elaborate rows to form an Array of Rows and Separators with adjacency properties added.
+    #
+    # This is separated from the String rendering so that certain features may be tweaked
+    # before the String is built.
 
-    def render
+    def elaborate_rows
 
-      buffer = style.border_top ? [Separator.new(self)] : []
+      buffer = style.border_top ? [Separator.new(self, border_type: :top)] : []
       unless @title.nil?
-        buffer << TitleRow.new(self, [title_cell_options])
+        buffer << Row.new(self, [title_cell_options])
         buffer << Separator.new(self)
       end
       @headings.each do |row|
         unless row.cells.empty?
           buffer << row
-          buffer << Separator.new(self)
+          buffer << Separator.new(self, border_type: :strong)
         end
       end
       if style.all_separators
-        @rows.each do |row|
+        @rows.each_with_index do |row, idx|
+          # last separator is bottom, others are :mid
+          border_type = (idx == @rows.size - 1) ? :bot : :mid
           buffer << row
-          buffer << Separator.new(self)
+          buffer << Separator.new(self, border_type: border_type)
         end
       else
         buffer += @rows
-        buffer << Separator.new(self) if style.border_bottom
+        buffer << Separator.new(self, border_type: :bot) if style.border_bottom
       end
-      buffer.each_with_index do |r,idx|
+
+      # After all implicit Separators are inserted we need to save off the
+      # adjacent rows so that we can decide what type of intersections to use
+      # based on column spans in the adjacent row(s).
+      buffer.each_with_index do |r, idx|
         if r.is_a?(Separator)
-          prevrow = idx>0 ? buffer[idx-1] : nil
-          nextrow = buffer.fetch(idx+1, nil)
-          r.save_adjacent_rows(prevrow, nextrow)
+          prev_row = idx > 0 ? buffer[idx - 1] : nil
+          next_row = buffer.fetch(idx + 1, nil)
+          r.save_adjacent_rows(prev_row, next_row)
         end
       end
       
-      buffer.map { |r| style.margin_left + r.render.rstrip }.join("\n")
+      @elaborated = true
+      @elab_rows = buffer
+    end
+
+    ##
+    # Render the table.
+
+    def render
+      elaborate_rows unless @elaborated
+      @elab_rows.map { |r| style.margin_left + r.render.rstrip }.join("\n")
     end
     alias :to_s :render
 

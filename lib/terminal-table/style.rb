@@ -5,6 +5,7 @@ module Terminal
   class Table
 
     class Border
+
       attr_accessor :data, :top, :bottom, :left, :right
       def initialize
         @top, @bottom, @left, @right = true, true, true, true
@@ -68,6 +69,9 @@ module Terminal
     end
     
     class UnicodeBorder < Border
+
+      ALLOWED_SEPARATOR_BORDER_STYLES = %i[top bot mid strong]
+
       HORIZONTALS = %i[x sx hx nx]
       VERTICALS = %i[y yw ye]
       INTERSECTIONS = %i[nw n ne nd 
@@ -93,14 +97,15 @@ module Terminal
       # Get horizontal border elements
       # @return [Array] a 6 element list of: [i-left, horizontal-bar, i-up/down, i-right, i-down, i-up]
       def horizontal(type)
+        raise ArgumentError, "Border type must be one of #{ALLOWED_SEPARATOR_BORDER_STYLES.inspect}, was #{type.inspect}" unless ALLOWED_SEPARATOR_BORDER_STYLES.include?(type)
         rval = case type
-               when :below_heading
+               when :strong # (typically used for the separator below the heading row or above a footer row)
                  [@data[:hw], @data[:hx], @data[:hi], @data[:he], @data[:hd], @data[:hu] ]
                when :top
                  [@data[:nw], @data[:nx], @data[:n], @data[:ne], @data[:n], nil ]
                when :bot
                  [@data[:sw], @data[:sx], @data[:s], @data[:se], nil, @data[:s] || @data[:up] ]
-               else # center
+               else  # :mid (center, unbolded)
                  [@data[:w], @data[:x], @data[:i], @data[:e], @data[:dn], @data[:up] ]
                end
         rval[0] = '' unless @left
