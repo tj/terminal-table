@@ -1,4 +1,4 @@
-x.x.x / 2020-01-22
+3.0.0 / 2020-01-22
 
 - Support for (optional) Unicode border styles on tables.  In order to support decent looking Unicode borders, different types of intersections get different types of intersection characters.  This has the side effect of subtle formatting differences even for the ASCII table border case due to removal of certain intersections near colspans.
 
