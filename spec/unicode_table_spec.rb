@@ -681,5 +681,53 @@ module Terminal
         │ c    │ 3     │
       EOF
     end
+
+    it "should be able to make a footer row" do
+      @table.headings = ['name', 'value']
+      @table.rows = [['a', 1], ['b', 2], ['c', 3]]
+      @table.add_separator(border_type: :strong)
+      @table.add_row ['tot', 6]
+      @table.render.should eq <<-EOF.deindent
+        ┌──────┬───────┐
+        │ name │ value │
+        ╞══════╪═══════╡
+        │ a    │ 1     │
+        │ b    │ 2     │
+        │ c    │ 3     │
+        ╞══════╪═══════╡
+        │ tot  │ 6     │
+        └──────┴───────┘
+      EOF
+    end
+    
+    it "should be able to change separators after elaboration" do
+      @table.style = { all_separators: true }
+      @table.title = 'Animals'
+      @table.headings = ['name', 'value']
+      @table.rows = [['rat', 1], ['cat', 2], ['dog', 3]]
+      @table.add_row ['totl', 6]
+      # Elaborate here, and we will modify the border-types
+      # post elaboration.
+      rows = @table.elaborate_rows
+      rows[2].border_type = :strong # emphasize below title
+      rows[4].border_type = :mid # de-emphasize below header
+      rows[-3].border_type = :strong # emphasize above footer
+      @table.render.should eq <<-EOF.deindent
+        ┌──────────────┐
+        │   Animals    │
+        ╞══════╤═══════╡
+        │ name │ value │
+        ├──────┼───────┤
+        │ rat  │ 1     │
+        ├──────┼───────┤
+        │ cat  │ 2     │
+        ├──────┼───────┤
+        │ dog  │ 3     │
+        ╞══════╪═══════╡
+        │ totl │ 6     │
+        └──────┴───────┘
+      EOF
+     end
+
   end
 end

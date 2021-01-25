@@ -7,12 +7,10 @@ module Terminal
     attr_reader :headings
 
     ##
-    # Generates a ASCII table with the given _options_.
+    # Generates a ASCII/Unicode table with the given _options_.
 
     def initialize options = {}, &block
-      # elaborated/elab_rows should be set just before rendering the table
       @elaborated = false
-      @elab_rows = []
       @headings = []
       @rows = []
       @column_widths = []
@@ -129,15 +127,15 @@ module Terminal
 
     def elaborate_rows
 
-      buffer = style.border_top ? [Separator.new(self, border_type: :top)] : []
+      buffer = style.border_top ? [Separator.new(self, border_type: :top, implicit: true)] : []
       unless @title.nil?
         buffer << Row.new(self, [title_cell_options])
-        buffer << Separator.new(self)
+        buffer << Separator.new(self, implicit: true)
       end
       @headings.each do |row|
         unless row.cells.empty?
           buffer << row
-          buffer << Separator.new(self, border_type: :strong)
+          buffer << Separator.new(self, border_type: :strong, implicit: true)
         end
       end
       if style.all_separators
@@ -145,11 +143,11 @@ module Terminal
           # last separator is bottom, others are :mid
           border_type = (idx == @rows.size - 1) ? :bot : :mid
           buffer << row
-          buffer << Separator.new(self, border_type: border_type)
+          buffer << Separator.new(self, border_type: border_type, implicit: true)
         end
       else
         buffer += @rows
-        buffer << Separator.new(self, border_type: :bot) if style.border_bottom
+        buffer << Separator.new(self, border_type: :bot, implicit: true) if style.border_bottom
       end
 
       # After all implicit Separators are inserted we need to save off the
@@ -164,7 +162,7 @@ module Terminal
       end
       
       @elaborated = true
-      @elab_rows = buffer
+      @rows = buffer
     end
 
     ##
@@ -172,7 +170,7 @@ module Terminal
 
     def render
       elaborate_rows unless @elaborated
-      @elab_rows.map { |r| style.margin_left + r.render.rstrip }.join("\n")
+      @rows.map { |r| style.margin_left + r.render.rstrip }.join("\n")
     end
     alias :to_s :render
 

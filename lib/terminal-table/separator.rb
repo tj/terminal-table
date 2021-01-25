@@ -2,13 +2,25 @@ module Terminal
   class Table
     class Separator < Row
 
-      def initialize(*args, border_type: :mid)
+      ##
+      # `prevrow`, `nextrow` contain references to adjacent rows.
+      #
+      # `border_type` is a symbol used to control which type of border is used
+      # on the separator (:top for top-edge, :bot for bottom-edge,
+      # :mid for interior, and :strong for emphasized-interior)
+      #
+      # `implicit` is false for user-added separators, and true for
+      # implicit/auto-generated separators.
+      
+      def initialize(*args, border_type: :mid, implicit: false)
         super
-        @prevrow, @nextrow = nil, nil # references to adjacent rows.
+        @prevrow, @nextrow = nil, nil
         @border_type = border_type
+        @implicit = implicit
       end
 
       attr_accessor :border_type
+      attr_reader :implicit
       
       def render
         left_edge, ctrflat, ctrud, right_edge, ctrdn, ctrup = @table.style.horizontal(border_type)
