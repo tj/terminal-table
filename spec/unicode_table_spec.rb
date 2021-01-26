@@ -89,7 +89,7 @@ module Terminal
       @table.headings = ['Char', 'Num']
       @table << ['a', 1]
       separator = Terminal::Table::Separator.new(@table)
-      # For UnicodeBorder this now defaults to a :mid border_type
+      # For UnicodeBorder this now defaults to a :div border_type
       separator.render.should eq '├────────────┤'
     end
 
@@ -129,15 +129,15 @@ module Terminal
         :padding_left => 0, :padding_right => 2,
         :margin_left => 'y' * 2
       }
-      @table.style.border[:hi] = "x"
+      @table.style.border[:ai] = "x"
       @table.style.border[:y]  = ":"
       @table.style.border[:nw] = "1"
       @table.style.border[:ne] = "2"
       @table.style.border[:sw] = "3"
       @table.style.border[:se] = "4"
       @table.style.border[:s] = "^"
-      @table.style.border[:hw] = "5"
-      @table.style.border[:he] = "6"
+      @table.style.border[:aw] = "5"
+      @table.style.border[:ae] = "6"
       
       @table << ['a', 1]
       @table << ['b', 2]
@@ -685,7 +685,7 @@ module Terminal
     it "should be able to make a footer row" do
       @table.headings = ['name', 'value']
       @table.rows = [['a', 1], ['b', 2], ['c', 3]]
-      @table.add_separator(border_type: :strong)
+      @table.add_separator(border_type: :double)
       @table.add_row ['tot', 6]
       @table.render.should eq <<-EOF.deindent
         ┌──────┬───────┐
@@ -709,13 +709,13 @@ module Terminal
       # Elaborate here, and we will modify the border-types
       # post elaboration.
       rows = @table.elaborate_rows
-      rows[2].border_type = :strong # emphasize below title
-      rows[4].border_type = :mid # de-emphasize below header
-      rows[-3].border_type = :strong # emphasize above footer
+      rows[2].border_type = :heavy # emphasize below title
+      rows[4].border_type = :div # de-emphasize below header
+      rows[-3].border_type = :double # emphasize above footer
       @table.render.should eq <<-EOF.deindent
         ┌──────────────┐
         │   Animals    │
-        ╞══════╤═══════╡
+        ┝━━━━━━┯━━━━━━━┥
         │ name │ value │
         ├──────┼───────┤
         │ rat  │ 1     │
@@ -726,6 +726,84 @@ module Terminal
         ╞══════╪═══════╡
         │ totl │ 6     │
         └──────┴───────┘
+      EOF
+     end
+
+    it "should be able manually specify separator borders" do
+      @table.style = { border: :unicode_round }
+      @table.title = 'Animals'
+      @table.headings = ['name', 'value']
+      @table.add_row ['rat', 1]
+      @table.add_separator
+      @table.add_row ['cat', 2]
+      @table.add_separator(border_type: :bold)
+      @table.add_row ['dog', 3]
+      @table.add_separator(border_type: :double)
+      @table.add_row ['totl', 6]
+      @table.render.should eq <<-EOF.deindent
+        ╭──────────────╮
+        │   Animals    │
+        ├──────┬───────┤
+        │ name │ value │
+        ╞══════╪═══════╡
+        │ rat  │ 1     │
+        ├──────┼───────┤
+        │ cat  │ 2     │
+        ┝━━━━━━┿━━━━━━━┥
+        │ dog  │ 3     │
+        ╞══════╪═══════╡
+        │ totl │ 6     │
+        ╰──────┴───────╯
+      EOF
+     end
+
+        it "should test many separator borders" do
+      @table.style = { border: :unicode_thick_edge }
+      @table.title = 'Borders'
+      @table.headings = ['name', 'value']
+      @table.add_row ['1st', 1]
+      @table.add_separator(border_type: :heavy)
+      @table.add_separator(border_type: :heavy_dash)
+      @table.add_separator(border_type: :heavy_dot3)
+      @table.add_separator(border_type: :heavy_dot4)
+      @table.add_separator(border_type: :thick)
+      @table.add_separator(border_type: :thick_dash)
+      @table.add_separator(border_type: :thick_dot3)
+      @table.add_separator(border_type: :thick_dot4)
+      @table.add_separator(border_type: :bold)
+      @table.add_separator(border_type: :bold_dash)
+      @table.add_separator(border_type: :bold_dot3)
+      @table.add_separator(border_type: :bold_dot4)
+      @table.add_separator(border_type: :dash)
+      @table.add_separator(border_type: :dot3)
+      @table.add_separator(border_type: :dot4)
+      @table.add_separator(border_type: :double)
+      @table.add_row ['last', 'N']
+      @table.render.should eq <<-EOF.deindent
+        ┏━━━━━━━━━━━━━━┓
+        ┃   Borders    ┃
+        ┠──────┬───────┨
+        ┃ name │ value ┃
+        ┣══════╪═══════┫
+        ┃ 1st  │ 1     ┃
+        ┣━━━━━━┿━━━━━━━┫
+        ┣╍╍╍╍╍╍┿╍╍╍╍╍╍╍┫
+        ┣┅┅┅┅┅┅┿┅┅┅┅┅┅┅┫
+        ┣┉┉┉┉┉┉┿┉┉┉┉┉┉┉┫
+        ┣━━━━━━┿━━━━━━━┫
+        ┣╍╍╍╍╍╍┿╍╍╍╍╍╍╍┫
+        ┣┅┅┅┅┅┅┿┅┅┅┅┅┅┅┫
+        ┣┉┉┉┉┉┉┿┉┉┉┉┉┉┉┫
+        ┣━━━━━━┿━━━━━━━┫
+        ┣╍╍╍╍╍╍┿╍╍╍╍╍╍╍┫
+        ┣┅┅┅┅┅┅┿┅┅┅┅┅┅┅┫
+        ┣┉┉┉┉┉┉┿┉┉┉┉┉┉┉┫
+        ┠╌╌╌╌╌╌┼╌╌╌╌╌╌╌┨
+        ┠┄┄┄┄┄┄┼┄┄┄┄┄┄┄┨
+        ┠┈┈┈┈┈┈┼┈┈┈┈┈┈┈┨
+        ┣══════╪═══════┫
+        ┃ last │ N     ┃
+        ┗━━━━━━┷━━━━━━━┛
       EOF
      end
 

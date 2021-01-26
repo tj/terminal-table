@@ -7,12 +7,12 @@ module Terminal
       #
       # `border_type` is a symbol used to control which type of border is used
       # on the separator (:top for top-edge, :bot for bottom-edge,
-      # :mid for interior, and :strong for emphasized-interior)
+      # :div for interior, and :strong for emphasized-interior)
       #
       # `implicit` is false for user-added separators, and true for
       # implicit/auto-generated separators.
       
-      def initialize(*args, border_type: :mid, implicit: false)
+      def initialize(*args, border_type: :div, implicit: false)
         super
         @prevrow, @nextrow = nil, nil
         @border_type = border_type

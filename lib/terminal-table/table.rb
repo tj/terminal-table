@@ -48,7 +48,7 @@ module Terminal
     ##
     # Add a separator.
 
-    def add_separator(border_type: :mid)
+    def add_separator(border_type: :div)
       @rows << Separator.new(self, border_type: border_type)
     end
 
@@ -135,13 +135,13 @@ module Terminal
       @headings.each do |row|
         unless row.cells.empty?
           buffer << row
-          buffer << Separator.new(self, border_type: :strong, implicit: true)
+          buffer << Separator.new(self, border_type: :double, implicit: true)
         end
       end
       if style.all_separators
         @rows.each_with_index do |row, idx|
-          # last separator is bottom, others are :mid
-          border_type = (idx == @rows.size - 1) ? :bot : :mid
+          # last separator is bottom, others are :div
+          border_type = (idx == @rows.size - 1) ? :bot : :div
           buffer << row
           buffer << Separator.new(self, border_type: border_type, implicit: true)
         end

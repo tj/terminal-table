@@ -70,22 +70,35 @@ module Terminal
     
     class UnicodeBorder < Border
 
-      ALLOWED_SEPARATOR_BORDER_STYLES = %i[top bot mid strong]
+      ALLOWED_SEPARATOR_BORDER_STYLES = %i[
+      top bot 
+      div dash dot3 dot4 
+      thick thick_dash thick_dot3 thick_dot4
+      heavy heavy_dash heavy_dot3 heavy_dot4
+      bold bold_dash bold_dot3 bold_dot4
+      double
+      ]  
 
-      HORIZONTALS = %i[x sx hx nx]
+      HORIZONTALS = %i[x sx ax bx nx bx_dot3 bx_dot4 bx_dash x_dot3 x_dot4 x_dash]
       VERTICALS = %i[y yw ye]
       INTERSECTIONS = %i[nw n ne nd 
-                         hw hi he hd hu
+                         aw ai ae ad au
+                         bw bi be bd bu
                          w i e dn up 
                          sw s se su]
       def initialize
         super
         @data = {
+          nil => nil,
           nw: "┌", nx: "─", n:  "┬", ne: "┐",
           yw: "│",          y:  "│", ye: "│", 
-          hw: "╞", hx: "═", hi: "╪", he: "╡", hd: '╤', hu: "╧",
-          w:  "├", x:  "─", i:  "┼", e:  "┤", dn: "┬", up: "┴",
+          aw: "╞", ax: "═", ai: "╪", ae: "╡", ad: '╤', au: "╧", # double
+          bw: "┝", bx: "━", bi: "┿", be: "┥", bd: '┯', bu: "┷", # heavy/bold/thick
+          w:  "├", x:  "─", i:  "┼", e:  "┤", dn: "┬", up: "┴", # normal div
           sw: "└", sx: "─", s:  "┴", se: "┘",
+          # alternative dots/dashes
+          x_dot4:  '┈', x_dot3:  '┄', x_dash:  '╌',
+          bx_dot4: '┉', bx_dot3: '┅', bx_dash: '╍',
         }
       end
       # Get vertical border elements
@@ -97,17 +110,29 @@ module Terminal
       # Get horizontal border elements
       # @return [Array] a 6 element list of: [i-left, horizontal-bar, i-up/down, i-right, i-down, i-up]
       def horizontal(type)
-        raise ArgumentError, "Border type must be one of #{ALLOWED_SEPARATOR_BORDER_STYLES.inspect}, was #{type.inspect}" unless ALLOWED_SEPARATOR_BORDER_STYLES.include?(type)
-        rval = case type
-               when :strong # (typically used for the separator below the heading row or above a footer row)
-                 [@data[:hw], @data[:hx], @data[:hi], @data[:he], @data[:hd], @data[:hu] ]
-               when :top
-                 [@data[:nw], @data[:nx], @data[:n], @data[:ne], @data[:n], nil ]
-               when :bot
-                 [@data[:sw], @data[:sx], @data[:s], @data[:se], nil, @data[:s] || @data[:up] ]
-               else  # :mid (center, unbolded)
-                 [@data[:w], @data[:x], @data[:i], @data[:e], @data[:dn], @data[:up] ]
-               end
+        raise ArgumentError, "Border type is #{type.inspect}, must be one of #{ALLOWED_SEPARATOR_BORDER_STYLES.inspect}" unless ALLOWED_SEPARATOR_BORDER_STYLES.include?(type)
+        lookup = case type
+                 when :top
+                   [:nw, :nx, :n, :ne, :n, nil]
+                 when :bot
+                   [:sw, :sx, :s, :se, nil, :s]
+                 when :double
+                   # typically used for the separator below the heading row or above a footer row)
+                   [:aw, :ax, :ai, :ae, :ad, :au]
+                 when :thick, :thick_dash, :thick_dot3, :thick_dot4,
+                      :heavy, :heavy_dash, :heavy_dot3, :heavy_dot4,
+                      :bold, :bold_dash, :bold_dot3, :bold_dot4
+                   # alternate thick/bold border
+                   xref = type.to_s.sub(/^(thick|heavy|bold)/,'bx').to_sym
+                   [:bw, xref, :bi, :be, :bd, :bu]
+                 when :dash, :dot3, :dot4
+                   # alternate thin dividers
+                   xref = "x_#{type}".to_sym
+                   [:w, xref, :i, :e, :dn, :up]
+                 else  # :div (center, non-emphasized)
+                   [:w, :x, :i, :e, :dn, :up]
+                 end
+        rval = lookup.map { |key| @data.fetch(key) }
         rval[0] = '' unless @left
         rval[3] = '' unless @right
         rval
@@ -127,11 +152,16 @@ module Terminal
       def initialize
         super
         @data = {
+          nil => nil,
           nw: "┏", nx: "━", n:  "┯", ne: "┓", nd: nil,
           yw: "┃",          y:  "│", ye: "┃", 
-          hw: "┣", hx: "═", hi: "╪", he: "┫", hd: '╤', hu: "╧",
-          w:  "┠", x:  "─", i:  "┼", e:  "┨", dn: "┬", up: "┴",
+          aw: "┣", ax: "═", ai: "╪", ae: "┫", ad: '╤', au: "╧", # double
+          bw: "┣", bx: "━", bi: "┿", be: "┫", bd: '┯', bu: "┷", # heavy/bold/thick
+          w:  "┠", x:  "─", i:  "┼", e:  "┨", dn: "┬", up: "┴", # normal div
           sw: "┗", sx: "━", s:  "┷", se: "┛", su:  nil,
+          # alternative dots/dashes
+          x_dot4:  '┈', x_dot3:  '┄', x_dash:  '╌',
+          bx_dot4: '┉', bx_dot3: '┅', bx_dash: '╍',
         }
       end
     end

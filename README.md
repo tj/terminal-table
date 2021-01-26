@@ -324,16 +324,19 @@ Inside the `UnicodeBorder` class, there are definitions for a variety of corner/
 
 ```
 @data = {
+nil => nil,
 nw: "┌", nx: "─", n:  "┬", ne: "┐",
 yw: "│",          y:  "│", ye: "│", 
-hw: "╞", hx: "═", hi: "╪", he: "╡", hd: '╤', hu: "╧",
+aw: "╞", ax: "═", ai: "╪", ae: "╡", ad: '╤', au: "╧",
+bw: "┝", bx: "━", bi: "┿", be: "┥", bd: '┯', bu: "┷",
 w:  "├", x:  "─", i:  "┼", e:  "┤", dn: "┬", up: "┴",
 sw: "└", sx: "─", s:  "┴", se: "┘",
 }
 ```
 
 Note that many are defined as directional (:nw == north-west), others defined in terms of 'x' or 'y'.
-The border that separates headings (below each heading) are defined with 'h*' entries.
+The border that separates headings (below each heading) is of type `:double` and is defined with 'a*' entries.
+Alternate `:heavy` types that can be applied to separators can be defined with 'b*' entries.
 
 When defining a new set of borders, it's probably easiest to define a new class that inherits from UnicodeBorder and replaces the @data Hash.
 However, these corners can be these can be overridden with:
@@ -341,6 +344,39 @@ However, these corners can be these can be overridden with:
 ```
 table.style = {border: :unicode}
 table.style.border[:nw] = '*'  # override the north-west corner of the table
+```
+
+### Customizing row separators
+
+Row-separators can now be customized in a variety of ways.  The default separator's border_type is referred to as `:mid`.  Additional `:strong` / `:strong_a` and `:strong_b` separator styles can be applied to separate sections (e.g. header/footer/title).
+
+The separator border_type may be specified when a user-defined separator added.  Alternatively, borders may be adjusted after the table's rows are elaborated, but before the table is rendered.
+
+Separator `border_type`s can be adjusted to be heavy, use double-lines, and different dash/dot styles.  The border type should be one of:
+
+    div dash dot3 dot4 
+    thick thick_dash thick_dot3 thick_dot4
+    heavy heavy_dash heavy_dot3 heavy_dot4
+    bold bold_dash bold_dot3 bold_dot4
+    double
+
+
+To manually set the separator border_type, the `add_separator` method may be called.
+```ruby
+add_separator(border_type: :heavy_dash)
+```
+
+Alternatively, if `style: :all_separators` is used, it may be necessary to elaborate the Rows prior to rendering.
+```ruby
+table = Terminal::Table.new do |t|
+  t.add_row [1, 'One']
+  t.add_row [2, 'Two']
+  t.add_row [3, 'Three']
+  t.style = {:all_separators => true}
+end
+rows = table.elaborate_rows
+rows[2].border_type = :heavy # modify separator row: emphasize below title
+puts table.render
 ```
 
 ## More examples
