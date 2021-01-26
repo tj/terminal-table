@@ -7,9 +7,10 @@ module Terminal
     attr_reader :headings
 
     ##
-    # Generates a ASCII table with the given _options_.
+    # Generates a ASCII/Unicode table with the given _options_.
 
     def initialize options = {}, &block
+      @elaborated = false
       @headings = []
       @rows = []
       @column_widths = []
@@ -47,12 +48,12 @@ module Terminal
     ##
     # Add a separator.
 
-    def add_separator
-      self << :separator
+    def add_separator(border_type: :div)
+      @rows << Separator.new(self, border_type: border_type)
     end
 
     def cell_spacing
-      cell_padding + style.border_y.length
+      cell_padding + style.border_y_width
     end
 
     def cell_padding
@@ -119,28 +120,57 @@ module Terminal
     end
 
     ##
-    # Render the table.
+    # Elaborate rows to form an Array of Rows and Separators with adjacency properties added.
+    #
+    # This is separated from the String rendering so that certain features may be tweaked
+    # before the String is built.
 
-    def render
-      separator = Separator.new(self)
-      buffer = style.border_top ? [separator] : []
+    def elaborate_rows
+
+      buffer = style.border_top ? [Separator.new(self, border_type: :top, implicit: true)] : []
       unless @title.nil?
         buffer << Row.new(self, [title_cell_options])
-        buffer << separator
+        buffer << Separator.new(self, implicit: true)
       end
       @headings.each do |row|
         unless row.cells.empty?
           buffer << row
-          buffer << separator
+          buffer << Separator.new(self, border_type: :double, implicit: true)
         end
       end
       if style.all_separators
-        buffer += @rows.product([separator]).flatten
+        @rows.each_with_index do |row, idx|
+          # last separator is bottom, others are :div
+          border_type = (idx == @rows.size - 1) ? :bot : :div
+          buffer << row
+          buffer << Separator.new(self, border_type: border_type, implicit: true)
+        end
       else
         buffer += @rows
-        buffer << separator if style.border_bottom
+        buffer << Separator.new(self, border_type: :bot, implicit: true) if style.border_bottom
       end
-      buffer.map { |r| style.margin_left + r.render.rstrip }.join("\n")
+
+      # After all implicit Separators are inserted we need to save off the
+      # adjacent rows so that we can decide what type of intersections to use
+      # based on column spans in the adjacent row(s).
+      buffer.each_with_index do |r, idx|
+        if r.is_a?(Separator)
+          prev_row = idx > 0 ? buffer[idx - 1] : nil
+          next_row = buffer.fetch(idx + 1, nil)
+          r.save_adjacent_rows(prev_row, next_row)
+        end
+      end
+      
+      @elaborated = true
+      @rows = buffer
+    end
+
+    ##
+    # Render the table.
+
+    def render
+      elaborate_rows unless @elaborated
+      @rows.map { |r| style.margin_left + r.render.rstrip }.join("\n")
     end
     alias :to_s :render
 
@@ -182,7 +212,7 @@ module Terminal
     private
 
     def columns_width
-      column_widths.inject(0) { |s, i| s + i + cell_spacing } + style.border_y.length
+      column_widths.inject(0) { |s, i| s + i + cell_spacing } + style.border_y_width
     end
 
     def recalc_column_widths
@@ -301,7 +331,7 @@ module Terminal
 
       full_width = dp[n_cols][0].keys.first
       unless style.width.nil?
-        new_width = style.width - space_width - style.border_y.length
+        new_width = style.width - space_width - style.border_y_width
         if new_width < full_width
           raise "Table width exceeds wanted width " +
                 "of #{style.width} characters."

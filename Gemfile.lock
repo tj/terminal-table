@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    terminal-table (2.0.0)
+    terminal-table (3.0.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
 
 GEM
@@ -14,19 +14,19 @@ GEM
       coderay (~> 1.1)
       method_source (~> 1.0)
     rake (13.0.1)
-    rspec (3.9.0)
-      rspec-core (~> 3.9.0)
-      rspec-expectations (~> 3.9.0)
-      rspec-mocks (~> 3.9.0)
-    rspec-core (3.9.3)
-      rspec-support (~> 3.9.3)
-    rspec-expectations (3.9.3)
+    rspec (3.10.0)
+      rspec-core (~> 3.10.0)
+      rspec-expectations (~> 3.10.0)
+      rspec-mocks (~> 3.10.0)
+    rspec-core (3.10.0)
+      rspec-support (~> 3.10.0)
+    rspec-expectations (3.10.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.9.0)
-    rspec-mocks (3.9.1)
+      rspec-support (~> 3.10.0)
+    rspec-mocks (3.10.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.9.0)
-    rspec-support (3.9.4)
+      rspec-support (~> 3.10.0)
+    rspec-support (3.10.0)
     term-ansicolor (1.7.1)
       tins (~> 1.0)
     tins (1.0.1)
@@ -34,6 +34,7 @@ GEM
 
 PLATFORMS
   ruby
+  x86_64-linux
 
 DEPENDENCIES
   bundler (~> 2)
@@ -45,4 +46,4 @@ DEPENDENCIES
   tins (~> 1.0.0)
 
 BUNDLED WITH
-   2.1.4
+   2.2.0

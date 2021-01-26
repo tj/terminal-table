@@ -41,7 +41,7 @@ module Terminal
         | 1 | 2 | 3  |
         | 4 | 5 | 6  |
         | 7     | 88 |
-        +---+---+----+
+        +-------+----+
       EOF
     end
 
@@ -87,7 +87,7 @@ module Terminal
       @table.headings = ['Char', 'Num']
       @table << ['a', 1]
       separator = Terminal::Table::Separator.new(@table)
-      separator.render.should eq '+------+-----+'
+      separator.render.should eq '+------------+'
     end
 
     it "should add separator" do
@@ -131,6 +131,7 @@ module Terminal
       @table << ['b', 2]
       @table << ['c', 3]
       @table.style.padding_right.should eq 2
+
       @table.render.should eq <<-EOF.deindent
         yyx======x=====x
         yy:Char  :Num  :
@@ -150,6 +151,7 @@ module Terminal
       @table << ['c', 3]
       @table.style.width = 21
       @table.style.alignment = :right
+
       @table.render.should eq <<-EOF.deindent
         +-----------+-------+
         | Character |   Num |
@@ -195,7 +197,7 @@ module Terminal
       @table << ['b', 2]
       @table << ['c', 3]
       @table.render.should eq <<-EOF.deindent
-        +------+-----+
+        +------------+
         |   Title    |
         +------+-----+
         | Char | Num |
@@ -418,7 +420,7 @@ module Terminal
       @table.headings = ['one', { :value => 'two', :alignment => :center, :colspan => 2}]
       @table.rows = [['a', 1, 2], ['b', 3, 4], ['c', 3, 4]]
       @table.render.should eq <<-EOF.deindent
-        +-----+---+---+
+        +-----+-------+
         | one |  two  |
         +-----+---+---+
         | a   | 1 | 2 |
@@ -438,7 +440,7 @@ module Terminal
         | a   | 1   | 2     |
         | b   | 3   | 4     |
         |  joined   | c     |
-        +-----+-----+-------+
+        +-----------+-------+
       EOF
     end
 
@@ -452,7 +454,7 @@ module Terminal
         | a   | 1   | 2     |
         | b   | 3   | 4     |
         | c   |   joined    |
-        +-----+-----+-------+
+        +-----+-------------+
       EOF
     end
 
@@ -466,7 +468,7 @@ module Terminal
         | a   | 1             | 2             |
         | b   | 3             | 4             |
         | c   | joined that is very very long |
-        +-----+---------------+---------------+
+        +-----+-------------------------------+
       EOF
     end
 
@@ -477,7 +479,7 @@ module Terminal
         +-------+---+---+
         | 12345 | 2 | 3 |
         | 123456789 | 4 |
-        +-------+---+---+
+        +-----------+---+
       EOF
     end
 
@@ -494,7 +496,7 @@ module Terminal
         | 123456789 | 4   |     |
         | 123       | 444444444 |
         | 0               |     |
-        +-------+---+-----+-----+
+        +-----------------+-----+
       EOF
     end
 
@@ -509,7 +511,7 @@ module Terminal
         | 4     | 5555555      |
         | 66666666      | 777  |
         | 20202020202020202020 |
-        +-------+-------+------+
+        +----------------------+
       EOF
     end
 
@@ -533,7 +535,7 @@ module Terminal
       @table.rows = [['a', 1, 2, 3], ['b', 4, 5, 6], ['c', 7, 8, 9]]
 
       @table.render.should eq <<-EOF.deindent
-        +------+---+---+---+
+        +------+-----------+
         | name | values    |
         +------+---+---+---+
         | a    | 1 | 2 | 3 |
@@ -560,7 +562,7 @@ module Terminal
       end
 
       @table.render.should eq <<-EOF.deindent
-        +--------+----+----+-------+------+-----+----+
+        +--------+---------+--------------+----------+
         | name   |  Values | Other values | Column 3 |
         +--------+----+----+-------+------+-----+----+
         | row #1 | 0  | 1  | 2     | 3    | 4   | 5  |
@@ -572,11 +574,11 @@ module Terminal
 
     it "should render a table with only X cell borders" do
       @table.style = {:border_x => "-", :border_y => "", :border_i => ""}
+      #@table.style.remove_verticals  # new methodology is to use remove_verticals method.
 
       @table.headings = ['name', { :value => 'values', :alignment => :right, :colspan => 3}]
       @table.headings = ['name', { :value => 'values', :colspan => 3}]
       @table.rows = [['a', 1, 2, 3], ['b', 4, 5, 6], ['c', 7, 8, 9]]
-
       @table.render.should eq <<-EOF.strip
 ---------------
  name  values
@@ -612,7 +614,7 @@ module Terminal
       @table.rows = [['a', 1, 2, 3], ['b', 4, 5, 6], ['c', 7, 8, 9]]
 
       @table.render.should eq <<-EOF.deindent
-        +------+---+---+---+
+        +------+-----------+
         | name | values    |
         +------+---+---+---+
         | a    | 1 | 2 | 3 |
@@ -665,5 +667,34 @@ module Terminal
         | c    | 3     |
       EOF
     end
+
+    it "should allow to not generate left and right border" do
+      @table.style = { :border_left => false, :border_right => false }
+      @table.headings = ['name', 'value']
+      @table.rows = [['a', 1], ['b', 2], ['c', 3]]
+      @table.render.should eq <<-EOF.chomp
+------+-------
+ name | value
+------+-------
+ a    | 1
+ b    | 2
+ c    | 3
+------+-------
+      EOF
+    end
+
+    it "create markdown compatible tables" do
+      @table.style.border = :markdown # Terminal::Table::MarkdownBorder.new
+      @table.headings = ['name', 'value']
+      @table.rows = [['a', 1], ['b', 2], ['c', 3]]
+      @table.render.should eq <<-EOF.deindent
+| name | value |
+|------|-------|
+| a    | 1     |
+| b    | 2     |
+| c    | 3     |
+      EOF
+    end
+    
   end
 end

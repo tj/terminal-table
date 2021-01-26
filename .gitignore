@@ -5,3 +5,6 @@ tmp
 doc
 vendor
 /.bundle
+
+# tempfiles
+*~

@@ -1,5 +1,10 @@
+#!/bin/env ruby
+
 $:.unshift File.dirname(__FILE__) + '/../lib'
 require 'terminal-table/import'
+
+Terminal::Table::Style.defaults = { :border => :unicode_round }
+# Terminal::Table::UnicodeThickEdgeBorder.new()
 
 puts
 puts table(['a', 'b'], [1, 2], [3, 4])
@@ -51,7 +56,8 @@ puts user_table
 puts
 user_table = table do
   self.headings = ['First Name', 'Last Name', {:value => 'Phones', :colspan => 2, :alignment => :center}]
-  add_row ['Bob', 'Someone',     '123', '456']
+  #add_row ['Bob', 'Someone',     '123', '456']
+  add_row [{:value => "Bob Someone", :colspan => 3, :alignment => :center}, '123456']
   add_row :separator
   add_row ['TJ',  'Holowaychuk', {:value => "No phones\navaiable", :colspan => 2, :alignment => :center}]
   add_row :separator
