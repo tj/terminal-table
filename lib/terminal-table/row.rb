@@ -12,7 +12,7 @@ module Terminal
       ##
       # Initialize with _width_ and _options_.
 
-      def initialize table, array = []
+      def initialize table, array = [], **_kwargs
         @cell_index = 0
         @table = table
         @cells = []

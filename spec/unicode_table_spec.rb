@@ -756,8 +756,8 @@ module Terminal
         ╰──────┴───────╯
       EOF
      end
-
-        it "should test many separator borders" do
+    
+    it "should test many separator borders" do
       @table.style = { border: :unicode_thick_edge }
       @table.title = 'Borders'
       @table.headings = ['name', 'value']
@@ -786,26 +786,66 @@ module Terminal
         ┃ name │ value ┃
         ┣══════╪═══════┫
         ┃ 1st  │ 1     ┃
-        ┣━━━━━━┿━━━━━━━┫
-        ┣╍╍╍╍╍╍┿╍╍╍╍╍╍╍┫
-        ┣┅┅┅┅┅┅┿┅┅┅┅┅┅┅┫
-        ┣┉┉┉┉┉┉┿┉┉┉┉┉┉┉┫
-        ┣━━━━━━┿━━━━━━━┫
-        ┣╍╍╍╍╍╍┿╍╍╍╍╍╍╍┫
-        ┣┅┅┅┅┅┅┿┅┅┅┅┅┅┅┫
-        ┣┉┉┉┉┉┉┿┉┉┉┉┉┉┉┫
-        ┣━━━━━━┿━━━━━━━┫
-        ┣╍╍╍╍╍╍┿╍╍╍╍╍╍╍┫
-        ┣┅┅┅┅┅┅┿┅┅┅┅┅┅┅┫
-        ┣┉┉┉┉┉┉┿┉┉┉┉┉┉┉┫
-        ┠╌╌╌╌╌╌┼╌╌╌╌╌╌╌┨
-        ┠┄┄┄┄┄┄┼┄┄┄┄┄┄┄┨
-        ┠┈┈┈┈┈┈┼┈┈┈┈┈┈┈┨
-        ┣══════╪═══════┫
+        ┣━━━━━━┷━━━━━━━┫
+        ┣╍╍╍╍╍╍╍╍╍╍╍╍╍╍┫
+        ┣┅┅┅┅┅┅┅┅┅┅┅┅┅┅┫
+        ┣┉┉┉┉┉┉┉┉┉┉┉┉┉┉┫
+        ┣━━━━━━━━━━━━━━┫
+        ┣╍╍╍╍╍╍╍╍╍╍╍╍╍╍┫
+        ┣┅┅┅┅┅┅┅┅┅┅┅┅┅┅┫
+        ┣┉┉┉┉┉┉┉┉┉┉┉┉┉┉┫
+        ┣━━━━━━━━━━━━━━┫
+        ┣╍╍╍╍╍╍╍╍╍╍╍╍╍╍┫
+        ┣┅┅┅┅┅┅┅┅┅┅┅┅┅┅┫
+        ┣┉┉┉┉┉┉┉┉┉┉┉┉┉┉┫
+        ┠╌╌╌╌╌╌╌╌╌╌╌╌╌╌┨
+        ┠┄┄┄┄┄┄┄┄┄┄┄┄┄┄┨
+        ┠┈┈┈┈┈┈┈┈┈┈┈┈┈┈┨
+        ┣══════╤═══════┫
         ┃ last │ N     ┃
         ┗━━━━━━┷━━━━━━━┛
       EOF
-     end
+    end
+    
+    it "should allow headings with no rows (issue #118.a)" do
+      @table.headings = ['a', 'b', 'c', 'd']
+      @table.render.should eq <<-EOF.deindent
+       ┌───┬───┬───┬───┐
+       │ a │ b │ c │ d │
+       ╞═══╧═══╧═══╧═══╡
+       └───────────────┘
+      EOF
+    end
+    
+    it "should allow multiple headings with no rows (issue #118.b)" do
+      @table.headings = [['a', 'b', 'c', 'd'], ['cat','dog','frog','mouse']]
+      @table.render.should eq <<-EOF.deindent
+       ┌─────┬─────┬──────┬───────┐
+       │ a   │ b   │ c    │ d     │
+       ╞═════╪═════╪══════╪═══════╡
+       │ cat │ dog │ frog │ mouse │
+       ╞═════╧═════╧══════╧═══════╡
+       └──────────────────────────┘
+      EOF
+    end
 
+    it "should not create spurrious vertical intersections for adjacent separators (issue #118.c)" do
+      @table.add_separator
+      @table.add_separator
+      @table.add_row ['x','y','z']
+      @table.add_separator
+      @table.add_separator
+      @table.render.should eq <<-EOF.deindent
+       ┌───────────┐
+       ├───────────┤
+       ├───┬───┬───┤
+       │ x │ y │ z │
+       ├───┴───┴───┤
+       ├───────────┤
+       └───────────┘
+       EOF
+    end
+
+    
   end
 end
