@@ -81,6 +81,14 @@ module Terminal
         end
         inner_width + padding
       end
+
+      def inspect
+        fields = %i[alignment colspan index value width].map do |name|
+          val = self.instance_variable_get('@'+name.to_s)
+          "@#{name}=#{val.inspect}"
+        end.join(', ')
+        return "#<#{self.class} #{fields}>"
+      end
     end
   end
 end
