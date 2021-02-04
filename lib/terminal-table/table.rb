@@ -1,4 +1,4 @@
-require 'unicode/display_width/no_string_ext'
+require 'unicode/display_width'
 
 module Terminal
   class Table
