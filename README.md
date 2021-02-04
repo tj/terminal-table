@@ -348,7 +348,7 @@ table.style.border[:nw] = '*'  # override the north-west corner of the table
 
 ### Customizing row separators
 
-Row-separators can now be customized in a variety of ways.  The default separator's border_type is referred to as `:mid`.  Additional `:strong` / `:strong_a` and `:strong_b` separator styles can be applied to separate sections (e.g. header/footer/title).
+Row-separators can now be customized in a variety of ways.  The default separator's border_type is referred to as `:div`.  Additional separator border types (e.g. `:double`, `:heavy`, `:dash` - see full list below) can be applied to separate the sections (e.g. header/footer/title).
 
 The separator border_type may be specified when a user-defined separator added.  Alternatively, borders may be adjusted after the table's rows are elaborated, but before the table is rendered.
 
@@ -379,6 +379,26 @@ rows[2].border_type = :heavy # modify separator row: emphasize below title
 puts table.render
 ```
 
+## Example: Displaying a small CSV spreadsheet
+
+See `examples/show_csv_table.rb` in source distribution
+
+```ruby
+#!/usr/bin/env ruby
+require "csv"
+require "terminal-table"
+use_stdin = ARGV[0].nil? || (ARGV[0] == '-')
+io_object = use_stdin ? $stdin : File.open(ARGV[0], 'r')
+csv = CSV.new(io_object)
+csv_array = csv.to_a
+user_table = Terminal::Table.new do |v|
+  v.style = { :border => :unicode_round } # >= v3.0.0
+  v.title = "Some Title"
+  v.headings = csv_array[0]
+  v.rows = csv_array[1..-1]
+end
+puts user_table
+```
 ## More examples
 
 For more examples, please see the `examples` directory included in the
