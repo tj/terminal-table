@@ -1,4 +1,5 @@
-[<img src="https://github.com/tj/terminal-table/workflows/CI/badge.svg"/>](https://github.com/tj/terminal-table/actions)
+[![CI status](https://github.com/tj/terminal-table/workflows/CI/badge.svg)](https://github.com/tj/terminal-table/actions)
+[![Gem Version](https://badge.fury.io/rb/terminal-table.svg)](https://badge.fury.io/rb/terminal-table)
 
 # Terminal Table
 
