@@ -355,17 +355,41 @@ module Terminal
 
     it "should align columns, but allow specifics to remain" do
       @table.headings = ['Just some characters', 'Num']
-      @table.rows = [[{:value => 'a', :alignment => :left}, 1], ['b', 2], ['c', 3]]
+      @table.rows = [[nil, 0], [{:value => 'a', :alignment => :left}, nil], ['b', 2], ['c', 3]]
       @table.align_column 0, :center
       @table.align_column 1, :right
       @table.render.should eq <<-EOF.deindent
         +----------------------+-----+
         | Just some characters | Num |
         +----------------------+-----+
-        | a                    |   1 |
+        |                      |   0 |
+        | a                    |     |
         |          b           |   2 |
         |          c           |   3 |
         +----------------------+-----+
+      EOF
+    end
+
+    it "should align columns taking colspan into account" do
+      @table.headings = ['xxx'] * 4
+      @table.rows = [
+        [1, 2, 3, 4],
+        [5, {:value => 6, :colspan => 2}, 7],
+        [{:value => 8, :colspan => 2}, 9, :a],
+        [{:value => :b, :colspan => 2}, {:value => :c, :colspan => 2}],
+        [{:value => :d, :colspan => 3}, :e],
+      ]
+      @table.align_column 3, :right
+      @table.render.should eq <<-EOF.deindent
+        +-----+-----+-----+-----+
+        | xxx | xxx | xxx | xxx |
+        +-----+-----+-----+-----+
+        | 1   | 2   | 3   |   4 |
+        | 5   | 6         |   7 |
+        | 8         | 9   |   a |
+        | b         |         c |
+        | d               |   e |
+        +-----------------+-----+
       EOF
     end
 
