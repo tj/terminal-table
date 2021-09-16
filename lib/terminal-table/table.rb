@@ -27,10 +27,8 @@ module Terminal
     # Align column _n_ to the given _alignment_ of :center, :left, or :right.
 
     def align_column n, alignment
-      r = rows
-      column(n).each_with_index do |col, i|
-        cell = r[i][n]
-        next unless cell
+      # nil forces the column method to return the cell itself
+      column(n, nil).each do |cell|
         cell.alignment = alignment unless cell.alignment?
       end
     end
