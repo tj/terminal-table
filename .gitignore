@@ -5,6 +5,7 @@ tmp
 doc
 vendor
 /.bundle
+Gemfile.lock
 
 # tempfiles
 *~
