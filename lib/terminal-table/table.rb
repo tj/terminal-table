@@ -14,7 +14,10 @@ module Terminal
       @headings = []
       @rows = []
       @column_widths = []
-      self.style = options.fetch :style, {}
+      style_opts = options.fetch :style, {}
+      style_opts[:header_separator] = true unless style_opts.key?(:header_separator)
+
+      self.style = style_opts
       self.headings = options.fetch :headings, []
       self.rows = options.fetch :rows, []
       self.title = options.fetch :title, nil
@@ -133,7 +136,9 @@ module Terminal
       @headings.each do |row|
         unless row.cells.empty?
           buffer << row
-          buffer << Separator.new(self, border_type: :double, implicit: true)
+          if style.header_separator
+            buffer << Separator.new(self, border_type: :double, implicit: true)
+          end
         end
       end
       if style.all_separators

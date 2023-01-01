@@ -227,11 +227,13 @@ module Terminal
       def border_bottom=(val) ; @border.bottom = val ; end
       def border_left=(val) ; @border.left = val ; end
       def border_right=(val) ; @border.right = val ; end
+      def header_separator=(val) ; @header_separator = val ; end
 
       def border_top ; @border.top ; end
       def border_bottom ; @border.bottom ; end
       def border_left ; @border.left ; end
       def border_right ; @border.right ; end
+      def header_separator ; @header_separator ; end
 
 
       attr_accessor :padding_left
