@@ -120,6 +120,18 @@ module Terminal
       EOF
     end
 
+    it "should replace illegal unicode characters" do
+      @table.headings = ["\xAE"]
+      @table << ['a']
+      @table.render.should eq <<-EOF.deindent
+        +---+
+        | � |
+        +---+
+        | a |
+        +---+
+      EOF
+    end
+
     it "should render styles properly" do
       @table.headings = ['Char', 'Num']
       @table.style = {
