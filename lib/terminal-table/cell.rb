@@ -48,7 +48,7 @@ module Terminal
         val.public_send(positions[position], length)
       end
       def lines
-        @value.to_s.split(/\n/)
+        @value.to_s.encode("utf-8", invalid: :replace).split(/\n/)
       end
 
       ##
