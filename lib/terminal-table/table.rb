@@ -109,6 +109,8 @@ module Terminal
     # Set the headings
 
     def headings= arrays
+      return if arrays.nil?
+  
       arrays = [arrays] unless arrays.first.is_a?(Array)
       @headings = arrays.map do |array|
         row = Row.new(self, array)
