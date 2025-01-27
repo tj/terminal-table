@@ -22,5 +22,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "term-ansicolor"
   spec.add_development_dependency "pry"
 
-  spec.add_runtime_dependency "unicode-display_width", [">= 1.1.1", "< 3"]
+  spec.add_runtime_dependency "unicode-display_width", [">= 1.1.1", "< 4"]
 end
