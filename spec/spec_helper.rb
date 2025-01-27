@@ -1,9 +1,6 @@
 require 'terminal-table'
-require 'term/ansicolor'
 
 class String
-  include Term::ANSIColor
-
   def deindent
     strip.gsub(/^ */, '')
   end

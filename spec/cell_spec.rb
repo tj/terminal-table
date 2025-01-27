@@ -24,15 +24,15 @@ describe Terminal::Table do
   end
 
   it "should allow multiline content" do
-    cell = Cell.new :value => "barrissimo\n"+"foo".yellow, :table => Terminal::Table.new, :index => 0
-    cell.value.should eq "barrissimo\n"+"foo".yellow
-    cell.lines.should eq ['barrissimo','foo'.yellow]
+    cell = Cell.new :value => "barrissimo\n"+"\e[33mfoo\e[0m", :table => Terminal::Table.new, :index => 0
+    cell.value.should eq "barrissimo\n"+"\e[33mfoo\e[0m"
+    cell.lines.should eq ['barrissimo',"\e[33mfoo\e[0m"]
     cell.value_for_column_width_recalc.should eq 'barrissimo'
     cell.render(0).should eq " barrissimo "
   end
 
   it "should allow colorized content" do
-    cell = Cell.new :value => "foo".red, :table => Terminal::Table.new, :index => 0
+    cell = Cell.new :value => "\e[31mfoo\e[0m", :table => Terminal::Table.new, :index => 0
     cell.value.should eq "\e[31mfoo\e[0m"
     cell.value_for_column_width_recalc.should eq 'foo'
     cell.render.should eq " \e[31mfoo\e[0m "
