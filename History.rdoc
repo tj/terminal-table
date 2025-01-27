@@ -1,3 +1,10 @@
+4.0.0 / 2025-01-28
+==================
+
+- Non-unicode characters are no longer supported. They will be replaced.
+- Headings may be set to nil.
+- unicode-display-width version 3 supported.
+
 3.0.2 / 2021-09-19
 ==================
 
