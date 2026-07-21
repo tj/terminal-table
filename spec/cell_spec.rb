@@ -38,6 +38,14 @@ describe Terminal::Table do
     cell.render.should eq " \e[31mfoo\e[0m "
   end
 
+  it "should allow content with OSC 8 hyperlink escape sequences" do
+    hyperlink = "\e]8;;http://example.com\afoo\e]8;;\a"
+    cell = Cell.new :value => hyperlink, :table => Terminal::Table.new, :index => 0
+    cell.value.should eq hyperlink
+    cell.value_for_column_width_recalc.should eq 'foo'
+    cell.render.should eq " #{hyperlink} "
+  end
+
   it "should render padding properly" do
     @table = Terminal::Table.new(:rows => [['foo', '2'], ['3', '4']], :style => {:padding_right => 3})
     cell = @table.rows.first.cells.first
