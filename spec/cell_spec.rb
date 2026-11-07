@@ -31,6 +31,11 @@ describe Terminal::Table do
     cell.render(0).should eq " barrissimo "
   end
 
+  it "should split multiline content into lines only once" do
+    cell = Cell.new :value => "foo\nbar", :table => Terminal::Table.new, :index => 0
+    cell.lines.should equal cell.lines
+  end
+
   it "should allow colorized content" do
     cell = Cell.new :value => "\e[31mfoo\e[0m", :table => Terminal::Table.new, :index => 0
     cell.value.should eq "\e[31mfoo\e[0m"
